@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Juntada | Catering y Organización de Eventos Premium</title>
+  <meta name="description" content="La Juntada le agrega sabor a tus encuentros. Servicio de catering premium, alquiler de equipamiento y organización integral para casamientos, cumpleaños y eventos en general.">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons (loaded via cdn for icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header / Navigation -->
+  <header class="main-header" id="header">
+    <div class="header-container">
+      <a href="#hero" class="logo-link" id="nav-logo" aria-label="La Juntada Inicio">
+        <!-- SVG Logo inline to style dynamically with CSS -->
+        <svg class="nav-logo-svg" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg">
+          <text x="10" y="65" class="logo-title">La Juntada</text>
+          <text x="140" y="105" class="logo-sub1">Le agrega sabor</text>
+          <text x="175" y="135" class="logo-sub2">a tus encuentros!</text>
+        </svg>
+      </a>
+      
+      <!-- Mobile Menu Toggle Button -->
+      <button class="mobile-menu-toggle" id="menu-toggle" aria-expanded="false" aria-label="Abrir menú">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+
+      <nav class="nav-menu" id="nav-menu">
+        <ul class="nav-list">
+          <li class="nav-item"><a href="#hero" class="nav-link active">Inicio</a></li>
+          <li class="nav-item"><a href="#servicios" class="nav-link">Servicios</a></li>
+          <li class="nav-item"><a href="#alquiler" class="nav-link">Alquileres</a></li>
+          <li class="nav-item"><a href="#calculadora" class="nav-link">Cotizador</a></li>
+          <li class="nav-item"><a href="#galeria" class="nav-link">Galería</a></li>
+          <li class="nav-item"><a href="#contacto" class="nav-link-btn">Contactar</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content-container">
+      <div class="hero-badge">Catering & Eventos Premium</div>
+      <h1 class="hero-title">Le agrega sabor <br><span class="highlight">a tus encuentros!</span></h1>
+      <p class="hero-description">
+        Creamos experiencias gastronómicas únicas y eventos a medida. Casamientos soñados, cumpleaños inolvidables y reuniones corporativas con la calidez y calidad que nos caracteriza.
+      </p>
+      <div class="hero-buttons">
+        <a href="#calculadora" class="btn-primary" id="hero-cta-calc"><i class="fa-solid fa-calculator"></i> Presupuestar Online</a>
+        <a href="#servicios" class="btn-secondary" id="hero-cta-serv">Conocer Servicios</a>
+      </div>
+    </div>
+    <a href="#servicios" class="scroll-down-indicator" aria-label="Desplazarse hacia abajo">
+      <i class="fa-solid fa-chevron-down animate-bounce"></i>
+    </a>
+  </section>
+
+  <!-- Info Badges Section -->
+  <section class="info-badges-section">
+    <div class="container grid-badges">
+      <div class="badge-card">
+        <div class="badge-icon"><i class="fa-solid fa-utensils"></i></div>
+        <h3>Catering Exclusivo</h3>
+        <p>Menús gourmet diseñados a la medida de tu festejo.</p>
+      </div>
+      <div class="badge-card">
+        <div class="badge-icon"><i class="fa-solid fa-wine-glass"></i></div>
+        <h3>Barras y Bebidas</h3>
+        <p>Coctelería clásica y moderna con bartenders profesionales.</p>
+      </div>
+      <div class="badge-card">
+        <div class="badge-icon"><i class="fa-solid fa-chair"></i></div>
+        <h3>Equipamiento Integral</h3>
+        <p>Alquiler de mesas, vajilla, mobiliario y ambientación.</p>
+      </div>
+      <div class="badge-card">
+        <div class="badge-icon"><i class="fa-solid fa-face-smile"></i></div>
+        <h3>Atención Dedicada</h3>
+        <p>Coordinación de inicio a fin para que solo disfrutes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="services-section" id="servicios">
+    <div class="container">
+      <div class="section-header">
+        <span class="sub-header">Lo que hacemos</span>
+        <h2 class="section-title">Servicios de Catering a tu Medida</h2>
+        <div class="divider"></div>
+      </div>
+      
+      <div class="services-grid">
+        <!-- Service Card 1 -->
+        <div class="service-card">
+          <div class="service-image-container">
+            <img src="assets/wedding_event.png" alt="Casamientos La Juntada" class="service-image">
+            <div class="service-price-tag">Desde $35.000 <small>/ pers.</small></div>
+          </div>
+          <div class="service-info">
+            <h3 class="service-title-card">Casamientos y Bodas</h3>
+            <p class="service-desc">
+              Organización integral para tu boda. Menús de pasos, buffets elegantes, islas gastronómicas y la mejor vajilla. Hacemos que el día más importante sea impecable.
+            </p>
+            <ul class="service-features">
+              <li><i class="fa-solid fa-circle-check"></i> Menú de pasos o buffet</li>
+              <li><i class="fa-solid fa-circle-check"></i> Recepción finger food premium</li>
+              <li><i class="fa-solid fa-circle-check"></i> Mesa dulce completa y torta</li>
+              <li><i class="fa-solid fa-circle-check"></i> Personal de servicio y cocina</li>
+            </ul>
+            <a href="#contacto" class="service-btn" data-event="casamiento">Consultar por WhatsApp</a>
+          </div>
+        </div>
+
+        <!-- Service Card 2 -->
+        <div class="service-card">
+          <div class="service-image-container">
+            <img src="assets/birthday_event.png" alt="Cumpleaños La Juntada" class="service-image">
+            <div class="service-price-tag">Desde $22.000 <small>/ pers.</small></div>
+          </div>
+          <div class="service-info">
+            <h3 class="service-title-card">Cumpleaños y Fiestas</h3>
+            <p class="service-desc">
+              Celebraciones descontracturadas y deliciosas. Pizzeros a la vista, pata flameada, mini burgers gourmet, y barras móviles de bebidas con la mejor onda.
+            </p>
+            <ul class="service-features">
+              <li><i class="fa-solid fa-circle-check"></i> Show de pizza party o cazuelas</li>
+              <li><i class="fa-solid fa-circle-check"></i> Pata flameada (cerdo/ternera)</li>
+              <li><i class="fa-solid fa-circle-check"></i> Postres individuales y torta</li>
+              <li><i class="fa-solid fa-circle-check"></i> Opciones de barra de tragos</li>
+            </ul>
+            <a href="#contacto" class="service-btn" data-event="cumpleaños">Consultar por WhatsApp</a>
+          </div>
+        </div>
+
+        <!-- Service Card 3 -->
+        <div class="service-card">
+          <div class="service-image-container">
+            <img src="assets/social_event.png" alt="Eventos Generales La Juntada" class="service-image">
+            <div class="service-price-tag">Desde $28.000 <small>/ pers.</small></div>
+          </div>
+          <div class="service-info">
+            <h3 class="service-title-card">Eventos en General</h3>
+            <p class="service-desc">
+              Eventos corporativos, aniversarios, bautismos, y reuniones sociales. Nos adaptamos a la cantidad de invitados y al estilo de tu festejo con un servicio impecable.
+            </p>
+            <ul class="service-features">
+              <li><i class="fa-solid fa-circle-check"></i> Coffee breaks y brunches</li>
+              <li><i class="fa-solid fa-circle-check"></i> Lunch formal o informal</li>
+              <li><i class="fa-solid fa-circle-check"></i> Ambientación y mobiliario</li>
+              <li><i class="fa-solid fa-circle-check"></i> Servicio de barra libre</li>
+            </ul>
+            <a href="#contacto" class="service-btn" data-event="general">Consultar por WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rental Section -->
+  <section class="rental-section" id="alquiler">
+    <div class="container">
+      <div class="rental-container">
+        <div class="rental-text-content">
+          <span class="sub-header">Alquiler de Equipamiento</span>
+          <h2>Alquilá todo lo necesario para tu evento</h2>
+          <p class="rental-desc">
+            No te preocupes por la logística. Además del catering, te ofrecemos el alquiler de vajilla fina, mantelería de alta calidad, livings modernos, barras móviles y carpas/gazebos para que tu locación luzca espectacular.
+          </p>
+          <div class="rental-grid-items">
+            <div class="rental-item-mini">
+              <span class="rental-item-icon"><i class="fa-solid fa-glass-water"></i></span>
+              <div>
+                <h4>Vajilla y Cristalería</h4>
+                <p>Copas, platos de sitio, cubiertos premium.</p>
+              </div>
+            </div>
+            <div class="rental-item-mini">
+              <span class="rental-item-icon"><i class="fa-solid fa-chair"></i></span>
+              <div>
+                <h4>Mobiliario y Livings</h4>
+                <p>Mesas rústicas, sillas tiffany, sillones de estilo.</p>
+              </div>
+            </div>
+            <div class="rental-item-mini">
+              <span class="rental-item-icon"><i class="fa-solid fa-tent"></i></span>
+              <div>
+                <h4>Carpas y Gazebos</h4>
+                <p>Estructuras elegantes para proteger tu evento.</p>
+              </div>
+            </div>
+            <div class="rental-item-mini">
+              <span class="rental-item-icon"><i class="fa-solid fa-lightbulb"></i></span>
+              <div>
+                <h4>Iluminación & Deco</h4>
+                <p>Guirnaldas de luces, candelabros y flores.</p>
+              </div>
+            </div>
+          </div>
+          <a href="#calculadora" class="btn-primary" id="rental-cta-calc">Cotizar Alquileres</a>
+        </div>
+        
+        <div class="rental-visual">
+          <div class="rental-card-pricing">
+            <h3>Lista de Precios (Alquileres)</h3>
+            <ul class="price-list">
+              <li>
+                <span>Juego de vajilla completo <small>(por persona)</small></span>
+                <strong>$1.500</strong>
+              </li>
+              <li>
+                <span>Juego de copas <small>(agua, vino, champagne)</small></span>
+                <strong>$800</strong>
+              </li>
+              <li>
+                <span>Living Completo <small>(para 10 personas)</small></span>
+                <strong>$18.000</strong>
+              </li>
+              <li>
+                <span>Mesa vestida con mantel y sendero</span>
+                <strong>$5.500</strong>
+              </li>
+              <li>
+                <span>Silla Tiffany / Crossback <small>(c/u)</small></span>
+                <strong>$1.200</strong>
+              </li>
+              <li>
+                <span>Gazebo estructural <small>(6x3m ambientado)</small></span>
+                <strong>$45.000</strong>
+              </li>
+            </ul>
+            <div class="price-list-note">* Los valores son diarios y no incluyen flete ni armado.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Photo Carousel / Showcase -->
+  <section class="carousel-section" id="carrusel">
+    <div class="container">
+      <div class="section-header">
+        <span class="sub-header">Nuestra Gastronomía</span>
+        <h2 class="section-title">El Sabor de La Juntada</h2>
+        <div class="divider"></div>
+      </div>
+      
+      <!-- Slider HTML structure -->
+      <div class="slider-wrapper">
+        <div class="slider-container" id="slider">
+          <!-- Slide 1 -->
+          <div class="slide">
+            <img src="assets/catering_premium.png" alt="Plato Gourmet La Juntada">
+            <div class="slide-caption">
+              <h3>Entradas Gourmet</h3>
+              <p>Mini bocados fríos y calientes diseñados para sorprender desde el primer bocado.</p>
+            </div>
+          </div>
+          <!-- Slide 2 -->
+          <div class="slide">
+            <img src="assets/birthday_sweet.png" alt="Mesa Dulce Cumpleaños">
+            <div class="slide-caption">
+              <h3>Mesa Dulce & Pastelería</h3>
+              <p>Cascadas de chocolate, tortas artesanales, macarons y bocados dulces irresistibles.</p>
+            </div>
+          </div>
+          <!-- Slide 3 -->
+          <div class="slide">
+            <img src="assets/hero_bg.png" alt="Catering en Boda">
+            <div class="slide-caption">
+              <h3>Buffets y Estaciones</h3>
+              <p>Islas gastronómicas temáticas que fomentan la interacción y el dinamismo en tu evento.</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Controls -->
+        <button class="slider-arrow prev" id="slider-prev" aria-label="Foto anterior"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="slider-arrow next" id="slider-next" aria-label="Siguiente foto"><i class="fa-solid fa-chevron-right"></i></button>
+        
+        <!-- Indicators -->
+        <div class="slider-indicators" id="slider-indicators"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Budget Calculator Section -->
+  <section class="calculator-section" id="calculadora">
+    <div class="container">
+      <div class="calculator-card">
+        <div class="calc-header">
+          <i class="fa-solid fa-calculator calc-main-icon"></i>
+          <h2>Cotizador de Eventos Online</h2>
+          <p>Calculá al instante una estimación del costo de tu catering y servicios adicionales.</p>
+        </div>
+        
+        <form id="budget-form" class="calc-form">
+          <div class="calc-grid">
+            <!-- Col Left: Configuration -->
+            <div class="calc-settings">
+              <div class="form-group">
+                <label for="event-type"><i class="fa-solid fa-star text-orange"></i> Tipo de Evento</label>
+                <select id="event-type" class="form-control" required>
+                  <option value="casamiento" data-base="35000">Casamiento / Boda ($35.000 x pers.)</option>
+                  <option value="cumpleaños" data-base="22000">Cumpleaños / Fiesta ($22.000 x pers.)</option>
+                  <option value="general" data-base="28000" selected>Evento Corporativo / Social ($28.000 x pers.)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <div class="label-with-value">
+                  <label for="guest-count"><i class="fa-solid fa-users text-orange"></i> Cantidad de Invitados</label>
+                  <span class="range-val-bubble" id="guest-count-val">80</span>
+                </div>
+                <input type="range" id="guest-count" class="form-range" min="15" max="300" step="5" value="80">
+                <div class="range-limits">
+                  <span>15 pers.</span>
+                  <span>300 pers.</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label><i class="fa-solid fa-circle-plus text-orange"></i> Servicios Adicionales</label>
+                
+                <div class="checkbox-options-grid">
+                  <label class="custom-checkbox-container">
+                    <input type="checkbox" id="srv-drinks" data-cost="5500">
+                    <span class="checkmark"></span>
+                    <span class="chk-label">Barra Libre Premium (+$5.500 x pers.)</span>
+                  </label>
+
+                  <label class="custom-checkbox-container">
+                    <input type="checkbox" id="srv-tableware" data-cost="2200">
+                    <span class="checkmark"></span>
+                    <span class="chk-label">Alquiler de Vajilla Completa (+$2.200 x pers.)</span>
+                  </label>
+
+                  <label class="custom-checkbox-container">
+                    <input type="checkbox" id="srv-decor" data-cost="45000" data-fixed="true">
+                    <span class="checkmark"></span>
+                    <span class="chk-label">Ambientación & Guirnaldas de luces (+$45.000 fijo)</span>
+                  </label>
+
+                  <label class="custom-checkbox-container">
+                    <input type="checkbox" id="srv-sound" data-cost="75000" data-fixed="true">
+                    <span class="checkmark"></span>
+                    <span class="chk-label">Sonido, DJ e Iluminación (+$75.000 fijo)</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Col Right: Live Results -->
+            <div class="calc-results">
+              <div class="results-inner">
+                <h3>Resumen de la Cotización</h3>
+                
+                <div class="summary-details" id="summary-details">
+                  <div class="summary-item">
+                    <span>Base Catering (80 invitados):</span>
+                    <strong id="sum-base">$2.240.000</strong>
+                  </div>
+                  <!-- Dynamic items inserted by JS -->
+                  <div id="dynamic-summary-items"></div>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="total-display">
+                  <span>Total Estimado</span>
+                  <strong class="total-price" id="calc-total">$2.240.000</strong>
+                  <p class="vat-disclaimer">* Los precios son estimativos y sujetos a variaciones según el menú final.</p>
+                </div>
+
+                <button type="button" class="btn-whatsapp-send" id="btn-calc-whatsapp">
+                  <i class="fa-brands fa-whatsapp"></i> Reservar / Enviar a WhatsApp
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Photo Gallery Section -->
+  <section class="gallery-section" id="galeria">
+    <div class="container">
+      <div class="section-header">
+        <span class="sub-header">Portafolio</span>
+        <h2 class="section-title">Nuestros Eventos Realizados</h2>
+        <div class="divider"></div>
+      </div>
+      
+      <!-- Filter Tabs -->
+      <div class="gallery-tabs">
+        <button class="tab-btn active" data-filter="all">Todos</button>
+        <button class="tab-btn" data-filter="casamiento">Casamientos</button>
+        <button class="tab-btn" data-filter="cumpleaños">Cumpleaños</button>
+        <button class="tab-btn" data-filter="corporativo">Corporativos</button>
+      </div>
+      
+      <!-- Grid -->
+      <div class="gallery-grid" id="gallery-grid">
+        <!-- Photo 1 (Casamiento) -->
+        <div class="gallery-item" data-category="casamiento">
+          <div class="gallery-item-inner">
+            <img src="assets/wedding_event.png" alt="Casamiento en La Juntada" class="gallery-img">
+            <div class="gallery-hover-overlay">
+              <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+              <h4>Boda al Aire Libre</h4>
+              <p>Casamientos</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photo 2 (Cumpleaños) -->
+        <div class="gallery-item" data-category="cumpleaños">
+          <div class="gallery-item-inner">
+            <img src="assets/birthday_event.png" alt="Cumpleaños en La Juntada" class="gallery-img">
+            <div class="gallery-hover-overlay">
+              <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+              <h4>Fiesta de 40 Años</h4>
+              <p>Cumpleaños</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photo 3 (Corporativo) -->
+        <div class="gallery-item" data-category="corporativo">
+          <div class="gallery-item-inner">
+            <img src="assets/social_event.png" alt="Evento corporativo en La Juntada" class="gallery-img">
+            <div class="gallery-hover-overlay">
+              <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+              <h4>Lanzamiento Corporativo</h4>
+              <p>Corporativos</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photo 4 (Catering - Casamiento) -->
+        <div class="gallery-item" data-category="casamiento">
+          <div class="gallery-item-inner">
+            <img src="assets/hero_bg.png" alt="Catering Boda La Juntada" class="gallery-img">
+            <div class="gallery-hover-overlay">
+              <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+              <h4>Buffet de Bodas</h4>
+              <p>Casamientos</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photo 5 (Catering - Cumpleaños) -->
+        <div class="gallery-item" data-category="cumpleaños">
+          <div class="gallery-item-inner">
+            <img src="assets/birthday_sweet.png" alt="Mesa dulce cumpleaños La Juntada" class="gallery-img">
+            <div class="gallery-hover-overlay">
+              <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+              <h4>Mesa de Postres Temática</h4>
+              <p>Cumpleaños</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photo 6 (Catering - Especial) -->
+        <div class="gallery-item" data-category="corporativo">
+          <div class="gallery-item-inner">
+            <img src="assets/catering_premium.png" alt="Catering de gala La Juntada" class="gallery-img">
+            <div class="gallery-hover-overlay">
+              <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+              <h4>Gourmet Finger Food</h4>
+              <p>Corporativos / Especiales</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox Modal -->
+  <div class="lightbox-modal" id="lightbox-modal" aria-hidden="true" role="dialog">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Cerrar galería">&times;</button>
+    <button class="lightbox-arrow prev" id="lightbox-prev" aria-label="Foto anterior"><i class="fa-solid fa-chevron-left"></i></button>
+    <div class="lightbox-content">
+      <img src="" alt="" id="lightbox-img">
+      <div class="lightbox-caption" id="lightbox-caption">Título de la imagen</div>
+    </div>
+    <button class="lightbox-arrow next" id="lightbox-next" aria-label="Siguiente foto"><i class="fa-solid fa-chevron-right"></i></button>
+  </div>
+
+  <!-- Contact Section -->
+  <section class="contact-section" id="contacto">
+    <div class="container contact-grid">
+      <!-- Contact Info -->
+      <div class="contact-info-block">
+        <span class="sub-header text-white-muted">Hablemos de tu evento</span>
+        <h2 class="text-white">Ponete en Contacto</h2>
+        <p class="contact-intro">
+          Contanos qué estás planeando. Estamos listos para asesorarte y armar una propuesta gastronómica que se adapte perfectamente a lo que imaginás.
+        </p>
+        
+        <div class="contact-details-list">
+          <div class="contact-detail-item">
+            <span class="contact-detail-icon"><i class="fa-brands fa-whatsapp"></i></span>
+            <div>
+              <h4>WhatsApp Directo</h4>
+              <p><a href="https://wa.me/5491123456789" target="_blank" rel="noopener noreferrer">+54 9 11 2345-6789</a></p>
+            </div>
+          </div>
+
+          <div class="contact-detail-item">
+            <span class="contact-detail-icon"><i class="fa-regular fa-envelope"></i></span>
+            <div>
+              <h4>Email de Consultas</h4>
+              <p><a href="mailto:info@lajuntadaeventos.com.ar">info@lajuntadaeventos.com.ar</a></p>
+            </div>
+          </div>
+
+          <div class="contact-detail-item">
+            <span class="contact-detail-icon"><i class="fa-solid fa-map-location-dot"></i></span>
+            <div>
+              <h4>Zona de Cobertura</h4>
+              <p>Buenos Aires y Alrededores (GBA y CABA), Argentina</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-social-icons">
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="contact-form-block">
+        <form id="contact-form" class="form-wrapper">
+          <div class="form-row">
+            <div class="form-group-half">
+              <label for="frm-name">Nombre y Apellido *</label>
+              <input type="text" id="frm-name" class="form-control-custom" required placeholder="Ej. Juan Pérez">
+            </div>
+            <div class="form-group-half">
+              <label for="frm-phone">Teléfono de Contacto *</label>
+              <input type="tel" id="frm-phone" class="form-control-custom" required placeholder="Ej. 11 2345 6789">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group-half">
+              <label for="frm-email">Email *</label>
+              <input type="email" id="frm-email" class="form-control-custom" required placeholder="Ej. juan@correo.com">
+            </div>
+            <div class="form-group-half">
+              <label for="frm-event">Tipo de Evento *</label>
+              <select id="frm-event" class="form-control-custom" required>
+                <option value="" disabled selected>Seleccioná...</option>
+                <option value="Casamiento">Casamiento / Boda</option>
+                <option value="Cumpleaños">Cumpleaños</option>
+                <option value="Empresarial">Evento Empresarial</option>
+                <option value="Otro">Otro Evento</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group-half">
+              <label for="frm-date">Fecha Estimada *</label>
+              <input type="date" id="frm-date" class="form-control-custom" required>
+            </div>
+            <div class="form-group-half">
+              <label for="frm-guests">Invitados Estimados *</label>
+              <input type="number" id="frm-guests" class="form-control-custom" required min="10" placeholder="Ej. 80">
+            </div>
+          </div>
+
+          <div class="form-group-full">
+            <label for="frm-msg">Contanos más sobre tu idea (Detalles, menús requeridos, alquileres...)</label>
+            <textarea id="frm-msg" class="form-control-textarea" rows="4" placeholder="Ej. Quería consultar por un pizza party para el cumpleaños de 50 años de mi papá..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit-form" id="btn-submit">
+            <i class="fa-regular fa-paper-plane"></i> Enviar Mensaje
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- WhatsApp Floating Button -->
+  <a href="https://wa.me/5491123456789?text=Hola!%20Me%20contacto%20desde%20la%20web.%20Quiero%20consultar%20por%20un%20servicio%20de%20catering%20para%20un%20evento." class="whatsapp-floating" target="_blank" rel="noopener noreferrer" aria-label="Escribinos por WhatsApp">
+    <i class="fa-brands fa-whatsapp"></i>
+    <span class="whatsapp-tooltip">¡Escribinos!</span>
+  </a>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <!-- SVG Logo White Version inside the footer -->
+        <svg class="footer-logo-svg" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg">
+          <text x="10" y="65" class="logo-title-white">La Juntada</text>
+          <text x="140" y="105" class="logo-sub1-white">Le agrega sabor</text>
+          <text x="175" y="135" class="logo-sub2-white">a tus encuentros!</text>
+        </svg>
+        <p class="footer-brand-desc">
+          Llevamos el mejor sabor y organización profesional a tus encuentros. Catering de primer nivel y alquileres listos para lucir.
+        </p>
+      </div>
+
+      <div class="footer-links">
+        <h3>Navegación</h3>
+        <ul>
+          <li><a href="#hero">Inicio</a></li>
+          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="#alquiler">Alquiler de Vajilla</a></li>
+          <li><a href="#calculadora">Calculadora Online</a></li>
+          <li><a href="#galeria">Galería de Fotos</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-services-list">
+        <h3>Nuestros Menús</h3>
+        <ul>
+          <li>Catering Casamiento Premium</li>
+          <li>Pizza Party & Cazuelas</li>
+          <li>Pata Flameada Gourmet</li>
+          <li>Barras Libres de Tragos</li>
+          <li>Servicio de Mesa Dulce</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <p>&copy; 2026 La Juntada Eventos. Todos los derechos reservados.</p>
+        <p>Diseño Web Profesional con Temática Naranja.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+</body>
+</html>
