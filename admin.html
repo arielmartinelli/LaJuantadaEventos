@@ -157,6 +157,92 @@
       color: var(--charcoal, #1d1715);
     }
 
+    /* Table styles */
+    .admin-table th, .admin-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--border-light, #ebdcd5);
+      font-size: 0.9rem;
+    }
+    
+    .admin-table td input[type="text"], .admin-table td input[type="number"], .admin-table td select {
+      padding: 6px 10px;
+      border: 1px solid var(--border-light, #ebdcd5);
+      border-radius: var(--radius-sm, 8px);
+      width: 100%;
+      outline: none;
+    }
+
+    .btn-delete-row {
+      background-color: #df3838;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: var(--transition);
+    }
+    
+    .btn-delete-row:hover {
+      background-color: #b82323;
+    }
+
+    /* Card slide styles */
+    .slide-edit-card {
+      background: var(--bg-white, #ffffff);
+      border: 1px solid var(--border-light, #ebdcd5);
+      border-radius: var(--radius-md, 16px);
+      padding: 20px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      position: relative;
+    }
+    
+    @media (max-width: 768px) {
+      .slide-edit-card {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    .slide-preview-img {
+      width: 150px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--border-light, #ebdcd5);
+      background-color: #eee;
+    }
+
+    .slide-edit-inputs {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Photo gallery card edit styles */
+    .gallery-edit-card {
+      background: var(--bg-white, #ffffff);
+      border: 1px solid var(--border-light, #ebdcd5);
+      border-radius: var(--radius-md, 16px);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+    }
+
+    .gallery-preview-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--border-light, #ebdcd5);
+      background-color: #eee;
+    }
+
     /* Switch toggle styles */
     .switch-container {
       display: flex;
@@ -345,10 +431,10 @@
 
       <form id="login-form">
         <div class="admin-form-group" style="text-align: left;">
-          <label for="username">Usuario *</label>
+          <label for="username">Usuario o Correo *</label>
           <div class="admin-input-group">
             <span class="admin-input-prefix"><i class="fa-solid fa-user"></i></span>
-            <input type="text" id="username" required placeholder="Ej. Leo" autocomplete="username">
+            <input type="text" id="username" required placeholder="Ej. leo" autocomplete="username">
           </div>
         </div>
         <div class="admin-form-group" style="text-align: left; margin-bottom: 25px;">
@@ -415,146 +501,12 @@
                 </div>
               </div>
             </div>
-
-            <!-- Section 2: Adicionales de Alquiler y Servicios (Precios) -->
-            <div class="admin-box">
-              <h3><i class="fa-solid fa-hand-holding-dollar"></i> Precios de Adicionales & Alquileres</h3>
-              
-              <div class="admin-form-group">
-                <label for="db-srv_drinks_price">Gaseosas libres, Vinos y Cervezas (por persona)</label>
-                <div class="admin-input-group">
-                  <span class="admin-input-prefix">$</span>
-                  <input type="number" id="db-srv_drinks_price" required min="0">
-                </div>
-              </div>
-
-              <div class="admin-form-group">
-                <label for="db-srv_bar_price">Barra Móvil Libre - Coctelería 4hs (por persona)</label>
-                <div class="admin-input-group">
-                  <span class="admin-input-prefix">$</span>
-                  <input type="number" id="db-srv_bar_price" required min="0">
-                </div>
-              </div>
-
-              <div class="admin-form-group">
-                <label for="db-srv_tableware_price">Alquiler de Vajilla y Mantelería (por persona)</label>
-                <div class="admin-input-group">
-                  <span class="admin-input-prefix">$</span>
-                  <input type="number" id="db-srv_tableware_price" required min="0">
-                </div>
-              </div>
-
-              <div class="admin-form-group">
-                <label for="db-srv_living_price">Alquiler Juego de Living - 10 pers. (por unidad)</label>
-                <div class="admin-input-group">
-                  <span class="admin-input-prefix">$</span>
-                  <input type="number" id="db-srv_living_price" required min="0">
-                </div>
-              </div>
-
-              <div class="admin-form-group">
-                <label for="db-srv_sound_price">DJ, Sonido Básico y Iluminación (Fijo)</label>
-                <div class="admin-input-group">
-                  <span class="admin-input-prefix">$</span>
-                  <input type="number" id="db-srv_sound_price" required min="0">
-                </div>
-              </div>
-
-              <div class="admin-form-group">
-                <label for="db-srv_gazebo_price">Gazebo Estructural - 6x3m ambientado (Fijo)</label>
-                <div class="admin-input-group">
-                  <span class="admin-input-prefix">$</span>
-                  <input type="number" id="db-srv_gazebo_price" required min="0">
-                </div>
-              </div>
-
-              <div class="admin-form-group">
-                <label for="db-srv_screen_price">Pantalla 120" y Proyector HD (Fijo)</label>
-                <div class="admin-input-group">
-                  <span class="admin-input-prefix">$</span>
-                  <input type="number" id="db-srv_screen_price" required min="0">
-                </div>
-              </div>
-
-              <div class="admin-form-group">
-                <label for="db-srv_photo_price">Fotografía Digital Profesional (Fijo)</label>
-                <div class="admin-input-group">
-                  <span class="admin-input-prefix">$</span>
-                  <input type="number" id="db-srv_photo_price" required min="0">
-                </div>
-              </div>
-            </div>
-
           </div>
 
           <!-- Column Right -->
           <div style="display: flex; flex-direction: column; gap: 30px;">
             
-            <!-- Section 3: Disponibilidad de Servicios -->
-            <div class="admin-box">
-              <h3><i class="fa-solid fa-circle-check"></i> Disponibilidad de Servicios</h3>
-              <p style="font-size: 0.8rem; color: var(--charcoal-muted); margin-bottom: 15px;">
-                Desactivá un servicio para marcarlo como "No Disponible" y deshabilitarlo en la calculadora de la web principal.
-              </p>
-
-              <div class="switch-container">
-                <span class="switch-label">Servicio de Barra Móvil</span>
-                <label class="admin-switch">
-                  <input type="checkbox" id="db-srv_bar_available">
-                  <span class="slider-switch"></span>
-                </label>
-              </div>
-
-              <div class="switch-container">
-                <span class="switch-label">Alquiler de Vajilla y Mantelería</span>
-                <label class="admin-switch">
-                  <input type="checkbox" id="db-srv_tableware_available">
-                  <span class="slider-switch"></span>
-                </label>
-              </div>
-
-              <div class="switch-container">
-                <span class="switch-label">Sonido, DJ e Iluminación</span>
-                <label class="admin-switch">
-                  <input type="checkbox" id="db-srv_sound_available">
-                  <span class="slider-switch"></span>
-                </label>
-              </div>
-
-              <div class="switch-container">
-                <span class="switch-label">Alquiler de Gazebos</span>
-                <label class="admin-switch">
-                  <input type="checkbox" id="db-srv_gazebo_available">
-                  <span class="slider-switch"></span>
-                </label>
-              </div>
-
-              <div class="switch-container">
-                <span class="switch-label">Pantalla y Proyector HD</span>
-                <label class="admin-switch">
-                  <input type="checkbox" id="db-srv_screen_available">
-                  <span class="slider-switch"></span>
-                </label>
-              </div>
-
-              <div class="switch-container">
-                <span class="switch-label">Fotografía Profesional</span>
-                <label class="admin-switch">
-                  <input type="checkbox" id="db-srv_photo_available">
-                  <span class="slider-switch"></span>
-                </label>
-              </div>
-
-              <div class="switch-container">
-                <span class="switch-label">Alquiler de Juegos de Living</span>
-                <label class="admin-switch">
-                  <input type="checkbox" id="db-srv_living_available">
-                  <span class="slider-switch"></span>
-                </label>
-              </div>
-            </div>
-
-            <!-- Section 4: Datos de Contacto -->
+            <!-- Section 2: Datos de Contacto -->
             <div class="admin-box">
               <h3><i class="fa-solid fa-address-book"></i> Datos de Contacto & Oficina</h3>
               
@@ -590,7 +542,65 @@
                 </div>
               </div>
             </div>
+          </div>
 
+          <!-- Section 3: Gestión de Servicios Adicionales -->
+          <div class="admin-box" style="grid-column: 1 / -1;">
+            <h3><i class="fa-solid fa-list-check"></i> Gestión de Servicios Adicionales</h3>
+            <p style="font-size: 0.8rem; color: var(--charcoal-muted); margin-bottom: 15px;">
+              Crea, edita o elimina los servicios adicionales de la calculadora y la sección de alquileres.
+            </p>
+            
+            <div style="overflow-x: auto; margin-bottom: 15px;">
+              <table class="admin-table" id="services-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 2px solid var(--border-light, #ebdcd5);">
+                    <th style="padding: 10px 8px;">Clave (ID único)</th>
+                    <th style="padding: 10px 8px;">Nombre del Servicio</th>
+                    <th style="padding: 10px 8px;">Precio ($)</th>
+                    <th style="padding: 10px 8px;">Cobro</th>
+                    <th style="padding: 10px 8px;">Disponible</th>
+                    <th style="padding: 10px 8px; text-align: center;">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="services-tbody">
+                  <!-- Carga dinámica -->
+                </tbody>
+              </table>
+            </div>
+            <button type="button" class="admin-btn-export" id="btn-add-service" style="background-color: var(--primary-orange); padding: 8px 16px; font-size: 0.85rem;">
+              <i class="fa-solid fa-plus"></i> Agregar Nuevo Servicio
+            </button>
+          </div>
+
+          <!-- Section 4: Gestión de Carrusel Principal -->
+          <div class="admin-box" style="grid-column: 1 / -1;">
+            <h3><i class="fa-solid fa-images"></i> Carrusel de Fotos (Sección "Nuestra Cocina")</h3>
+            <p style="font-size: 0.8rem; color: var(--charcoal-muted); margin-bottom: 15px;">
+              Administra las diapositivas de fotos principales. Puedes actualizar títulos, descripciones y subir imágenes desde tu PC.
+            </p>
+            
+            <div id="carousel-list" style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 15px;">
+              <!-- Carga dinámica -->
+            </div>
+            <button type="button" class="admin-btn-export" id="btn-add-slide" style="background-color: var(--primary-orange); padding: 8px 16px; font-size: 0.85rem;">
+              <i class="fa-solid fa-plus"></i> Añadir Diapositiva
+            </button>
+          </div>
+
+          <!-- Section 5: Galería de Eventos (Portafolio) -->
+          <div class="admin-box" style="grid-column: 1 / -1;">
+            <h3><i class="fa-solid fa-photo-film"></i> Galería de Eventos (Portafolio con Filtros)</h3>
+            <p style="font-size: 0.8rem; color: var(--charcoal-muted); margin-bottom: 15px;">
+              Sube fotos para mostrar en el catálogo de eventos realizados. Recuerda clasificarlas en la categoría correcta.
+            </p>
+            
+            <div id="gallery-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(285px, 1fr)); gap: 20px; margin-bottom: 15px;">
+              <!-- Carga dinámica -->
+            </div>
+            <button type="button" class="admin-btn-export" id="btn-add-gallery" style="background-color: var(--primary-orange); padding: 8px 16px; font-size: 0.85rem;">
+              <i class="fa-solid fa-plus"></i> Agregar Imagen a la Galería
+            </button>
           </div>
 
         </div>
@@ -613,7 +623,6 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Serverless-enabled admin controller with dual auth support (Supabase and Local Mode fallback)
     document.addEventListener('DOMContentLoaded', async () => {
       
       const loginSection = document.getElementById('login-section');
@@ -627,9 +636,16 @@
       const btnLogout = document.getElementById('btn-logout');
       const btnExport = document.getElementById('btn-export-json');
 
-      const ADMIN_EMAIL = 'leo@lajuntada.com.ar';
+      const btnAddService = document.getElementById('btn-add-service');
+      const btnAddSlide = document.getElementById('btn-add-slide');
+      const btnAddGallery = document.getElementById('btn-add-gallery');
+
       let currentSession = null;
       let dbConfigs = {};
+      let dbServices = [];
+      let dbCarousel = [];
+      let dbGallery = [];
+
       let supabaseClient = null;
       let isLocalMode = false;
 
@@ -643,21 +659,24 @@
           }
 
           const data = await response.json();
-          const { supabaseUrl, supabaseAnonKey, configs } = data;
+          const { supabaseUrl, supabaseAnonKey, configs, services, carousel, gallery } = data;
 
           if (!supabaseUrl || !supabaseAnonKey) {
             enableLocalMode("Variables Supabase faltantes en Vercel. Entrando en Modo Local.");
             return;
           }
 
-          // Initialize client-side Supabase client for Authentication
           supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
           dbConfigs = configs || {};
+          dbServices = services || [];
+          dbCarousel = carousel || [];
+          dbGallery = gallery || [];
 
-          // Fill inputs from DB config values
           fillFormInputs();
+          renderServicesTable(dbServices);
+          renderCarouselList(dbCarousel);
+          renderGalleryList(dbGallery);
 
-          // Check session
           await checkSession();
 
         } catch (err) {
@@ -672,19 +691,22 @@
         
         // Load configurations from localStorage
         const localData = localStorage.getItem('lajuntada_config');
-        if (localData) {
-          try {
-            dbConfigs = JSON.parse(localData);
-          } catch(e) {
-            dbConfigs = {};
-          }
-        } else {
-          dbConfigs = {};
-        }
+        dbConfigs = localData ? JSON.parse(localData) : {};
+
+        const localServices = localStorage.getItem('lajuntada_services_list');
+        dbServices = localServices ? JSON.parse(localServices) : [];
+
+        const localCarousel = localStorage.getItem('lajuntada_carousel_list');
+        dbCarousel = localCarousel ? JSON.parse(localCarousel) : [];
+
+        const localGallery = localStorage.getItem('lajuntada_gallery_list');
+        dbGallery = localGallery ? JSON.parse(localGallery) : [];
 
         fillFormInputs();
+        renderServicesTable(dbServices);
+        renderCarouselList(dbCarousel);
+        renderGalleryList(dbGallery);
         
-        // In local mode, check if we already have a mock local session
         const localSession = sessionStorage.getItem('lajuntada_logged_in');
         if (localSession === 'true') {
           showDashboard();
@@ -728,7 +750,7 @@
         loginError.classList.add('error');
       }
 
-      // 2. Authenticate with Supabase Auth or Local credentials
+      // Authenticate with Supabase Auth or Local credentials
       if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
           e.preventDefault();
@@ -785,7 +807,6 @@
 
             if (error) {
               let errMsg = `Error de Autenticación: ${error.message}`;
-              // Validar si es por falta de confirmación de email
               if (error.message.includes("Email not confirmed")) {
                 errMsg = "Acceso bloqueado: Confirmación de Email pendiente en Supabase. Por favor, desactiva 'Confirm Email' en Supabase Auth o confirma el usuario en el panel.";
               } else if (error.message.includes("Invalid login credentials")) {
@@ -820,7 +841,277 @@
         });
       }
 
-      // 3. Save configs via POST request or localStorage fallback
+      // ==========================================================================
+      // UPLOAD IMAGE (SUPABASE STORAGE / LOCAL BASE64 FALLBACK)
+      // ==========================================================================
+      async function handleImageUpload(file, folder) {
+        if (!file) return null;
+        
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+        
+        if (isLocalMode) {
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(file);
+          });
+        }
+
+        if (!supabaseClient) {
+          alert("Cliente de Supabase no cargado.");
+          return null;
+        }
+
+        try {
+          const { data, error } = await supabaseClient.storage
+            .from('lajuntada_images')
+            .upload(fileName, file);
+
+          if (error) {
+            console.error("Error al subir a Supabase Storage:", error);
+            alert("Error al subir la imagen a Supabase Storage: " + error.message);
+            return null;
+          }
+
+          const { data: { publicUrl } } = supabaseClient.storage
+            .from('lajuntada_images')
+            .getPublicUrl(fileName);
+
+          return publicUrl;
+        } catch (err) {
+          console.error("Fallo de red en Storage:", err);
+          alert("Error de red al subir la imagen: " + err.message);
+          return null;
+        }
+      }
+
+      // ==========================================================================
+      // RENDER SERVICIOS ADICIONALES
+      // ==========================================================================
+      function renderServicesTable(services) {
+        const tbody = document.getElementById('services-tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        
+        services.forEach(srv => {
+          tbody.appendChild(createServiceRow(srv));
+        });
+      }
+
+      function createServiceRow(srv) {
+        const tr = document.createElement('tr');
+        tr.className = 'service-row';
+        
+        const isPerPersonChecked = srv.is_per_person ? 'selected' : '';
+        const isFixedChecked = !srv.is_per_person ? 'selected' : '';
+        const isAvailableChecked = srv.is_available ? 'checked' : '';
+        const isSrvLiving = srv.key === 'srv_living';
+        
+        const isKeyReadOnly = srv.key.startsWith('srv_') ? 'readonly' : '';
+        
+        tr.innerHTML = `
+          <td>
+            <input type="text" class="srv-input-key" value="${srv.key}" ${isKeyReadOnly} required placeholder="ej. srv_luces">
+          </td>
+          <td>
+            <input type="text" class="srv-input-name" value="${srv.name}" required placeholder="Nombre del servicio">
+          </td>
+          <td>
+            <input type="number" class="srv-input-price" value="${srv.price}" required min="0">
+          </td>
+          <td>
+            <select class="srv-input-type" ${isSrvLiving ? 'disabled' : ''}>
+              <option value="per_person" ${isPerPersonChecked}>Por persona</option>
+              <option value="fixed" ${isFixedChecked}>Fijo</option>
+            </select>
+          </td>
+          <td>
+            <label class="admin-switch">
+              <input type="checkbox" class="srv-input-available" ${isAvailableChecked}>
+              <span class="slider-switch"></span>
+            </label>
+          </td>
+          <td style="text-align: center;">
+            <button type="button" class="btn-delete-row" ${isSrvLiving ? 'disabled' : ''} onclick="this.closest('tr').remove()"><i class="fa-solid fa-trash"></i></button>
+          </td>
+        `;
+        
+        return tr;
+      }
+
+      if (btnAddService) {
+        btnAddService.addEventListener('click', () => {
+          const tbody = document.getElementById('services-tbody');
+          if (tbody) {
+            tbody.appendChild(createServiceRow({
+              key: 'srv_nuevo_' + Math.random().toString(36).substring(2, 7),
+              name: '',
+              price: 0,
+              is_per_person: false,
+              is_available: true
+            }));
+          }
+        });
+      }
+
+      // ==========================================================================
+      // RENDER CAROUSEL DE FOTOS
+      // ==========================================================================
+      function renderCarouselList(carousel) {
+        const container = document.getElementById('carousel-list');
+        if (!container) return;
+        container.innerHTML = '';
+        
+        carousel.forEach(slide => {
+          container.appendChild(createSlideCard(slide));
+        });
+      }
+
+      function createSlideCard(slide) {
+        const div = document.createElement('div');
+        div.className = 'slide-edit-card';
+        div.dataset.id = slide.id || '';
+        
+        div.innerHTML = `
+          <img src="${slide.image_url}" class="slide-preview-img" alt="Vista previa">
+          <div class="slide-edit-inputs">
+            <div class="admin-form-group" style="margin-bottom: 5px;">
+              <label>Título de la Diapositiva</label>
+              <input type="text" class="slide-input-title" value="${slide.title || ''}" placeholder="Ej. Cumpleaños & Fiestas">
+            </div>
+            <div class="admin-form-group" style="margin-bottom: 5px;">
+              <label>Descripción corta</label>
+              <input type="text" class="slide-input-desc" value="${slide.description || ''}" placeholder="Ej. Pata flambeada y cazuelas criollas...">
+            </div>
+            <div class="admin-form-group" style="margin-bottom: 5px;">
+              <label>Subir Nueva Foto (PC)</label>
+              <input type="file" class="slide-input-file" accept="image/*">
+              <input type="hidden" class="slide-input-url" value="${slide.image_url}">
+            </div>
+          </div>
+          <button type="button" class="btn-delete-row" style="position: absolute; top: 15px; right: 15px;" onclick="this.closest('.slide-edit-card').remove()">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        `;
+        
+        const fileInput = div.querySelector('.slide-input-file');
+        const imgPreview = div.querySelector('.slide-preview-img');
+        const urlInput = div.querySelector('.slide-input-url');
+        
+        fileInput.addEventListener('change', async (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            imgPreview.src = 'assets/loading.gif';
+            const url = await handleImageUpload(file, 'carousel');
+            if (url) {
+              imgPreview.src = url;
+              urlInput.value = url;
+            } else {
+              imgPreview.src = urlInput.value;
+            }
+          }
+        });
+        
+        return div;
+      }
+
+      if (btnAddSlide) {
+        btnAddSlide.addEventListener('click', () => {
+          const container = document.getElementById('carousel-list');
+          if (container) {
+            container.appendChild(createSlideCard({
+              title: '',
+              description: '',
+              image_url: 'assets/wedding_event.png' // Default placeholder
+            }));
+          }
+        });
+      }
+
+      // ==========================================================================
+      // RENDER GALERÍA DE PORTAFOLIO
+      // ==========================================================================
+      function renderGalleryList(gallery) {
+        const container = document.getElementById('gallery-list');
+        if (!container) return;
+        container.innerHTML = '';
+        
+        gallery.forEach(item => {
+          container.appendChild(createGalleryCard(item));
+        });
+      }
+
+      function createGalleryCard(item) {
+        const div = document.createElement('div');
+        div.className = 'gallery-edit-card';
+        div.dataset.id = item.id || '';
+        
+        const catCasamiento = item.category === 'casamiento' ? 'selected' : '';
+        const catCumple = item.category === 'cumpleaños' ? 'selected' : '';
+        const catCorp = item.category === 'corporativo' ? 'selected' : '';
+        
+        div.innerHTML = `
+          <img src="${item.image_url}" class="gallery-preview-img" alt="Vista previa">
+          <div class="admin-form-group" style="margin-bottom: 5px;">
+            <label>Título de la Foto</label>
+            <input type="text" class="gallery-input-title" value="${item.title}" required placeholder="Ej. Entrada de Quesos">
+          </div>
+          <div class="admin-form-group" style="margin-bottom: 5px;">
+            <label>Categoría</label>
+            <select class="gallery-input-category">
+              <option value="casamiento" ${catCasamiento}>Casamientos</option>
+              <option value="cumpleaños" ${catCumple}>Cumpleaños</option>
+              <option value="corporativo" ${catCorp}>Corporativos</option>
+            </select>
+          </div>
+          <div class="admin-form-group" style="margin-bottom: 5px;">
+            <label>Subir Foto (PC)</label>
+            <input type="file" class="gallery-input-file" accept="image/*">
+            <input type="hidden" class="gallery-input-url" value="${item.image_url}">
+          </div>
+          <button type="button" class="btn-delete-row" style="position: absolute; top: 10px; right: 10px; padding: 4px 8px;" onclick="this.closest('.gallery-edit-card').remove()">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        `;
+        
+        const fileInput = div.querySelector('.gallery-input-file');
+        const imgPreview = div.querySelector('.gallery-preview-img');
+        const urlInput = div.querySelector('.gallery-input-url');
+        
+        fileInput.addEventListener('change', async (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            imgPreview.src = 'assets/loading.gif';
+            const url = await handleImageUpload(file, 'gallery');
+            if (url) {
+              imgPreview.src = url;
+              urlInput.value = url;
+            } else {
+              imgPreview.src = urlInput.value;
+            }
+          }
+        });
+        
+        return div;
+      }
+
+      if (btnAddGallery) {
+        btnAddGallery.addEventListener('click', () => {
+          const container = document.getElementById('gallery-list');
+          if (container) {
+            container.appendChild(createGalleryCard({
+              title: '',
+              category: 'casamiento',
+              image_url: 'assets/wedding_event.png'
+            }));
+          }
+        });
+      }
+
+      // ==========================================================================
+      // GUARDAR CONFIGURACIONES E IMÁGENES
+      // ==========================================================================
       if (adminConfigForm) {
         adminConfigForm.addEventListener('submit', async (e) => {
           e.preventDefault();
@@ -830,11 +1121,11 @@
             return;
           }
 
-          showSaveAlert("Guardando cambios...", "success");
+          showSaveAlert("Guardando todos los cambios...", "success");
 
+          // 1. Recopilar configs normales
           const inputs = adminConfigForm.querySelectorAll('[id^="db-"]');
-          const payload = [];
-
+          const configsPayload = [];
           inputs.forEach(input => {
             const configKey = input.id.replace('db-', '');
             let value = '';
@@ -843,20 +1134,78 @@
             } else {
               value = input.value.trim();
             }
-            payload.push({
+            configsPayload.push({
               key: configKey,
               value: value
             });
           });
 
+          // 2. Recopilar servicios
+          const servicesPayload = [];
+          const serviceRows = document.querySelectorAll('.service-row');
+          serviceRows.forEach(row => {
+            const key = row.querySelector('.srv-input-key').value.trim();
+            const name = row.querySelector('.srv-input-name').value.trim();
+            const price = parseFloat(row.querySelector('.srv-input-price').value) || 0;
+            const isPerPerson = row.querySelector('.srv-input-type').value === 'per_person';
+            const isAvailable = row.querySelector('.srv-input-available').checked;
+            
+            servicesPayload.push({
+              key,
+              name,
+              price,
+              is_per_person: isPerPerson,
+              is_available: isAvailable
+            });
+          });
+
+          // 3. Recopilar carrusel
+          const carouselPayload = [];
+          const carouselCards = document.querySelectorAll('.slide-edit-card');
+          carouselCards.forEach(card => {
+            const id = card.dataset.id || undefined;
+            const title = card.querySelector('.slide-input-title').value.trim();
+            const description = card.querySelector('.slide-input-desc').value.trim();
+            const imageUrl = card.querySelector('.slide-input-url').value;
+            
+            if (imageUrl) {
+              const item = { title, description, image_url: imageUrl };
+              if (id) item.id = id;
+              carouselPayload.push(item);
+            }
+          });
+
+          // 4. Recopilar galería
+          const galleryPayload = [];
+          const galleryCards = document.querySelectorAll('.gallery-edit-card');
+          galleryCards.forEach(card => {
+            const id = card.dataset.id || undefined;
+            const title = card.querySelector('.gallery-input-title').value.trim();
+            const category = card.querySelector('.gallery-input-category').value;
+            const imageUrl = card.querySelector('.gallery-input-url').value;
+            
+            if (imageUrl) {
+              const item = { title, category, image_url: imageUrl };
+              if (id) item.id = id;
+              galleryPayload.push(item);
+            }
+          });
+
           // GUARDADO LOCAL FALLBACK
           if (isLocalMode) {
+            // Guardar configs
             const configObj = {};
-            payload.forEach(item => {
+            configsPayload.forEach(item => {
               configObj[item.key] = item.value;
             });
             localStorage.setItem('lajuntada_config', JSON.stringify(configObj));
-            showSaveAlert("¡Configuraciones guardadas localmente en este navegador con éxito!", "success");
+            
+            // Guardar servicios, carrusel y galería
+            localStorage.setItem('lajuntada_services_list', JSON.stringify(servicesPayload));
+            localStorage.setItem('lajuntada_carousel_list', JSON.stringify(carouselPayload));
+            localStorage.setItem('lajuntada_gallery_list', JSON.stringify(galleryPayload));
+            
+            showSaveAlert("¡Configuraciones e imágenes guardadas localmente en este navegador con éxito!", "success");
             return;
           }
 
@@ -868,7 +1217,12 @@
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${currentSession.access_token}`
               },
-              body: JSON.stringify(payload)
+              body: JSON.stringify({
+                configs: configsPayload,
+                services: servicesPayload,
+                carousel: carouselPayload,
+                gallery: galleryPayload
+              })
             });
 
             const resData = await response.json();
@@ -876,14 +1230,16 @@
             if (!response.ok) {
               showSaveAlert("Error al guardar: " + (resData.error || response.statusText), "error");
             } else {
-              showSaveAlert("¡Configuraciones guardadas y actualizadas en la base de datos de Supabase con éxito!", "success");
-              // Update local state copy
-              payload.forEach(item => {
-                dbConfigs[item.key] = item.value;
-              });
+              showSaveAlert("¡Todos los cambios y referencias de fotos fueron guardados en Supabase con éxito!", "success");
+              // Actualizar datos locales en memoria
+              dbConfigs = {};
+              configsPayload.forEach(item => { dbConfigs[item.key] = item.value; });
+              dbServices = servicesPayload;
+              dbCarousel = carouselPayload;
+              dbGallery = galleryPayload;
             }
           } catch (err) {
-            showSaveAlert("Error de red al enviar la configuración.", "error");
+            showSaveAlert("Error de red al enviar los datos.", "error");
             console.error(err);
           }
         });
@@ -900,11 +1256,11 @@
         if (type === 'success') {
           setTimeout(() => {
             saveAlert.style.display = 'none';
-          }, 5000);
+          }, 6000);
         }
       }
 
-      // 4. Log out handler
+      // Log out handler
       if (btnLogout) {
         btnLogout.addEventListener('click', async () => {
           if (isLocalMode) {
@@ -918,20 +1274,20 @@
         });
       }
 
-      // 5. Export JSON config handler
+      // Export JSON config handler
       if (btnExport) {
         btnExport.addEventListener('click', () => {
-          const inputs = adminConfigForm.querySelectorAll('[id^="db-"]');
-          const exportData = {};
-          inputs.forEach(input => {
-            const configKey = input.id.replace('db-', '');
-            exportData[configKey] = input.type === 'checkbox' ? input.checked.toString() : input.value.trim();
-          });
+          const exportData = {
+            configs: dbConfigs,
+            services: dbServices,
+            carousel: dbCarousel,
+            gallery: dbGallery
+          };
 
           const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
           const downloadAnchor = document.createElement('a');
           downloadAnchor.setAttribute("href", dataStr);
-          downloadAnchor.setAttribute("download", "lajuntada_config.json");
+          downloadAnchor.setAttribute("download", "lajuntada_completa.json");
           document.body.appendChild(downloadAnchor);
           downloadAnchor.click();
           downloadAnchor.remove();

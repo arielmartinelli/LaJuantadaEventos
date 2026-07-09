@@ -385,31 +385,8 @@
         <div class="rental-visual">
           <div class="rental-card-pricing">
             <h3>Lista de Precios (Alquileres)</h3>
-            <ul class="price-list">
-              <li>
-                <span>Vajilla, Cristalería y Mantelería <small>(por persona)</small></span>
-                <strong id="lbl-price-vajilla">$2.500</strong>
-              </li>
-              <li>
-                <span>Juego de Living Modelo Butacón <small>(para 10 personas)</small></span>
-                <strong id="lbl-price-living">$18.000</strong>
-              </li>
-              <li>
-                <span>Mesa vestida con mantel y sendero de tela</span>
-                <strong>$5.500</strong>
-              </li>
-              <li>
-                <span>Silla plástica vestida con funda y lazo</span>
-                <strong>$1.200</strong>
-              </li>
-              <li>
-                <span>Gazebo estructural ambientado <small>(6x3m)</small></span>
-                <strong id="lbl-price-gazebo">$45.000</strong>
-              </li>
-              <li>
-                <span>Pantalla 120" y proyector HD</span>
-                <strong id="lbl-price-screen">$35.000</strong>
-              </li>
+            <ul class="price-list" id="rental-price-list">
+              <!-- Carga dinámica -->
             </ul>
             <div class="price-list-note">* Los roturas de vajilla quedan a cargo del cliente. Precios en pesos.</div>
           </div>
@@ -430,30 +407,7 @@
       <!-- Slider HTML structure -->
       <div class="slider-wrapper">
         <div class="slider-container" id="slider">
-          <!-- Slide 1 -->
-          <div class="slide">
-            <img src="assets/catering_premium.png" alt="Plato Gourmet La Juntada">
-            <div class="slide-caption">
-              <h3>Entradas Gourmet</h3>
-              <p>Mini bocados fríos y calientes diseñados por nuestro chef para abrir tu evento.</p>
-            </div>
-          </div>
-          <!-- Slide 2 -->
-          <div class="slide">
-            <img src="assets/birthday_sweet.png" alt="Mesa Dulce Cumpleaños">
-            <div class="slide-caption">
-              <h3>Mesa Dulce & Pastelería</h3>
-              <p>Variedad de tartas, mini alfajores, cañoncitos con dulce de leche y tortas decoradas.</p>
-            </div>
-          </div>
-          <!-- Slide 3 -->
-          <div class="slide">
-            <img src="assets/hero_bg.png" alt="Catering en Boda">
-            <div class="slide-caption">
-              <h3>Estaciones y Patas Flambeadas</h3>
-              <p>Pata de ternera y cerdo cortada al instante para sándwiches con salsas variadas.</p>
-            </div>
-          </div>
+          <!-- Carga dinámica -->
         </div>
         
         <!-- Controls -->
@@ -507,48 +461,8 @@
               <div class="form-group">
                 <label><i class="fa-solid fa-circle-plus text-orange"></i> Servicios Adicionales</label>
                 
-                <div class="checkbox-options-grid">
-                  <label class="custom-checkbox-container">
-                    <input type="checkbox" id="srv-drinks" data-cost="4500">
-                    <span class="checkmark"></span>
-                    <span class="chk-label">Gaseosas libres, Vinos y Cervezas (+$4.500 x pers.)</span>
-                  </label>
-
-                  <label class="custom-checkbox-container">
-                    <input type="checkbox" id="srv-bar" data-cost="6500">
-                    <span class="checkmark"></span>
-                    <span class="chk-label">Barra Móvil Libre (Coctelería 4 hs) (+$6.500 x pers.)</span>
-                  </label>
-
-                  <label class="custom-checkbox-container">
-                    <input type="checkbox" id="srv-tableware" data-cost="2500">
-                    <span class="checkmark"></span>
-                    <span class="chk-label">Alquiler de Vajilla y Mantelería (+$2.500 x pers.)</span>
-                  </label>
-
-                  <label class="custom-checkbox-container">
-                    <input type="checkbox" id="srv-sound" data-cost="90000" data-fixed="true">
-                    <span class="checkmark"></span>
-                    <span class="chk-label">DJ, Sonido Básico y Luces (+$90.000 fijo)</span>
-                  </label>
-
-                  <label class="custom-checkbox-container">
-                    <input type="checkbox" id="srv-gazebo" data-cost="45000" data-fixed="true">
-                    <span class="checkmark"></span>
-                    <span class="chk-label">Gazebo Estructural (6x3m ambientado) (+$45.000 fijo)</span>
-                  </label>
-
-                  <label class="custom-checkbox-container">
-                    <input type="checkbox" id="srv-screen" data-cost="35000" data-fixed="true">
-                    <span class="checkmark"></span>
-                    <span class="chk-label">Pantalla 120" y Proyector HD (+$35.000 fijo)</span>
-                  </label>
-
-                  <label class="custom-checkbox-container">
-                    <input type="checkbox" id="srv-photo" data-cost="80000" data-fixed="true">
-                    <span class="checkmark"></span>
-                    <span class="chk-label">Fotografía Digital Profesional (+$80.000 fijo)</span>
-                  </label>
+                <div class="checkbox-options-grid" id="calc-addons-container">
+                  <!-- Carga dinámica -->
                 </div>
               </div>
 
@@ -619,77 +533,7 @@
       
       <!-- Grid -->
       <div class="gallery-grid" id="gallery-grid">
-        <!-- Photo 1 (Casamiento) -->
-        <div class="gallery-item" data-category="casamiento">
-          <div class="gallery-item-inner">
-            <img src="assets/wedding_event.png" alt="Casamiento en La Juntada" class="gallery-img">
-            <div class="gallery-hover-overlay">
-              <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
-              <h4>Boda al Aire Libre</h4>
-              <p>Casamientos</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Photo 2 (Cumpleaños) -->
-        <div class="gallery-item" data-category="cumpleaños">
-          <div class="gallery-item-inner">
-            <img src="assets/birthday_event.png" alt="Cumpleaños en La Juntada" class="gallery-img">
-            <div class="gallery-hover-overlay">
-              <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
-              <h4>Fiesta de 40 Años</h4>
-              <p>Cumpleaños</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Photo 3 (Corporativo) -->
-        <div class="gallery-item" data-category="corporativo">
-          <div class="gallery-item-inner">
-            <img src="assets/social_event.png" alt="Evento corporativo en La Juntada" class="gallery-img">
-            <div class="gallery-hover-overlay">
-              <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
-              <h4>Lanzamiento Corporativo</h4>
-              <p>Corporativos</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Photo 4 (Catering - Casamiento) -->
-        <div class="gallery-item" data-category="casamiento">
-          <div class="gallery-item-inner">
-            <img src="assets/hero_bg.png" alt="Catering Boda La Juntada" class="gallery-img">
-            <div class="gallery-hover-overlay">
-              <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
-              <h4>Buffet de Bodas</h4>
-              <p>Casamientos</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Photo 5 (Catering - Cumpleaños) -->
-        <div class="gallery-item" data-category="cumpleaños">
-          <div class="gallery-item-inner">
-            <img src="assets/birthday_sweet.png" alt="Mesa dulce cumpleaños La Juntada" class="gallery-img">
-            <div class="gallery-hover-overlay">
-              <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
-              <h4>Mesa de Postres Temática</h4>
-              <p>Cumpleaños</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Photo 6 (Catering - Especial) -->
-        <div class="gallery-item" data-category="corporativo">
-          <div class="gallery-item-inner">
-            <img src="assets/catering_premium.png" alt="Catering de gala La Juntada" class="gallery-img">
-            <div class="gallery-hover-overlay">
-              <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
-              <h4>Gourmet Finger Food</h4>
-              <p>Corporativos / Especiales</p>
-            </div>
-          </div>
-        </div>
+        <!-- Carga dinámica -->
       </div>
     </div>
   </section>

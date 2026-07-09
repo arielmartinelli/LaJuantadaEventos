@@ -1,73 +1,7 @@
-/* ==========================================================================
-   JavaScript - La Juntada Eventos
-   Lógica interactiva: Menú, Carrusel, Galería Filtrable, Lightbox, Cotizador y Formularios
-   ========================================================================== */
+// script.js
+document.addEventListener('DOMContentLoaded', () => {
 
-document.addEventListener('DOMContentLoaded', async () => {
-
-  /* ==========================================================================
-     Navegación y Estados del Header
-     ========================================================================== */
-  const header = document.getElementById('header');
-  const menuToggle = document.getElementById('menu-toggle');
-  const navMenu = document.getElementById('nav-menu');
-  const navLinks = document.querySelectorAll('.nav-link');
-
-  // Cambiar fondo de la cabecera al hacer scroll
-  if (header) {
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
-    });
-  }
-
-  // Activar enlace activo de navegación según scroll
-  const sections = document.querySelectorAll('section');
-  window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(section => {
-      const sectionTop = section.offsetTop;
-      if (window.scrollY >= (sectionTop - 120)) {
-        current = section.getAttribute('id');
-      }
-    });
-
-    navLinks.forEach(link => {
-      link.classList.remove('active');
-      if (link.getAttribute('href').slice(1) === current) {
-        link.classList.add('active');
-      }
-    });
-  });
-
-  // Scroll suave al hacer click en enlaces
-  const scrollBtns = document.querySelectorAll('a[href^="#"]');
-  scrollBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const targetId = btn.getAttribute('href');
-      if (targetId === '#') return;
-      const target = document.querySelector(targetId);
-      if (target) {
-        e.preventDefault();
-        window.scrollTo({
-          top: target.offsetTop - 80,
-          behavior: 'smooth'
-        });
-        if (menuToggle && navMenu) {
-          menuToggle.setAttribute('aria-expanded', 'false');
-          menuToggle.classList.remove('active');
-          navMenu.classList.remove('active');
-        }
-      }
-    });
-  });
-
-  /* ==========================================================================
-     0. Configuración por Defecto (Fallback) y Conexión con Supabase
-     ========================================================================== */
+  // CONFIGURACIONES POR DEFECTO (SEMILLA LOCAL)
   const DEFAULT_CONFIGS = {
     menu_diente_libre_price: '25000',
     menu_pollo_noisette_price: '28000',
@@ -93,21 +27,123 @@ document.addEventListener('DOMContentLoaded', async () => {
     contact_email: 'lajuntadaeventos@gmail.com'
   };
 
-  // Copia de trabajo de configuración
-  let activeConfigs = { ...DEFAULT_CONFIGS };
+  const DEFAULT_SERVICES = [
+    { key: 'srv_drinks', name: 'Gaseosas libres, Vinos y Cervezas', description: 'Gaseosas Pepsi/7up, cerveza Quilmes/Brahma libre y vinos Otro Loco Mas.', price: 4500, is_per_person: true, is_available: true },
+    { key: 'srv_bar', name: 'Barra Movil Libre (Tragos)', description: 'Fernet, Campari, Gancia, Gin y Vodka libre por 4 horas con barmans.', price: 6500, is_per_person: true, is_available: true },
+    { key: 'srv_tableware', name: 'Alquiler de Vajilla y Manteleria', description: 'Vajilla de loza, cubiertos, cristalería y mantelería a tono.', price: 2500, is_per_person: true, is_available: true },
+    { key: 'srv_living', name: 'Alquiler de Juego de Living (10 pers.)', description: 'Juegos de living de ecocuero blanco con mesa ratona (precio por juego).', price: 18000, is_per_person: false, is_available: true },
+    { key: 'srv_sound', name: 'DJ, Sonido Basico y Luces', description: 'Cabina de DJ, parlantes activos, luces roboticas e iluminacion de pista.', price: 90000, is_per_person: false, is_available: true },
+    { key: 'srv_gazebo', name: 'Gazebo Estructural (6x3m)', description: 'Gazebo estructural cerrado con guirnaldas de luces led decorativas.', price: 45000, is_per_person: false, is_available: true },
+    { key: 'srv_screen', name: 'Pantalla 120" y Proyector HD', description: 'Pantalla gigante y proyector de alta luminosidad para videos.', price: 35000, is_per_person: false, is_available: true },
+    { key: 'srv_photo', name: 'Fotografia Digital Profesional', description: 'Cobertura completa del evento con entrega digital de fotografias.', price: 80000, is_per_person: false, is_available: true }
+  ];
 
-  // Formateador de moneda
+  const DEFAULT_CAROUSEL = [
+    { title: 'Bodas de Ensueño', description: 'Servicio integral de catering, barras móviles y vajilla para casamientos inolvidables.', image_url: 'assets/wedding_event.png' },
+    { title: 'Cumpleaños & Fiestas', description: 'Pata flambeada, cazuelas criollas y barras de tragos para que tu fiesta sea única.', image_url: 'assets/birthday_event.png' },
+    { title: 'Eventos Corporativos', description: 'Coordinación y producción gastronómica premium para lanzamientos y empresariales.', image_url: 'assets/social_event.png' }
+  ];
+
+  const DEFAULT_GALLERY = [
+    { title: 'Boda al Aire Libre', category: 'casamiento', image_url: 'assets/wedding_event.png' },
+    { title: 'Fiesta de 40 Años', category: 'cumpleaños', image_url: 'assets/birthday_event.png' },
+    { title: 'Lanzamiento Corporativo', category: 'corporativo', image_url: 'assets/social_event.png' },
+    { title: 'Buffet de Bodas', category: 'casamiento', image_url: 'assets/hero_bg.png' },
+    { title: 'Mesa de Postres Temática', category: 'cumpleaños', image_url: 'assets/birthday_sweet.png' },
+    { title: 'Gourmet Finger Food', category: 'corporativo', image_url: 'assets/catering_premium.png' }
+  ];
+
+  let activeConfigs = { ...DEFAULT_CONFIGS };
+  let activeServices = [...DEFAULT_SERVICES];
+
+  /* ==========================================================================
+     1. Menú de Navegación y Scroll
+     ========================================================================== */
+  const menuToggle = document.getElementById('menu-toggle');
+  const navMenu = document.getElementById('nav-menu');
+  const mainHeader = document.querySelector('.main-header');
+  const navLinks = document.querySelectorAll('.nav-link, .nav-link-btn, .admin-nav-link');
+
+  // Menú hamburguesa móvil
+  if (menuToggle && navMenu) {
+    menuToggle.addEventListener('click', () => {
+      const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+      menuToggle.setAttribute('aria-expanded', !expanded);
+      navMenu.classList.toggle('active');
+      menuToggle.classList.toggle('active');
+    });
+
+    // Cerrar menú al hacer clic en un enlace
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        menuToggle.setAttribute('aria-expanded', 'false');
+        navMenu.classList.remove('active');
+        menuToggle.classList.remove('active');
+      });
+    });
+  }
+
+  // Header opaco al hacer scroll
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      mainHeader.classList.add('scrolled');
+    } else {
+      mainHeader.classList.remove('scrolled');
+    }
+  });
+
+  // Enlaces activos según sección (ScrollSpy)
+  const sections = document.querySelectorAll('section[id]');
+  window.addEventListener('scroll', () => {
+    const scrollY = window.pageYOffset;
+    sections.forEach(current => {
+      const sectionHeight = current.offsetHeight;
+      const sectionTop = current.offsetTop - 100;
+      const sectionId = current.getAttribute('id');
+      const navLink = document.querySelector(`.nav-list a[href*=${sectionId}]`);
+      
+      if (navLink) {
+        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+          navLink.classList.add('active');
+        } else {
+          navLink.classList.remove('active');
+        }
+      }
+    });
+  });
+
+  // Scroll suave para botones CTA
+  const btnCtaCalc = document.getElementById('hero-cta-calc');
+  const btnCtaServ = document.getElementById('hero-cta-serv');
+  const btnCtaRent = document.getElementById('rental-cta-calc');
+
+  const smoothScrollTo = (targetId) => {
+    const targetElement = document.querySelector(targetId);
+    if (targetElement) {
+      window.scrollTo({
+        top: targetElement.offsetTop - 70,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  if (btnCtaCalc) btnCtaCalc.addEventListener('click', (e) => { e.preventDefault(); smoothScrollTo('#calculadora'); });
+  if (btnCtaServ) btnCtaServ.addEventListener('click', (e) => { e.preventDefault(); smoothScrollTo('#menu-carta'); });
+  if (btnCtaRent) btnCtaRent.addEventListener('click', (e) => { e.preventDefault(); smoothScrollTo('#calculadora'); });
+
+  /* Formateador de moneda */
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('es-AR', {
       style: 'currency',
       currency: 'ARS',
-      minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(value);
   };
 
-  // Intentar cargar la configuración en tiempo real desde la API de Vercel/Supabase
-  async function loadSupabaseConfigs() {
+  /* ==========================================================================
+     2. Carga en Tiempo Real (Supabase API / Local Fallback)
+     ========================================================================== */
+  async function loadDataAndRender() {
     try {
       const response = await fetch('/api/config');
       if (!response.ok) {
@@ -119,14 +155,23 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = await response.json();
       if (data.configs) {
         activeConfigs = { ...DEFAULT_CONFIGS, ...data.configs };
-        console.log("Configuraciones cargadas desde la API de Vercel/Supabase con éxito.");
       }
+      if (data.services && data.services.length > 0) {
+        activeServices = data.services;
+      }
+      
+      renderServicesDOM();
+      renderCarouselDOM(data.carousel || DEFAULT_CAROUSEL);
+      renderGalleryDOM(data.gallery || DEFAULT_GALLERY);
+      
+      console.log("Configuraciones dinámicas y recursos cargados con éxito.");
     } catch (err) {
       console.warn("Fallo de red al conectar con /api/config. Cargando fallback local:", err);
       loadLocalFallback();
     }
 
     applyDOMConfigurations();
+    calculateBudget();
   }
 
   function loadLocalFallback() {
@@ -135,18 +180,158 @@ document.addEventListener('DOMContentLoaded', async () => {
       try {
         const parsed = JSON.parse(localData);
         activeConfigs = { ...DEFAULT_CONFIGS, ...parsed };
-        console.log("Sincronizado con configuraciones guardadas localmente (localStorage).");
       } catch (e) {
         activeConfigs = { ...DEFAULT_CONFIGS };
       }
     } else {
       activeConfigs = { ...DEFAULT_CONFIGS };
     }
+
+    // Cargar servicios locales de localStorage
+    const localServices = localStorage.getItem('lajuntada_services_list');
+    if (localServices) {
+      try {
+        activeServices = JSON.parse(localServices);
+      } catch (e) {
+        activeServices = [...DEFAULT_SERVICES];
+      }
+    } else {
+      activeServices = [...DEFAULT_SERVICES];
+    }
+
+    renderServicesDOM();
+    renderCarouselDOM(DEFAULT_CAROUSEL);
+    renderGalleryDOM(DEFAULT_GALLERY);
   }
 
-  // Actualizar todos los elementos del DOM basados en activeConfigs
+  // Renderizar checkboxes y lista de precios
+  function renderServicesDOM() {
+    const addonsContainer = document.getElementById('calc-addons-container');
+    const rentalPriceList = document.getElementById('rental-price-list');
+    
+    // 1. Checkboxes calculadora
+    if (addonsContainer) {
+      addonsContainer.innerHTML = '';
+      activeServices.forEach(srv => {
+        // living_qty se maneja por selector numérico separado en el html
+        if (srv.key === 'srv_living') {
+          updateLivingSelector(srv);
+          return;
+        }
+
+        const disabledAttr = srv.is_available ? '' : 'disabled';
+        const disabledClass = srv.is_available ? '' : 'disabled';
+        const badgeHtml = srv.is_available ? '' : ' <span class="unavailable-badge">No Disponible</span>';
+        const priceSuffix = srv.is_per_person ? 'x pers.' : 'fijo';
+        const labelText = `${srv.name} (+${formatCurrency(srv.price)} ${priceSuffix})`;
+
+        addonsContainer.innerHTML += `
+          <label class="custom-checkbox-container ${disabledClass}">
+            <input type="checkbox" id="${srv.key}" data-cost="${srv.price}" data-name="${srv.name}" data-per-person="${srv.is_per_person}" ${disabledAttr}>
+            <span class="checkmark"></span>
+            <span class="chk-label">${labelText}${badgeHtml}</span>
+          </label>
+        `;
+      });
+
+      // Agregar listeners a los nuevos checkboxes
+      const checkboxes = addonsContainer.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(chk => {
+        chk.addEventListener('change', calculateBudget);
+      });
+    }
+
+    // 2. Lista de Precios de Alquiler
+    if (rentalPriceList) {
+      rentalPriceList.innerHTML = '';
+      activeServices.forEach(srv => {
+        const priceSuffix = srv.is_per_person ? '<small>(por persona)</small>' : '<small>(fijo)</small>';
+        rentalPriceList.innerHTML += `
+          <li>
+            <span>${srv.name} ${priceSuffix}</span>
+            <strong>${formatCurrency(srv.price)}</strong>
+          </li>
+        `;
+      });
+    }
+  }
+
+  // Actualizar selector de livings
+  function updateLivingSelector(livingService) {
+    const srvLivingQtySelect = document.getElementById('srv-living-qty');
+    if (srvLivingQtySelect && livingService) {
+      const price = parseFloat(livingService.price);
+      srvLivingQtySelect.setAttribute('data-cost', price);
+      
+      if (!livingService.is_available) {
+        srvLivingQtySelect.disabled = true;
+        srvLivingQtySelect.innerHTML = `<option value="0" selected>Ninguno (No Disponible)</option>`;
+      } else {
+        srvLivingQtySelect.disabled = false;
+        srvLivingQtySelect.innerHTML = `
+          <option value="0" selected>Ninguno (${formatCurrency(price)} c/u)</option>
+          <option value="1">1 Juego de Living (+${formatCurrency(price)})</option>
+          <option value="2">2 Juegos de Living (+${formatCurrency(price * 2)})</option>
+          <option value="3">3 Juegos de Living (+${formatCurrency(price * 3)})</option>
+          <option value="4">4 Juegos de Living (+${formatCurrency(price * 4)})</option>
+          <option value="5">5 Juegos de Living (+${formatCurrency(price * 5)})</option>
+          <option value="6">6 Juegos de Living (+${formatCurrency(price * 6)})</option>
+        `;
+      }
+    }
+  }
+
+  // Renderizar Carrusel dinámicamente
+  function renderCarouselDOM(slidesList) {
+    const sliderContainer = document.getElementById('slider');
+    if (sliderContainer) {
+      sliderContainer.innerHTML = '';
+      slidesList.forEach(slide => {
+        sliderContainer.innerHTML += `
+          <div class="slide">
+            <img src="${slide.image_url}" alt="${slide.title || 'Foto de comida'}">
+            <div class="slide-caption">
+              <h3>${slide.title || ''}</h3>
+              <p>${slide.description || ''}</p>
+            </div>
+          </div>
+        `;
+      });
+
+      initializeSlider();
+    }
+  }
+
+  // Renderizar Galería dinámicamente
+  function renderGalleryDOM(galleryList) {
+    const galleryGrid = document.getElementById('gallery-grid');
+    if (galleryGrid) {
+      galleryGrid.innerHTML = '';
+      galleryList.forEach(item => {
+        const readableCategory = item.category === 'casamiento' ? 'Casamientos' :
+                                 item.category === 'cumpleaños' ? 'Cumpleaños' : 'Corporativos';
+
+        galleryGrid.innerHTML += `
+          <div class="gallery-item" data-category="${item.category}">
+            <div class="gallery-item-inner">
+              <img src="${item.image_url}" alt="${item.title}" class="gallery-img">
+              <div class="gallery-hover-overlay">
+                <span class="gallery-zoom-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+                <h4>${item.title}</h4>
+                <p>${readableCategory}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      initializeGallery();
+    }
+  }
+
+  // Aplicar configuraciones de contacto al DOM
   function applyDOMConfigurations() {
-    // 1. Actualizar los precios visibles en el selector de tipo de menú (Calculadora)
+    // Menú base precios
     const optDienteLibre = document.querySelector('option[value="diente-libre"]');
     if (optDienteLibre) {
       optDienteLibre.setAttribute('data-base', activeConfigs.menu_diente_libre_price);
@@ -165,384 +350,257 @@ document.addEventListener('DOMContentLoaded', async () => {
       optParrillada.textContent = `Menú Parrillada Completa a las Brasas (${formatCurrency(activeConfigs.menu_parrillada_price)} x pers.)`;
     }
 
-    // 2. Actualizar precios en la sección Alquileres
-    const lblVajilla = document.getElementById('lbl-price-vajilla');
-    if (lblVajilla) lblVajilla.textContent = formatCurrency(activeConfigs.srv_tableware_price);
-
-    const lblLiving = document.getElementById('lbl-price-living');
-    if (lblLiving) lblLiving.textContent = formatCurrency(activeConfigs.srv_living_price);
-
-    const lblGazebo = document.getElementById('lbl-price-gazebo');
-    if (lblGazebo) lblGazebo.textContent = formatCurrency(activeConfigs.srv_gazebo_price);
-
-    const lblScreen = document.getElementById('lbl-price-screen');
-    if (lblScreen) lblScreen.textContent = formatCurrency(activeConfigs.srv_screen_price);
-
-    // 3. Actualizar textos de adicionales en la Calculadora
-    updateAddonLabelText('srv-drinks', `Gaseosas libres, Vinos y Cervezas (+${formatCurrency(activeConfigs.srv_drinks_price)} x pers.)`);
-    updateAddonLabelText('srv-bar', `Barra Móvil Libre (Coctelería 4 hs) (+${formatCurrency(activeConfigs.srv_bar_price)} x pers.)`);
-    updateAddonLabelText('srv-tableware', `Alquiler de Vajilla y Mantelería (+${formatCurrency(activeConfigs.srv_tableware_price)} x pers.)`);
-    updateAddonLabelText('srv-sound', `DJ, Sonido Básico y Luces (+${formatCurrency(activeConfigs.srv_sound_price)} fijo)`);
-    updateAddonLabelText('srv-gazebo', `Gazebo Estructural (6x3m ambientado) (+${formatCurrency(activeConfigs.srv_gazebo_price)} fijo)`);
-    updateAddonLabelText('srv-screen', `Pantalla 120" y Proyector HD (+${formatCurrency(activeConfigs.srv_screen_price)} fijo)`);
-    updateAddonLabelText('srv-photo', `Fotografía Digital Profesional (+${formatCurrency(activeConfigs.srv_photo_price)} fijo)`);
-    
-    // Selector de living
-    const optLivingSelect = document.getElementById('srv-living-qty');
-    if (optLivingSelect) {
-      optLivingSelect.setAttribute('data-cost', activeConfigs.srv_living_price);
-      optLivingSelect.options[0].textContent = `Ninguno (${formatCurrency(activeConfigs.srv_living_price)} c/u)`;
-      for (let i = 1; i <= 6; i++) {
-        optLivingSelect.options[i].textContent = `${i} Juego${i>1?'s':''} de Living (+${formatCurrency(activeConfigs.srv_living_price * i)})`;
-      }
+    // Datos de contacto en vivo (footer/header/contacto)
+    const phoneLink1 = document.getElementById('contact-phone-link1');
+    const phoneText1 = document.getElementById('contact-phone-text1');
+    if (phoneLink1 && phoneText1) {
+      phoneText1.textContent = activeConfigs.contact_phone1;
+      phoneLink1.href = `https://wa.me/549${activeConfigs.contact_phone1.replace(/\s+/g, '')}`;
     }
 
-    // 4. Actualizar disponibilidad (Disponibilidad en la Calculadora)
-    checkAvailability('srv-bar', activeConfigs.srv_bar_available, "Barra Móvil Libre");
-    checkAvailability('srv-tableware', activeConfigs.srv_tableware_available, "Alquiler de Vajilla y Mantelería");
-    checkAvailability('srv-sound', activeConfigs.srv_sound_available, "DJ, Sonido Básico y Luces");
-    checkAvailability('srv-gazebo', activeConfigs.srv_gazebo_available, "Gazebo Estructural (6x3m)");
-    checkAvailability('srv-screen', activeConfigs.srv_screen_available, "Pantalla 120\" y Proyector HD");
-    checkAvailability('srv-photo', activeConfigs.srv_photo_available, "Fotografía Digital Profesional");
-    checkAvailabilityLivingSelector('srv-living-qty', activeConfigs.srv_living_available);
-
-    // 5. Sincronizar datos de contacto en cabecera y footer
-    const contactLinks = document.querySelectorAll('a[href^="https://wa.me/549"]');
-    contactLinks.forEach(link => {
-      // Reemplazar número de WhatsApp conservando el mensaje predefinido
-      const urlObj = new URL(link.href);
-      const textParam = urlObj.searchParams.get('text') || '';
-      link.href = `https://wa.me/549${activeConfigs.contact_phone1}?text=${encodeURIComponent(textParam)}`;
-      if (link.textContent.includes('351') || link.textContent.includes('+54')) {
-        // Si el texto del enlace contiene un teléfono anterior, actualizarlo visualmente
-        link.textContent = activeConfigs.contact_phone1;
-      }
-    });
-
-    const mailLinks = document.querySelectorAll('a[href^="mailto:"]');
-    mailLinks.forEach(link => {
-      link.href = `mailto:${activeConfigs.contact_email}`;
-      link.textContent = activeConfigs.contact_email;
-    });
-
-    // Dirección comercial
-    const addressLabels = document.querySelectorAll('.contact-detail-item p');
-    addressLabels.forEach(p => {
-      if (p.textContent.includes('Mendoza')) {
-        p.innerHTML = `${activeConfigs.contact_address}<br><span style="font-size: 0.8rem; color: rgba(250, 246, 240, 0.5); margin-top: 3px;">Horario: Lunes a Sábados de 9 a 18 hs (avisar con 30 min de anticipación)</span>`;
-      }
-    });
-
-    const footerBottomInner = document.querySelector('.footer-bottom-inner p:last-child');
-    if (footerBottomInner) {
-      footerBottomInner.textContent = `Alta Córdoba, ${activeConfigs.contact_address.split(',')[0]}. Tel: ${activeConfigs.contact_phone1} | ${activeConfigs.contact_phone2}`;
+    const phoneLink2 = document.getElementById('contact-phone-link2');
+    const phoneText2 = document.getElementById('contact-phone-text2');
+    if (phoneLink2 && phoneText2) {
+      phoneText2.textContent = activeConfigs.contact_phone2;
+      phoneLink2.href = `tel:${activeConfigs.contact_phone2.replace(/\s+/g, '')}`;
     }
 
-    // Ejecutar recálculo
-    calculateBudget();
-  }
+    const emailLink = document.getElementById('contact-email-link');
+    if (emailLink) {
+      emailLink.textContent = activeConfigs.contact_email;
+      emailLink.href = `mailto:${activeConfigs.contact_email}`;
+    }
 
-  // Funciones auxiliares para actualizar inputs
-  function updateAddonLabelText(id, text) {
-    const input = document.getElementById(id);
-    if (input) {
-      input.setAttribute('data-cost', activeConfigs[id.replace('-', '_') + '_price']);
-      const label = input.closest('.custom-checkbox-container');
-      if (label) {
-        const textSpan = label.querySelector('.chk-label');
-        if (textSpan) textSpan.textContent = text;
-      }
+    const addressText = document.getElementById('contact-address-text');
+    if (addressText) {
+      addressText.textContent = activeConfigs.contact_address;
     }
   }
-
-  function checkAvailability(id, available, labelName) {
-    const input = document.getElementById(id);
-    if (input) {
-      const container = input.closest('.custom-checkbox-container');
-      if (container) {
-        const textSpan = container.querySelector('.chk-label');
-        if (available === 'false') {
-          input.checked = false;
-          input.disabled = true;
-          container.classList.add('disabled');
-          if (textSpan && !textSpan.textContent.includes('(No Disponible)')) {
-            textSpan.innerHTML = `${labelName} <span class="unavailable-badge">No Disponible</span>`;
-          }
-        } else {
-          input.disabled = false;
-          container.classList.remove('disabled');
-        }
-      }
-    }
-  }
-
-  function checkAvailabilityLivingSelector(id, available) {
-    const select = document.getElementById(id);
-    if (select) {
-      const formGroup = select.closest('.form-group');
-      if (formGroup) {
-        if (available === 'false') {
-          select.value = "0";
-          select.disabled = true;
-          formGroup.style.opacity = '0.5';
-          formGroup.style.pointerEvents = 'none';
-          const label = formGroup.querySelector('label');
-          if (label && !label.textContent.includes('No Disponible')) {
-            label.innerHTML = `<i class="fa-solid fa-couch text-orange"></i> Juegos de Living <span class="unavailable-badge">No Disponible</span>`;
-          }
-        } else {
-          select.disabled = false;
-          formGroup.style.opacity = '1';
-          formGroup.style.pointerEvents = 'auto';
-        }
-      }
-    }
-  }
-
-
-  /* ==========================================================================
-     1. Navegación y Menú Mobile
-     ========================================================================== */
-  // Toggle menú mobile
-  menuToggle.addEventListener('click', () => {
-    const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
-    menuToggle.setAttribute('aria-expanded', !isExpanded);
-    menuToggle.classList.toggle('active');
-    navMenu.classList.toggle('active');
-  });
-
-  // Cerrar menú mobile al hacer clic en un enlace
-  navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      menuToggle.setAttribute('aria-expanded', 'false');
-      menuToggle.classList.remove('active');
-      navMenu.classList.remove('active');
-    });
-  });
-
-
-  /* ==========================================================================
-     2. Sección Interactiva de la Carta / Menú de Opciones
-     ========================================================================== */
-  const menuTabBtns = document.querySelectorAll('.menu-tab-btn');
-  const menuTabContents = document.querySelectorAll('.menu-tab-content');
-
-  menuTabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      menuTabBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      const selectedMenu = btn.getAttribute('data-menu');
-      menuTabContents.forEach(content => {
-        content.classList.remove('active');
-        if (content.getAttribute('id') === `menu-${selectedMenu}`) {
-          content.classList.add('active');
-        }
-      });
-    });
-  });
 
 
   /* ==========================================================================
      3. Carrusel / Slider de Fotos (Nuestra Cocina)
      ========================================================================== */
-  const slider = document.getElementById('slider');
-  const slides = document.querySelectorAll('.slide');
-  const btnPrev = document.getElementById('slider-prev');
-  const btnNext = document.getElementById('slider-next');
-  const indicatorsContainer = document.getElementById('slider-indicators');
-  
   let currentSlide = 0;
-  const slideCount = slides.length;
   let slideInterval;
+  let slides = [];
+  let dots = [];
 
-  // Crear indicadores dinámicamente
-  if (indicatorsContainer) {
-    slides.forEach((_, idx) => {
-      const dot = document.createElement('button');
-      dot.classList.add('indicator-dot');
-      if (idx === 0) dot.classList.add('active');
-      dot.setAttribute('aria-label', `Ir a foto ${idx + 1}`);
-      dot.addEventListener('click', () => goToSlide(idx));
-      indicatorsContainer.appendChild(dot);
-    });
-  }
+  function initializeSlider() {
+    const slider = document.getElementById('slider');
+    const btnPrev = document.getElementById('slider-prev');
+    const btnNext = document.getElementById('slider-next');
+    const indicatorsContainer = document.getElementById('slider-indicators');
+    
+    slides = document.querySelectorAll('.slide');
+    if (slides.length === 0) return;
 
-  const dots = document.querySelectorAll('.indicator-dot');
-
-  function updateSlider() {
-    if (!slider) return;
-    slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-    dots.forEach((dot, idx) => {
-      dot.classList.toggle('active', idx === currentSlide);
-    });
-  }
-
-  function nextSlide() {
-    currentSlide = (currentSlide + 1) % slideCount;
-    updateSlider();
-  }
-
-  function prevSlide() {
-    currentSlide = (currentSlide - 1 + slideCount) % slideCount;
-    updateSlider();
-  }
-
-  function goToSlide(idx) {
-    currentSlide = idx;
-    updateSlider();
-    resetInterval();
-  }
-
-  function startAutoPlay() {
-    if (slides.length > 0 && slider) {
-      slideInterval = setInterval(nextSlide, 5000);
+    currentSlide = 0;
+    
+    // Limpiar y crear indicadores
+    if (indicatorsContainer) {
+      indicatorsContainer.innerHTML = '';
+      slides.forEach((_, idx) => {
+        const dot = document.createElement('button');
+        dot.classList.add('indicator-dot');
+        if (idx === 0) dot.classList.add('active');
+        dot.setAttribute('aria-label', `Ir a foto ${idx + 1}`);
+        dot.addEventListener('click', () => goToSlide(idx));
+        indicatorsContainer.appendChild(dot);
+      });
     }
-  }
 
-  function resetInterval() {
-    clearInterval(slideInterval);
+    dots = document.querySelectorAll('.indicator-dot');
+
+    function updateSlider() {
+      if (!slider) return;
+      slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === currentSlide);
+      });
+    }
+
+    window.nextSlide = function() {
+      currentSlide = (currentSlide + 1) % slides.length;
+      updateSlider();
+    };
+
+    window.prevSlide = function() {
+      currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+      updateSlider();
+    };
+
+    window.goToSlide = function(idx) {
+      currentSlide = idx;
+      updateSlider();
+      resetInterval();
+    };
+
+    function startAutoPlay() {
+      clearInterval(slideInterval);
+      if (slides.length > 0 && slider) {
+        slideInterval = setInterval(window.nextSlide, 5000);
+      }
+    }
+
+    function resetInterval() {
+      clearInterval(slideInterval);
+      startAutoPlay();
+    }
+
+    // Registrar eventos para flechas
+    if (btnNext && btnPrev) {
+      // Remover listeners viejos clonando los nodos
+      const newNext = btnNext.cloneNode(true);
+      const newPrev = btnPrev.cloneNode(true);
+      btnNext.parentNode.replaceChild(newNext, btnNext);
+      btnPrev.parentNode.replaceChild(newPrev, btnPrev);
+
+      newNext.addEventListener('click', () => {
+        window.nextSlide();
+        resetInterval();
+      });
+      newPrev.addEventListener('click', () => {
+        window.prevSlide();
+        resetInterval();
+      });
+    }
+
+    // Soporte para swipe táctil
+    let startX = 0;
+    let endX = 0;
+    
+    if (slider) {
+      slider.addEventListener('touchstart', e => {
+        startX = e.touches[0].clientX;
+      }, { passive: true });
+
+      slider.addEventListener('touchend', e => {
+        endX = e.changedTouches[0].clientX;
+        const threshold = 50;
+        if (startX - endX > threshold) {
+          window.nextSlide();
+          resetInterval();
+        } else if (endX - startX > threshold) {
+          window.prevSlide();
+          resetInterval();
+        }
+      }, { passive: true });
+    }
+
     startAutoPlay();
   }
-
-  if (btnNext && btnPrev) {
-    btnNext.addEventListener('click', () => {
-      nextSlide();
-      resetInterval();
-    });
-    btnPrev.addEventListener('click', () => {
-      prevSlide();
-      resetInterval();
-    });
-  }
-
-  // Soporte para swipe táctil
-  let startX = 0;
-  let endX = 0;
-  
-  if (slider) {
-    slider.addEventListener('touchstart', e => {
-      startX = e.touches[0].clientX;
-    }, { passive: true });
-
-    slider.addEventListener('touchend', e => {
-      endX = e.changedTouches[0].clientX;
-      handleSwipe();
-    }, { passive: true });
-  }
-
-  function handleSwipe() {
-    const threshold = 50;
-    if (startX - endX > threshold) {
-      nextSlide();
-      resetInterval();
-    } else if (endX - startX > threshold) {
-      prevSlide();
-      resetInterval();
-    }
-  }
-
-  startAutoPlay();
 
 
   /* ==========================================================================
      4. Galería de Fotos con Filtros y Lightbox Modal
      ========================================================================== */
-  const tabBtns = document.querySelectorAll('.tab-btn');
-  const galleryItems = document.querySelectorAll('.gallery-item');
-  const lightboxModal = document.getElementById('lightbox-modal');
-  const lightboxImg = document.getElementById('lightbox-img');
-  const lightboxCaption = document.getElementById('lightbox-caption');
-  const lightboxClose = document.getElementById('lightbox-close');
-  const lightboxPrev = document.getElementById('lightbox-prev');
-  const lightboxNext = document.getElementById('lightbox-next');
-
-  let activeFilter = 'all';
-  let filteredImages = [...galleryItems];
+  let filteredImages = [];
   let currentLightboxIdx = 0;
 
-  // Filtrado de Galería
-  tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      tabBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      
-      activeFilter = btn.getAttribute('data-filter');
-      
-      filteredImages = [];
-      galleryItems.forEach(item => {
-        const category = item.getAttribute('data-category');
-        if (activeFilter === 'all' || category === activeFilter) {
-          item.classList.remove('hide');
-          item.classList.add('show');
-          filteredImages.push(item);
-        } else {
-          item.classList.remove('show');
-          item.classList.add('hide');
-        }
+  function initializeGallery() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    const lightboxModal = document.getElementById('lightbox-modal');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    const lightboxClose = document.getElementById('lightbox-close');
+    const lightboxPrev = document.getElementById('lightbox-prev');
+    const lightboxNext = document.getElementById('lightbox-next');
+
+    let activeFilter = 'all';
+    filteredImages = [...galleryItems];
+
+    // Filtrado de Galería
+    tabBtns.forEach(btn => {
+      // Evitar acumulación de eventos
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+
+      newBtn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        newBtn.classList.add('active');
+        
+        activeFilter = newBtn.getAttribute('data-filter');
+        filteredImages = [];
+        
+        galleryItems.forEach(item => {
+          const category = item.getAttribute('data-category');
+          if (activeFilter === 'all' || category === activeFilter) {
+            item.classList.remove('hide');
+            item.classList.add('show');
+            filteredImages.push(item);
+          } else {
+            item.classList.remove('show');
+            item.classList.add('hide');
+          }
+        });
       });
     });
-  });
 
-  // Abrir Lightbox
-  galleryItems.forEach(item => {
-    item.addEventListener('click', () => {
-      currentLightboxIdx = filteredImages.indexOf(item);
+    // Abrir Lightbox
+    galleryItems.forEach(item => {
+      item.addEventListener('click', () => {
+        currentLightboxIdx = filteredImages.indexOf(item);
+        openLightbox();
+      });
+    });
+
+    function openLightbox() {
+      const activeItem = filteredImages[currentLightboxIdx];
+      if (!activeItem || !lightboxImg) return;
+      
+      const imgEl = activeItem.querySelector('.gallery-img');
+      const titleEl = activeItem.querySelector('h4');
+      
+      lightboxImg.src = imgEl.src;
+      lightboxImg.alt = imgEl.alt;
+      lightboxCaption.textContent = titleEl.textContent;
+      
+      lightboxModal.classList.add('active');
+      lightboxModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    window.closeLightbox = function() {
+      if (!lightboxModal) return;
+      lightboxModal.classList.remove('active');
+      lightboxModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    };
+
+    window.nextLightbox = function() {
+      if (filteredImages.length === 0) return;
+      currentLightboxIdx = (currentLightboxIdx + 1) % filteredImages.length;
       openLightbox();
-    });
-  });
+    };
 
-  function openLightbox() {
-    const activeItem = filteredImages[currentLightboxIdx];
-    if (!activeItem) return;
-    
-    const imgEl = activeItem.querySelector('.gallery-img');
-    const titleEl = activeItem.querySelector('h4');
-    
-    lightboxImg.src = imgEl.src;
-    lightboxImg.alt = imgEl.alt;
-    lightboxCaption.textContent = titleEl.textContent;
-    
-    lightboxModal.classList.add('active');
-    lightboxModal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+    window.prevLightbox = function() {
+      if (filteredImages.length === 0) return;
+      currentLightboxIdx = (currentLightboxIdx - 1 + filteredImages.length) % filteredImages.length;
+      openLightbox();
+    };
+
+    if (lightboxClose) {
+      lightboxClose.addEventListener('click', window.closeLightbox);
+      lightboxModal.addEventListener('click', (e) => {
+        if (e.target === lightboxModal) window.closeLightbox();
+      });
+    }
+
+    if (lightboxNext && lightboxPrev) {
+      lightboxNext.addEventListener('click', window.nextLightbox);
+      lightboxPrev.addEventListener('click', window.prevLightbox);
+    }
   }
 
-  function closeLightbox() {
-    if (!lightboxModal) return;
-    lightboxModal.classList.remove('active');
-    lightboxModal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-  }
-
-  function nextLightbox() {
-    currentLightboxIdx = (currentLightboxIdx + 1) % filteredImages.length;
-    openLightbox();
-  }
-
-  function prevLightbox() {
-    currentLightboxIdx = (currentLightboxIdx - 1 + filteredImages.length) % filteredImages.length;
-    openLightbox();
-  }
-
-  if (lightboxClose) {
-    lightboxClose.addEventListener('click', closeLightbox);
-    lightboxModal.addEventListener('click', (e) => {
-      if (e.target === lightboxModal) closeLightbox();
-    });
-  }
-
-  if (lightboxNext && lightboxPrev) {
-    lightboxNext.addEventListener('click', nextLightbox);
-    lightboxPrev.addEventListener('click', prevLightbox);
-  }
-
-  // Teclas de dirección
+  // Teclas de dirección globales
   document.addEventListener('keydown', (e) => {
+    const lightboxModal = document.getElementById('lightbox-modal');
     if (!lightboxModal || !lightboxModal.classList.contains('active')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowRight') nextLightbox();
-    if (e.key === 'ArrowLeft') prevLightbox();
+    if (e.key === 'Escape') window.closeLightbox();
+    if (e.key === 'ArrowRight') window.nextLightbox();
+    if (e.key === 'ArrowLeft') window.prevLightbox();
   });
 
 
@@ -553,147 +611,79 @@ document.addEventListener('DOMContentLoaded', async () => {
   const guestCountInput = document.getElementById('guest-count');
   const guestCountVal = document.getElementById('guest-count-val');
   const minGuestsWarning = document.getElementById('min-guests-warning');
-
-  const srvDrinksInput = document.getElementById('srv-drinks');
-  const srvBarInput = document.getElementById('srv-bar');
-  const srvTablewareInput = document.getElementById('srv-tableware');
-  const srvSoundInput = document.getElementById('srv-sound');
-  const srvGazeboInput = document.getElementById('srv-gazebo');
-  const srvScreenInput = document.getElementById('srv-screen');
-  const srvPhotoInput = document.getElementById('srv-photo');
-  const srvLivingQtySelect = document.getElementById('srv-living-qty');
   
+  const srvLivingQtySelect = document.getElementById('srv-living-qty');
   const sumBase = document.getElementById('sum-base');
   const dynamicSummaryItems = document.getElementById('dynamic-summary-items');
   const calcTotal = document.getElementById('calc-total');
   const btnCalcWhatsApp = document.getElementById('btn-calc-whatsapp');
 
   function calculateBudget() {
-    if (!eventTypeSelect) return;
+    if (!eventTypeSelect || !guestCountInput) return;
 
     const selectedOption = eventTypeSelect.options[eventTypeSelect.selectedIndex];
+    if (!selectedOption) return;
     
-    // Obtener precio desde la base de datos (activeConfigs)
-    let basePricePerPerson = 0;
-    if (selectedOption.value === 'diente-libre') basePricePerPerson = parseFloat(activeConfigs.menu_diente_libre_price);
-    else if (selectedOption.value === 'pollo-noisette') basePricePerPerson = parseFloat(activeConfigs.menu_pollo_noisette_price);
-    else if (selectedOption.value === 'parrillada') basePricePerPerson = parseFloat(activeConfigs.menu_parrillada_price);
+    // Obtener precio base
+    let basePricePerPerson = parseFloat(selectedOption.getAttribute('data-base')) || 0;
 
     const guestCount = parseInt(guestCountInput.value);
     
-    // Actualizar burbuja
-    guestCountVal.textContent = guestCount;
+    // Actualizar burbuja de invitados
+    if (guestCountVal) guestCountVal.textContent = guestCount;
     
-    // Mínimos
-    if (guestCount < 50) {
-      minGuestsWarning.style.display = 'block';
-    } else {
-      minGuestsWarning.style.display = 'none';
+    // Validar mínimos de invitados
+    if (minGuestsWarning) {
+      if (guestCount < 50) {
+        minGuestsWarning.style.display = 'block';
+      } else {
+        minGuestsWarning.style.display = 'none';
+      }
     }
 
     const baseCateringTotal = basePricePerPerson * guestCount;
-    const selectedMenuName = selectedOption.text.split(' ($')[0];
-    sumBase.textContent = `${formatCurrency(baseCateringTotal)} (${guestCount} invitados)`;
+    const selectedMenuName = selectedOption.text.split(' (')[0];
+    if (sumBase) sumBase.textContent = `${formatCurrency(baseCateringTotal)} (${guestCount} invitados)`;
     
     let additionalTotal = 0;
     let dynamicHtml = '';
     let selectedAddonsList = [];
 
-    // 1. Bebidas sin alcohol libres, vinos y cervezas
-    if (srvDrinksInput && srvDrinksInput.checked && !srvDrinksInput.disabled) {
-      const cost = parseFloat(activeConfigs.srv_drinks_price) * guestCount;
-      additionalTotal += cost;
-      selectedAddonsList.push(`Bebidas Libres c/ alcohol (${guestCount} pers.)`);
-      dynamicHtml += `
-        <div class="summary-item">
-          <span>Bebidas Libres:</span>
-          <strong>${formatCurrency(cost)}</strong>
-        </div>`;
+    // 1. Recorrer dinámicamente los adicionales del contenedor
+    const addonsContainer = document.getElementById('calc-addons-container');
+    if (addonsContainer) {
+      const checkboxes = addonsContainer.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(chk => {
+        if (chk.checked && !chk.disabled) {
+          const cost = parseFloat(chk.getAttribute('data-cost')) || 0;
+          const isPerPerson = chk.getAttribute('data-per-person') === 'true';
+          const totalCost = isPerPerson ? cost * guestCount : cost;
+          const srvName = chk.getAttribute('data-name');
+          
+          additionalTotal += totalCost;
+          selectedAddonsList.push(`${srvName} (${isPerPerson ? guestCount + ' pers.' : 'fijo'})`);
+          
+          dynamicHtml += `
+            <div class="summary-item">
+              <span>${srvName}:</span>
+              <strong>${formatCurrency(totalCost)}</strong>
+            </div>`;
+        }
+      });
     }
 
-    // 2. Barra Móvil Coctelería 4hs
-    if (srvBarInput && srvBarInput.checked && !srvBarInput.disabled) {
-      const cost = parseFloat(activeConfigs.srv_bar_price) * guestCount;
-      additionalTotal += cost;
-      selectedAddonsList.push(`Barra Móvil Libre 4hs (${guestCount} pers.)`);
-      dynamicHtml += `
-        <div class="summary-item">
-          <span>Barra Móvil:</span>
-          <strong>${formatCurrency(cost)}</strong>
-        </div>`;
-    }
-
-    // 3. Vajilla y Mantelería
-    if (srvTablewareInput && srvTablewareInput.checked && !srvTablewareInput.disabled) {
-      const cost = parseFloat(activeConfigs.srv_tableware_price) * guestCount;
-      additionalTotal += cost;
-      selectedAddonsList.push(`Alquiler Vajilla/Mantelería (${guestCount} pers.)`);
-      dynamicHtml += `
-        <div class="summary-item">
-          <span>Vajilla y Mantelería:</span>
-          <strong>${formatCurrency(cost)}</strong>
-        </div>`;
-    }
-
-    // 4. Sonido y DJ (Fijo)
-    if (srvSoundInput && srvSoundInput.checked && !srvSoundInput.disabled) {
-      const cost = parseFloat(activeConfigs.srv_sound_price);
-      additionalTotal += cost;
-      selectedAddonsList.push(`DJ y Sonido básico`);
-      dynamicHtml += `
-        <div class="summary-item">
-          <span>Sonido y DJ (Fijo):</span>
-          <strong>${formatCurrency(cost)}</strong>
-        </div>`;
-    }
-
-    // 5. Gazebo Estructural (Fijo)
-    if (srvGazeboInput && srvGazeboInput.checked && !srvGazeboInput.disabled) {
-      const cost = parseFloat(activeConfigs.srv_gazebo_price);
-      additionalTotal += cost;
-      selectedAddonsList.push(`Gazebo Estructural 6x3m`);
-      dynamicHtml += `
-        <div class="summary-item">
-          <span>Gazebo Estructural (Fijo):</span>
-          <strong>${formatCurrency(cost)}</strong>
-        </div>`;
-    }
-
-    // 6. Pantalla 120" y proyector (Fijo)
-    if (srvScreenInput && srvScreenInput.checked && !srvScreenInput.disabled) {
-      const cost = parseFloat(activeConfigs.srv_screen_price);
-      additionalTotal += cost;
-      selectedAddonsList.push(`Pantalla 120" y Proyector`);
-      dynamicHtml += `
-        <div class="summary-item">
-          <span>Pantalla y Proyector (Fijo):</span>
-          <strong>${formatCurrency(cost)}</strong>
-        </div>`;
-    }
-
-    // 7. Fotografía Digital Profesional (Fijo)
-    if (srvPhotoInput && srvPhotoInput.checked && !srvPhotoInput.disabled) {
-      const cost = parseFloat(activeConfigs.srv_photo_price);
-      additionalTotal += cost;
-      selectedAddonsList.push(`Fotografía Profesional`);
-      dynamicHtml += `
-        <div class="summary-item">
-          <span>Fotografía Digital (Fijo):</span>
-          <strong>${formatCurrency(cost)}</strong>
-        </div>`;
-    }
-
-    // 8. Cantidad de Juegos de Living (livingQty * srv_living_price)
+    // 2. Cantidad de Juegos de Living (livingQty * srv_living_price)
     if (srvLivingQtySelect && !srvLivingQtySelect.disabled) {
       const qty = parseInt(srvLivingQtySelect.value);
+      const costPerUnit = parseFloat(srvLivingQtySelect.getAttribute('data-cost')) || 0;
       if (qty > 0) {
-        const cost = qty * parseFloat(activeConfigs.srv_living_price);
-        additionalTotal += cost;
+        const totalCost = qty * costPerUnit;
+        additionalTotal += totalCost;
         selectedAddonsList.push(`${qty} Juego(s) de Living`);
         dynamicHtml += `
           <div class="summary-item">
             <span>${qty} Juegos de Living:</span>
-            <strong>${formatCurrency(cost)}</strong>
+            <strong>${formatCurrency(totalCost)}</strong>
           </div>`;
       }
     }
@@ -715,21 +705,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (eventTypeSelect && guestCountInput) {
     eventTypeSelect.addEventListener('change', calculateBudget);
     guestCountInput.addEventListener('input', calculateBudget);
-    
-    if (srvDrinksInput) srvDrinksInput.addEventListener('change', calculateBudget);
-    if (srvBarInput) srvBarInput.addEventListener('change', calculateBudget);
-    if (srvTablewareInput) srvTablewareInput.addEventListener('change', calculateBudget);
-    if (srvSoundInput) srvSoundInput.addEventListener('change', calculateBudget);
-    if (srvGazeboInput) srvGazeboInput.addEventListener('change', calculateBudget);
-    if (srvScreenInput) srvScreenInput.addEventListener('change', calculateBudget);
-    if (srvPhotoInput) srvPhotoInput.addEventListener('change', calculateBudget);
-    if (srvLivingQtySelect) srvLivingQtySelect.addEventListener('change', calculateBudget);
+  }
+  if (srvLivingQtySelect) {
+    srvLivingQtySelect.addEventListener('change', calculateBudget);
   }
 
   // Botón enviar cotización a WhatsApp
   if (btnCalcWhatsApp) {
     btnCalcWhatsApp.addEventListener('click', () => {
       const results = calculateBudget();
+      if (!results) return;
       
       let addonsText = '';
       if (results.addons.length > 0) {
@@ -748,153 +733,46 @@ document.addEventListener('DOMContentLoaded', async () => {
 - *Menú Elegido:* ${results.menuName}
 - *Invitados:* ${results.guestCount} personas ${warningText}
 - *Servicios Adicionales Seleccionados:${addonsText}*
-- *Monto Estimado:* ${formatCurrency(results.grandTotal)}
 
-*Condición de Pago de interés:* Contado Efectivo (10% Desc.) / Financiación Propia.
-¿Me podrían confirmar disponibilidad de agenda? ¡Muchas gracias!`;
+*Total Estimado:* ${formatCurrency(results.grandTotal)}
 
-      const waUrl = `https://wa.me/549${activeConfigs.contact_phone1}?text=${encodeURIComponent(waMessage)}`;
+¿Podrían confirmarme disponibilidad para presupuesto formal y reserva? ¡Muchas gracias!`;
+
+      // Enviar a WhatsApp
+      const cleanPhone = activeConfigs.contact_phone1.replace(/\s+/g, '');
+      const waUrl = `https://wa.me/549${cleanPhone}?text=${encodeURIComponent(waMessage)}`;
       window.open(waUrl, '_blank', 'noopener,noreferrer');
     });
   }
 
 
   /* ==========================================================================
-     6. Condiciones de Contratación (Acordeón FAQs)
+     6. Acordeón de Preguntas Frecuentes (FAQ)
      ========================================================================== */
-  const accordionHeaders = document.querySelectorAll('.accordion-header');
-
-  accordionHeaders.forEach(headerEl => {
-    headerEl.addEventListener('click', () => {
-      const isExpanded = headerEl.getAttribute('aria-expanded') === 'true';
-      const itemBody = headerEl.nextElementSibling;
-
-      accordionHeaders.forEach(otherHeader => {
-        if (otherHeader !== headerEl) {
-          otherHeader.setAttribute('aria-expanded', 'false');
-          otherHeader.classList.remove('active');
-          otherHeader.nextElementSibling.style.maxHeight = null;
-        }
-      });
-
-      headerEl.setAttribute('aria-expanded', !isExpanded);
-      headerEl.classList.toggle('active');
-
-      if (!isExpanded) {
-        itemBody.style.maxHeight = itemBody.scrollHeight + "px";
-      } else {
-        itemBody.style.maxHeight = null;
-      }
-    });
-  });
-
-
-  /* ==========================================================================
-     7. Vinculación de botones de tarjeta de servicios al cotizador
-     ========================================================================== */
-  const serviceCtaBtns = document.querySelectorAll('.service-btn');
-  const contactFormEventSelect = document.getElementById('frm-event');
-  
-  serviceCtaBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const targetEvent = btn.getAttribute('data-event');
-      
-      if (eventTypeSelect) {
-        if (targetEvent === 'casamiento') {
-          eventTypeSelect.value = 'parrillada';
-        } else {
-          eventTypeSelect.value = 'diente-libre';
-        }
-        calculateBudget();
-      }
-      
-      if (contactFormEventSelect) {
-        if (targetEvent === 'casamiento') contactFormEventSelect.value = 'Casamiento';
-        else if (targetEvent === 'cumpleaños') contactFormEventSelect.value = 'Cumpleaños';
-        else if (targetEvent === 'general') contactFormEventSelect.value = 'Empresarial';
-      }
-
-      const calcSection = document.getElementById('calculadora');
-      if (calcSection) {
-        e.preventDefault();
-        window.scrollTo({
-          top: calcSection.offsetTop - 85,
-          behavior: 'smooth'
+  const faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(item => {
+    const questionBtn = item.querySelector('.faq-question');
+    if (questionBtn) {
+      questionBtn.addEventListener('click', () => {
+        const isActive = item.classList.contains('active');
+        
+        // Cerrar todos los demás
+        faqItems.forEach(otherItem => {
+          otherItem.classList.remove('active');
+          const otherBtn = otherItem.querySelector('.faq-question');
+          if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
         });
-      }
-    });
+
+        // Abrir el actual si no estaba activo
+        if (!isActive) {
+          item.classList.add('active');
+          questionBtn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    }
   });
 
 
-  /* ==========================================================================
-     8. Formulario de Contacto
-     ========================================================================== */
-  const contactForm = document.getElementById('contact-form');
-  
-  if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      const name = document.getElementById('frm-name').value;
-      const phone = document.getElementById('frm-phone').value;
-      const email = document.getElementById('frm-email').value;
-      const eventType = contactFormEventSelect.options[contactFormEventSelect.selectedIndex].text;
-      const date = document.getElementById('frm-date').value;
-      const guests = document.getElementById('frm-guests').value;
-      const msg = document.getElementById('frm-msg').value;
-
-      const contactMessage = `¡Hola La Juntada! Les dejo mis datos cargados desde el formulario web de consultas comerciales.
-
-*Datos del Solicitante:*
-- *Nombre y Apellido:* ${name}
-- *Teléfono:* ${phone}
-- *Email:* ${email}
-- *Tipo de Evento:* ${eventType}
-- *Fecha Tentativa:* ${date}
-- *Invitados Estimados:* ${guests} personas
-- *Detalles / Mensaje:* ${msg}`;
-
-      const waUrl = `https://wa.me/549${activeConfigs.contact_phone1}?text=${encodeURIComponent(contactMessage)}`;
-      
-      // Mostrar Modal de Éxito
-      const successModal = document.createElement('div');
-      successModal.style.position = 'fixed';
-      successModal.style.top = '0';
-      successModal.style.left = '0';
-      successModal.style.width = '100%';
-      successModal.style.height = '100%';
-      successModal.style.backgroundColor = 'rgba(18, 13, 11, 0.8)';
-      successModal.style.backdropFilter = 'blur(10px)';
-      successModal.style.zIndex = '3000';
-      successModal.style.display = 'flex';
-      successModal.style.alignItems = 'center';
-      successModal.style.justifyContent = 'center';
-      successModal.style.animation = 'fadeIn 0.3s ease';
-
-      successModal.innerHTML = `
-        <div style="background-color: white; padding: 40px; border-radius: 24px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); border: 1px solid #ebdcd5;">
-          <div style="width: 70px; height: 70px; background-color: #fdf1ed; color: #e05326; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 2rem;">
-            <i class="fa-solid fa-circle-check"></i>
-          </div>
-          <h3 style="font-size: 1.6rem; font-weight: 800; color: #1d1715; margin-bottom: 15px;">¡Consulta Recibida!</h3>
-          <p style="color: #483d39; font-size: 0.95rem; line-height: 1.6; margin-bottom: 25px;">Tus datos fueron cargados. Para enviarle el presupuesto formal a Sánchez Leonardo, te redireccionaremos a WhatsApp para finalizar la consulta.</p>
-          <button id="modal-redirect-btn" style="background-color: #25d366; color: white; border: none; padding: 14px 28px; border-radius: 50px; font-weight: 700; width: 100%; font-size: 1rem; box-shadow: 0 8px 16px rgba(37,211,102,0.2); cursor: pointer; transition: all 0.3s;">
-            <i class="fa-brands fa-whatsapp"></i> Enviar por WhatsApp
-          </button>
-        </div>`;
-
-      document.body.appendChild(successModal);
-
-      document.getElementById('modal-redirect-btn').addEventListener('click', () => {
-        window.open(waUrl, '_blank', 'noopener,noreferrer');
-        successModal.remove();
-      });
-
-      contactForm.reset();
-    });
-  }
-
-  // Cargar configuración de Supabase al iniciar
-  loadSupabaseConfigs();
-
+  // Cargar datos al iniciar
+  loadDataAndRender();
 });
