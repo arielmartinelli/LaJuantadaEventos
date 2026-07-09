@@ -737,8 +737,13 @@
 
           loginError.style.display = 'none';
 
-          if (username.toLowerCase() !== 'leo') {
-            showError("Usuario incorrecto. El usuario administrador es 'Leo'.");
+          let emails = [];
+          if (username.toLowerCase() === 'leo') {
+            emails = ['lajuntadaeventos@gmail.com', 'leo@lajuntada.com.ar'];
+          } else if (username.includes('@')) {
+            emails = [username];
+          } else {
+            showError("Usuario incorrecto. Ingresa 'leo' o tu correo registrado en Supabase.");
             return;
           }
 
@@ -760,27 +765,31 @@
           }
 
           try {
-            // Intentar primero con lajuntadaeventos@gmail.com
-            let authResult = await supabaseClient.auth.signInWithPassword({
-              email: 'lajuntadaeventos@gmail.com',
-              password: password
-            });
-
-            // Si falla, probar con leo@lajuntada.com.ar
-            if (authResult.error) {
-              authResult = await supabaseClient.auth.signInWithPassword({
-                email: 'leo@lajuntada.com.ar',
+            let authResult = null;
+            
+            // Intentar autenticación probando los correos correspondientes secuencialmente
+            for (const email of emails) {
+              const res = await supabaseClient.auth.signInWithPassword({
+                email: email,
                 password: password
               });
+              if (!res.error) {
+                authResult = res;
+                break;
+              } else {
+                authResult = res; // Guardar el último error
+              }
             }
 
             const { data, error } = authResult;
 
             if (error) {
-              let errMsg = "Contraseña incorrecta para el usuario Leo.";
+              let errMsg = `Error de Autenticación: ${error.message}`;
               // Validar si es por falta de confirmación de email
               if (error.message.includes("Email not confirmed")) {
                 errMsg = "Acceso bloqueado: Confirmación de Email pendiente en Supabase. Por favor, desactiva 'Confirm Email' en Supabase Auth o confirma el usuario en el panel.";
+              } else if (error.message.includes("Invalid login credentials")) {
+                errMsg = "Credenciales incorrectas: El usuario o la contraseña no coinciden con los registrados en tu base de datos de Supabase.";
               }
               showError(errMsg);
               console.error(error);
@@ -789,7 +798,7 @@
               showDashboard();
             }
           } catch (err) {
-            showError("Error de red al intentar iniciar sesión.");
+            showError("Error de red al intentar iniciar sesión: " + err.message);
             console.error(err);
           }
         });
