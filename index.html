@@ -387,11 +387,11 @@
             <ul class="price-list">
               <li>
                 <span>Vajilla, Cristalería y Mantelería <small>(por persona)</small></span>
-                <strong>$2.500</strong>
+                <strong id="lbl-price-vajilla">$2.500</strong>
               </li>
               <li>
                 <span>Juego de Living Modelo Butacón <small>(para 10 personas)</small></span>
-                <strong>$18.000</strong>
+                <strong id="lbl-price-living">$18.000</strong>
               </li>
               <li>
                 <span>Mesa vestida con mantel y sendero de tela</span>
@@ -403,11 +403,11 @@
               </li>
               <li>
                 <span>Gazebo estructural ambientado <small>(6x3m)</small></span>
-                <strong>$45.000</strong>
+                <strong id="lbl-price-gazebo">$45.000</strong>
               </li>
               <li>
                 <span>Pantalla 120" y proyector HD</span>
-                <strong>$35.000</strong>
+                <strong id="lbl-price-screen">$35.000</strong>
               </li>
             </ul>
             <div class="price-list-note">* Los roturas de vajilla quedan a cargo del cliente. Precios en pesos.</div>
@@ -935,12 +935,14 @@
     <div class="footer-bottom">
       <div class="container footer-bottom-inner">
         <p>&copy; 2026 La Juntada Eventos. Todos los derechos reservados.</p>
-        <p>Alta Córdoba, Mendoza 3147. Tel: 351 606 9743 | 351 216 0141</p>
+        <p>Alta Córdoba, Mendoza 3147. Tel: 351 606 9743 | 351 216 0141 | <a href="admin.html" style="text-decoration: underline; opacity: 0.8;">Acceso Admin</a></p>
       </div>
     </div>
   </footer>
 
   <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

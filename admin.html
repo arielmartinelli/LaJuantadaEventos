@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración | La Juntada</title>
+  <meta name="robots" content="noindex, nofollow">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <style>
+    /* Specific overrides for Admin Portal Styles (to avoid breaking style.css if not loaded) */
+    .admin-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #1d1715 0%, #3a312e 100%);
+    }
+
+    .login-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: var(--radius-lg, 24px);
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(235, 220, 213, 0.2);
+      text-align: center;
+    }
+
+    .admin-container {
+      width: 100%;
+      max-width: 1000px;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: var(--radius-lg, 24px);
+      padding: 40px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      display: none;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border-light, #ebdcd5);
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .admin-header h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--charcoal, #1d1715);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .admin-header h1 span {
+      color: var(--primary-orange, #e05326);
+    }
+
+    .admin-sections-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .admin-sections-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .admin-box {
+      background: var(--bg-light, #faf6f0);
+      border: 1px solid var(--border-light, #ebdcd5);
+      border-radius: var(--radius-md, 16px);
+      padding: 25px;
+    }
+
+    .admin-box h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--charcoal, #1d1715);
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-light, #ebdcd5);
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .admin-box h3 i {
+      color: var(--primary-orange, #e05326);
+    }
+
+    .admin-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .admin-form-group label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--charcoal-light, #483d39);
+    }
+
+    .admin-input-group {
+      display: flex;
+      align-items: center;
+      background-color: var(--bg-white, #ffffff);
+      border: 1px solid var(--border-light, #ebdcd5);
+      border-radius: var(--radius-sm, 8px);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .admin-input-group:focus-within {
+      border-color: var(--primary-orange, #e05326);
+      box-shadow: 0 0 0 3px var(--primary-alpha, rgba(224, 83, 38, 0.1));
+    }
+
+    .admin-input-prefix {
+      padding: 10px 15px;
+      background-color: #ebdcd5;
+      color: var(--charcoal-light, #483d39);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .admin-input-group input {
+      border: none;
+      padding: 10px 15px;
+      width: 100%;
+      outline: none;
+      font-size: 0.95rem;
+      color: var(--charcoal, #1d1715);
+    }
+
+    /* Switch toggle styles */
+    .switch-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 15px;
+      background-color: var(--bg-white, #ffffff);
+      border: 1px solid var(--border-light, #ebdcd5);
+      border-radius: var(--radius-sm, 8px);
+      margin-bottom: 12px;
+    }
+
+    .switch-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--charcoal-light, #483d39);
+    }
+
+    .admin-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .admin-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider-switch {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ebdcd5;
+      transition: .3s;
+      border-radius: 24px;
+    }
+
+    .slider-switch:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider-switch {
+      background-color: var(--primary-orange, #e05326);
+    }
+
+    input:checked + .slider-switch:before {
+      transform: translateX(20px);
+    }
+
+    .admin-action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .admin-btn-save {
+      background-color: var(--primary-orange, #e05326);
+      color: white;
+      padding: 14px 30px;
+      border-radius: 50px;
+      font-weight: 700;
+      box-shadow: var(--shadow-orange);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .admin-btn-save:hover {
+      background-color: var(--primary-hover, #f1683d);
+      transform: translateY(-2px);
+    }
+
+    .admin-btn-export {
+      background-color: var(--charcoal, #1d1715);
+      color: white;
+      padding: 14px 24px;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .admin-btn-export:hover {
+      background-color: var(--charcoal-light, #483d39);
+      transform: translateY(-2px);
+    }
+
+    .admin-btn-logout {
+      background-color: #df3838;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: var(--transition);
+    }
+
+    .admin-btn-logout:hover {
+      background-color: #b82323;
+    }
+
+    .admin-back-link {
+      color: var(--primary-orange, #e05326);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .admin-back-link:hover {
+      color: var(--primary-hover, #f1683d);
+      text-decoration: underline;
+    }
+
+    /* Message banner styling */
+    .admin-alert {
+      padding: 15px 20px;
+      border-radius: var(--radius-sm, 8px);
+      margin-bottom: 25px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .admin-alert.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: flex;
+    }
+
+    .admin-alert.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: flex;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-wrapper">
+    
+    <!-- LOGIN CARD -->
+    <div class="login-card" id="login-section">
+      <div style="width: 120px; height: 50px; margin: 0 auto 25px;">
+        <svg viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+          <text x="10" y="65" style="font-family:'Pacifico', cursive; fill:#e05326; font-size: 52px;">La Juntada</text>
+          <text x="140" y="105" style="font-family:'Caveat', cursive; fill:#1d1715; font-size: 20px; font-weight:700;">Le agrega sabor</text>
+          <text x="175" y="135" style="font-family:'Caveat', cursive; fill:#1d1715; font-size: 20px; font-weight:700;">a tus encuentros!</text>
+        </svg>
+      </div>
+      <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 10px; color: var(--charcoal);">Acceso de Administrador</h2>
+      <p style="font-size: 0.85rem; color: var(--charcoal-muted); margin-bottom: 30px;">Ingresá tus credenciales para gestionar el sitio.</p>
+      
+      <div id="login-error" class="admin-alert error" style="margin-bottom: 20px; font-size: 0.85rem; padding: 10px 15px;">
+        <i class="fa-solid fa-circle-xmark"></i> <span id="error-text">Credenciales incorrectas</span>
+      </div>
+
+      <form id="login-form">
+        <div class="admin-form-group" style="text-align: left;">
+          <label for="username">Usuario *</label>
+          <div class="admin-input-group">
+            <span class="admin-input-prefix"><i class="fa-solid fa-user"></i></span>
+            <input type="text" id="username" required placeholder="Ej. Leo" autocomplete="username">
+          </div>
+        </div>
+        <div class="admin-form-group" style="text-align: left; margin-bottom: 25px;">
+          <label for="password">Contraseña *</label>
+          <div class="admin-input-group">
+            <span class="admin-input-prefix"><i class="fa-solid fa-key"></i></span>
+            <input type="password" id="password" required placeholder="••••••••" autocomplete="current-password">
+          </div>
+        </div>
+        <button type="submit" class="btn-submit-form" style="width: 100%; border: none;">
+          <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
+        </button>
+      </form>
+      <div style="margin-top: 25px;">
+        <a href="index.html" class="admin-back-link"><i class="fa-solid fa-arrow-left"></i> Volver a la web</a>
+      </div>
+    </div>
+
+    <!-- ADMIN PANEL DASHBOARD -->
+    <div class="admin-container" id="dashboard-section">
+      <div class="admin-header">
+        <h1><i class="fa-solid fa-sliders"></i> Panel de Control <span>La Juntada</span></h1>
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <a href="index.html" class="admin-back-link" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-eye"></i> Ver Web</a>
+          <button type="button" class="admin-btn-logout" id="btn-logout"><i class="fa-solid fa-power-off"></i> Salir</button>
+        </div>
+      </div>
+
+      <div id="save-alert" class="admin-alert">
+        <!-- Success/Error alert icon and text populated dynamically -->
+      </div>
+
+      <form id="admin-config-form">
+        <div class="admin-sections-grid">
+          
+          <!-- Column Left -->
+          <div style="display: flex; flex-direction: column; gap: 30px;">
+            
+            <!-- Section 1: Precios de Menús -->
+            <div class="admin-box">
+              <h3><i class="fa-solid fa-utensils"></i> Tarifas de Menús Base (por Persona)</h3>
+              
+              <div class="admin-form-group">
+                <label for="db-menu_diente_libre_price">Menú Diente Libre (Pata, Cazuelas, Burgers, Pizzas, Fajitas)</label>
+                <div class="admin-input-group">
+                  <span class="admin-input-prefix">$</span>
+                  <input type="number" id="db-menu_diente_libre_price" required min="0">
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="db-menu_pollo_noisette_price">Menú Pollo Deshuesado con Papas Noisette</label>
+                <div class="admin-input-group">
+                  <span class="admin-input-prefix">$</span>
+                  <input type="number" id="db-menu_pollo_noisette_price" required min="0">
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="db-menu_parrillada_price">Menú Parrillada Completa a las Brasas</label>
+                <div class="admin-input-group">
+                  <span class="admin-input-prefix">$</span>
+                  <input type="number" id="db-menu_parrillada_price" required min="0">
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 2: Adicionales de Alquiler y Servicios (Precios) -->
+            <div class="admin-box">
+              <h3><i class="fa-solid fa-hand-holding-dollar"></i> Precios de Adicionales & Alquileres</h3>
+              
+              <div class="admin-form-group">
+                <label for="db-srv_drinks_price">Gaseosas libres, Vinos y Cervezas (por persona)</label>
+                <div class="admin-input-group">
+                  <span class="admin-input-prefix">$</span>
+                  <input type="number" id="db-srv_drinks_price" required min="0">
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="db-srv_bar_price">Barra Móvil Libre - Coctelería 4hs (por persona)</label>
+                <div class="admin-input-group">
+                  <span class="admin-input-prefix">$</span>
+                  <input type="number" id="db-srv_bar_price" required min="0">
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="db-srv_tableware_price">Alquiler de Vajilla y Mantelería (por persona)</label>
+                <div class="admin-input-group">
+                  <span class="admin-input-prefix">$</span>
+                  <input type="number" id="db-srv_tableware_price" required min="0">
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="db-srv_living_price">Alquiler Juego de Living - 10 pers. (por unidad)</label>
+                <div class="admin-input-group">
+                  <span class="admin-input-prefix">$</span>
+                  <input type="number" id="db-srv_living_price" required min="0">
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="db-srv_sound_price">DJ, Sonido Básico y Iluminación (Fijo)</label>
+                <div class="admin-input-group">
+                  <span class="admin-input-prefix">$</span>
+                  <input type="number" id="db-srv_sound_price" required min="0">
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="db-srv_gazebo_price">Gazebo Estructural - 6x3m ambientado (Fijo)</label>
+                <div class="admin-input-group">
+                  <span class="admin-input-prefix">$</span>
+                  <input type="number" id="db-srv_gazebo_price" required min="0">
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="db-srv_screen_price">Pantalla 120" y Proyector HD (Fijo)</label>
+                <div class="admin-input-group">
+                  <span class="admin-input-prefix">$</span>
+                  <input type="number" id="db-srv_screen_price" required min="0">
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="db-srv_photo_price">Fotografía Digital Profesional (Fijo)</label>
+                <div class="admin-input-group">
+                  <span class="admin-input-prefix">$</span>
+                  <input type="number" id="db-srv_photo_price" required min="0">
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Column Right -->
+          <div style="display: flex; flex-direction: column; gap: 30px;">
+            
+            <!-- Section 3: Disponibilidad de Servicios -->
+            <div class="admin-box">
+              <h3><i class="fa-solid fa-circle-check"></i> Disponibilidad de Servicios</h3>
+              <p style="font-size: 0.8rem; color: var(--charcoal-muted); margin-bottom: 15px;">
+                Desactivá un servicio para marcarlo como "No Disponible" y deshabilitarlo en la calculadora de la web principal.
+              </p>
+
+              <div class="switch-container">
+                <span class="switch-label">Servicio de Barra Móvil</span>
+                <label class="admin-switch">
+                  <input type="checkbox" id="db-srv_bar_available">
+                  <span class="slider-switch"></span>
+                </label>
+              </div>
+
+              <div class="switch-container">
+                <span class="switch-label">Alquiler de Vajilla y Mantelería</span>
+                <label class="admin-switch">
+                  <input type="checkbox" id="db-srv_tableware_available">
+                  <span class="slider-switch"></span>
+                </label>
+              </div>
+
+              <div class="switch-container">
+                <span class="switch-label">Sonido, DJ e Iluminación</span>
+                <label class="admin-switch">
+                  <input type="checkbox" id="db-srv_sound_available">
+                  <span class="slider-switch"></span>
+                </label>
+              </div>
+
+              <div class="switch-container">
+                <span class="switch-label">Alquiler de Gazebos</span>
+                <label class="admin-switch">
+                  <input type="checkbox" id="db-srv_gazebo_available">
+                  <span class="slider-switch"></span>
+                </label>
+              </div>
+
+              <div class="switch-container">
+                <span class="switch-label">Pantalla y Proyector HD</span>
+                <label class="admin-switch">
+                  <input type="checkbox" id="db-srv_screen_available">
+                  <span class="slider-switch"></span>
+                </label>
+              </div>
+
+              <div class="switch-container">
+                <span class="switch-label">Fotografía Profesional</span>
+                <label class="admin-switch">
+                  <input type="checkbox" id="db-srv_photo_available">
+                  <span class="slider-switch"></span>
+                </label>
+              </div>
+
+              <div class="switch-container">
+                <span class="switch-label">Alquiler de Juegos de Living</span>
+                <label class="admin-switch">
+                  <input type="checkbox" id="db-srv_living_available">
+                  <span class="slider-switch"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Section 4: Datos de Contacto -->
+            <div class="admin-box">
+              <h3><i class="fa-solid fa-address-book"></i> Datos de Contacto & Oficina</h3>
+              
+              <div class="admin-form-group">
+                <label for="db-contact_phone1">Teléfono Principal de Consultas (WhatsApp)</label>
+                <div class="admin-input-group">
+                  <span class="admin-input-prefix"><i class="fa-brands fa-whatsapp"></i></span>
+                  <input type="text" id="db-contact_phone1" required>
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="db-contact_phone2">Teléfono Secundario de Respaldo</label>
+                <div class="admin-input-group">
+                  <span class="admin-input-prefix"><i class="fa-solid fa-phone"></i></span>
+                  <input type="text" id="db-contact_phone2" required>
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="db-contact_email">Email Comercial</label>
+                <div class="admin-input-group">
+                  <span class="admin-input-prefix"><i class="fa-regular fa-envelope"></i></span>
+                  <input type="email" id="db-contact_email" required>
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="db-contact_address">Dirección de Oficina Comercial</label>
+                <div class="admin-input-group">
+                  <span class="admin-input-prefix"><i class="fa-solid fa-map-location-dot"></i></span>
+                  <input type="text" id="db-contact_address" required>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Submit Row -->
+        <div class="admin-action-row">
+          <button type="button" class="admin-btn-export" id="btn-export-json">
+            <i class="fa-solid fa-file-arrow-down"></i> Exportar Config. (JSON)
+          </button>
+          <button type="submit" class="admin-btn-save" id="btn-save-configs">
+            <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios en Supabase
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    // Pure client-side admin controller for authentication and DB sync
+    document.addEventListener('DOMContentLoaded', () => {
+      
+      const loginSection = document.getElementById('login-section');
+      const dashboardSection = document.getElementById('dashboard-section');
+      const loginForm = document.getElementById('login-form');
+      const loginError = document.getElementById('login-error');
+      const errorText = document.getElementById('error-text');
+      
+      const adminConfigForm = document.getElementById('admin-config-form');
+      const saveAlert = document.getElementById('save-alert');
+      const btnLogout = document.getElementById('btn-logout');
+      const btnExport = document.getElementById('btn-export-json');
+
+      let currentSession = null;
+      let dbConfigs = {}; // Holds configuration key-value mapping
+
+      // Initialize Supabase Client
+      let supabaseClient = null;
+      try {
+        if (typeof supabase !== 'undefined' && SUPABASE_URL && SUPABASE_ANON_KEY) {
+          supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+      } catch (err) {
+        console.error("Error al inicializar Supabase:", err);
+      }
+
+      // Check current login session
+      async function checkSession() {
+        if (!supabaseClient) {
+          showError("Supabase no está configurado. Edita el archivo 'supabase-config.js'.");
+          return;
+        }
+        
+        try {
+          const { data, error } = await supabaseClient.auth.getSession();
+          if (data && data.session) {
+            currentSession = data.session;
+            showDashboard();
+          } else {
+            showLogin();
+          }
+        } catch (err) {
+          showLogin();
+        }
+      }
+
+      function showLogin() {
+        loginSection.style.display = 'block';
+        dashboardSection.style.display = 'none';
+      }
+
+      function showDashboard() {
+        loginSection.style.display = 'none';
+        dashboardSection.style.display = 'block';
+        fetchConfigs();
+      }
+
+      function showError(msg) {
+        errorText.textContent = msg;
+        loginError.classList.add('success'); // Ensure clean display class
+        loginError.classList.remove('success');
+        loginError.classList.add('error');
+      }
+
+      // 1. Authenticate with Supabase Auth using email mapping
+      if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const username = document.getElementById('username').value.trim();
+          const password = document.getElementById('password').value.trim();
+
+          loginError.style.display = 'none';
+
+          if (username.toLowerCase() !== 'leo') {
+            showError("Usuario incorrecto. El usuario administrador es 'Leo'.");
+            return;
+          }
+
+          if (!supabaseClient) {
+            showError("Supabase no está configurado. Configura 'supabase-config.js'.");
+            return;
+          }
+
+          try {
+            // Authenticate using the mapped email credentials
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+              email: ADMIN_EMAIL,
+              password: password
+            });
+
+            if (error) {
+              showError("Contraseña incorrecta para el usuario Leo.");
+              console.error(error);
+            } else {
+              currentSession = data.session;
+              showDashboard();
+            }
+          } catch (err) {
+            showError("Error de red o conexión al servidor de Supabase.");
+            console.error(err);
+          }
+        });
+      }
+
+      // 2. Fetch configurations from DB
+      async function fetchConfigs() {
+        if (!supabaseClient) return;
+
+        try {
+          const { data, error } = await supabaseClient
+            .from('lajuntada_config')
+            .select('key, value');
+
+          if (error) {
+            showSaveAlert("Error al descargar las configuraciones de Supabase.", "error");
+            console.error(error);
+            return;
+          }
+
+          // Map configs array to objects
+          dbConfigs = {};
+          data.forEach(row => {
+            dbConfigs[row.key] = row.value;
+          });
+
+          // Fill inputs dynamically
+          fillFormInputs();
+
+        } catch (err) {
+          showSaveAlert("Fallo en la comunicación con la base de datos.", "error");
+          console.error(err);
+        }
+      }
+
+      function fillFormInputs() {
+        // Iterate through form fields starting with id="db-..."
+        const inputs = adminConfigForm.querySelectorAll('[id^="db-"]');
+        inputs.forEach(input => {
+          const configKey = input.id.replace('db-', '');
+          const configVal = dbConfigs[configKey];
+          
+          if (configVal !== undefined) {
+            if (input.type === 'checkbox') {
+              input.checked = (configVal === 'true');
+            } else {
+              input.value = configVal;
+            }
+          }
+        });
+      }
+
+      // 3. Save configs to DB
+      if (adminConfigForm) {
+        adminConfigForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if (!supabaseClient) return;
+
+          showSaveAlert("Guardando cambios...", "success");
+
+          const inputs = adminConfigForm.querySelectorAll('[id^="db-"]');
+          const payload = [];
+
+          inputs.forEach(input => {
+            const configKey = input.id.replace('db-', '');
+            let value = '';
+            if (input.type === 'checkbox') {
+              value = input.checked ? 'true' : 'false';
+            } else {
+              value = input.value.trim();
+            }
+            payload.push({
+              key: configKey,
+              value: value
+            });
+          });
+
+          try {
+            // Perform batch update/insert (upsert) based on unique key constraint
+            const { error } = await supabaseClient
+              .from('lajuntada_config')
+              .upsert(payload, { onConflict: 'key' });
+
+            if (error) {
+              showSaveAlert("Error al guardar cambios: " + error.message, "error");
+              console.error(error);
+            } else {
+              showSaveAlert("¡Configuraciones guardadas y actualizadas en Supabase con éxito!", "success");
+              // Update local state copy
+              payload.forEach(item => {
+                dbConfigs[item.key] = item.value;
+              });
+            }
+          } catch (err) {
+            showSaveAlert("Error de red al intentar guardar cambios.", "error");
+            console.error(err);
+          }
+        });
+      }
+
+      function showSaveAlert(msg, type) {
+        if (!saveAlert) return;
+        saveAlert.style.display = 'flex';
+        saveAlert.className = `admin-alert ${type}`;
+        
+        const icon = type === 'success' ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-solid fa-triangle-exclamation"></i>';
+        saveAlert.innerHTML = `${icon} <span>${msg}</span>`;
+
+        // Hide success banners after 5 seconds
+        if (type === 'success') {
+          setTimeout(() => {
+            saveAlert.style.display = 'none';
+          }, 5000);
+        }
+      }
+
+      // 4. Log out handler
+      if (btnLogout) {
+        btnLogout.addEventListener('click', async () => {
+          if (supabaseClient) {
+            await supabaseClient.auth.signOut();
+          }
+          currentSession = null;
+          showLogin();
+          window.location.reload();
+        });
+      }
+
+      // 5. Export JSON config handler
+      if (btnExport) {
+        btnExport.addEventListener('click', () => {
+          const inputs = adminConfigForm.querySelectorAll('[id^="db-"]');
+          const exportData = {};
+          inputs.forEach(input => {
+            const configKey = input.id.replace('db-', '');
+            exportData[configKey] = input.type === 'checkbox' ? input.checked.toString() : input.value.trim();
+          });
+
+          const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+          const downloadAnchor = document.createElement('a');
+          downloadAnchor.setAttribute("href", dataStr);
+          downloadAnchor.setAttribute("download", "lajuntada_config.json");
+          document.body.appendChild(downloadAnchor);
+          downloadAnchor.click();
+          downloadAnchor.remove();
+        });
+      }
+
+      // Initial session verify
+      checkSession();
+    });
+  </script>
+</body>
+</html>

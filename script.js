@@ -3,48 +3,247 @@
    Lógica interactiva: Menú, Carrusel, Galería Filtrable, Lightbox, Cotizador y Formularios
    ========================================================================== */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 
-  // WhatsApp de Contacto Comercial (Córdoba)
-  const WHATSAPP_NUMBER = '5493516069743';
+  /* ==========================================================================
+     0. Configuración por Defecto (Fallback) y Conexión con Supabase
+     ========================================================================== */
+  const DEFAULT_CONFIGS = {
+    menu_diente_libre_price: '25000',
+    menu_pollo_noisette_price: '28000',
+    menu_parrillada_price: '35000',
+    srv_drinks_price: '4500',
+    srv_bar_price: '6500',
+    srv_tableware_price: '2500',
+    srv_sound_price: '90000',
+    srv_gazebo_price: '45000',
+    srv_screen_price: '35000',
+    srv_photo_price: '80000',
+    srv_living_price: '18000',
+    srv_bar_available: 'true',
+    srv_tableware_available: 'true',
+    srv_sound_available: 'true',
+    srv_gazebo_available: 'true',
+    srv_screen_available: 'true',
+    srv_photo_available: 'true',
+    srv_living_available: 'true',
+    contact_phone1: '3516069743',
+    contact_phone2: '3512160141',
+    contact_address: 'Mendoza 3147, Alta Córdoba, Córdoba',
+    contact_email: 'lajuntadaeventos@gmail.com'
+  };
+
+  // Copia de trabajo de configuración
+  let activeConfigs = { ...DEFAULT_CONFIGS };
+
+  // Formateador de moneda
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(value);
+  };
+
+  // Intentar cargar la configuración en tiempo real desde Supabase
+  async function loadSupabaseConfigs() {
+    // Verificar si las credenciales y el SDK de Supabase están cargados
+    const isSupabaseConfigured = typeof supabase !== 'undefined' 
+      && typeof SUPABASE_URL !== 'undefined' 
+      && typeof SUPABASE_ANON_KEY !== 'undefined'
+      && SUPABASE_URL !== 'https://tu-proyecto.supabase.co';
+
+    if (!isSupabaseConfigured) {
+      console.log("Supabase no configurado o cargado. Usando configuración local por defecto.");
+      applyDOMConfigurations();
+      return;
+    }
+
+    try {
+      const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const { data, error } = await supabaseClient
+        .from('lajuntada_config')
+        .select('key, value');
+
+      if (error) {
+        console.error("Error al descargar de Supabase:", error);
+        applyDOMConfigurations();
+        return;
+      }
+
+      if (data && data.length > 0) {
+        data.forEach(item => {
+          activeConfigs[item.key] = item.value;
+        });
+        console.log("Configuraciones descargadas y sincronizadas desde Supabase con éxito.");
+      }
+    } catch (err) {
+      console.error("Fallo de red al conectar con Supabase:", err);
+    }
+
+    applyDOMConfigurations();
+  }
+
+  // Actualizar todos los elementos del DOM basados en activeConfigs
+  function applyDOMConfigurations() {
+    // 1. Actualizar los precios visibles en el selector de tipo de menú (Calculadora)
+    const optDienteLibre = document.querySelector('option[value="diente-libre"]');
+    if (optDienteLibre) {
+      optDienteLibre.setAttribute('data-base', activeConfigs.menu_diente_libre_price);
+      optDienteLibre.textContent = `Menú Diente Libre (Pata, Cazuela, Burgers, Pizza, Sándwich Campo) (${formatCurrency(activeConfigs.menu_diente_libre_price)} x pers.)`;
+    }
+
+    const optPollo = document.querySelector('option[value="pollo-noisette"]');
+    if (optPollo) {
+      optPollo.setAttribute('data-base', activeConfigs.menu_pollo_noisette_price);
+      optPollo.textContent = `Menú Pollo Deshuesado con Papas Noisette (${formatCurrency(activeConfigs.menu_pollo_noisette_price)} x pers.)`;
+    }
+
+    const optParrillada = document.querySelector('option[value="parrillada"]');
+    if (optParrillada) {
+      optParrillada.setAttribute('data-base', activeConfigs.menu_parrillada_price);
+      optParrillada.textContent = `Menú Parrillada Completa a las Brasas (${formatCurrency(activeConfigs.menu_parrillada_price)} x pers.)`;
+    }
+
+    // 2. Actualizar precios en la sección Alquileres
+    const lblVajilla = document.getElementById('lbl-price-vajilla');
+    if (lblVajilla) lblVajilla.textContent = formatCurrency(activeConfigs.srv_tableware_price);
+
+    const lblLiving = document.getElementById('lbl-price-living');
+    if (lblLiving) lblLiving.textContent = formatCurrency(activeConfigs.srv_living_price);
+
+    const lblGazebo = document.getElementById('lbl-price-gazebo');
+    if (lblGazebo) lblGazebo.textContent = formatCurrency(activeConfigs.srv_gazebo_price);
+
+    const lblScreen = document.getElementById('lbl-price-screen');
+    if (lblScreen) lblScreen.textContent = formatCurrency(activeConfigs.srv_screen_price);
+
+    // 3. Actualizar textos de adicionales en la Calculadora
+    updateAddonLabelText('srv-drinks', `Gaseosas libres, Vinos y Cervezas (+${formatCurrency(activeConfigs.srv_drinks_price)} x pers.)`);
+    updateAddonLabelText('srv-bar', `Barra Móvil Libre (Coctelería 4 hs) (+${formatCurrency(activeConfigs.srv_bar_price)} x pers.)`);
+    updateAddonLabelText('srv-tableware', `Alquiler de Vajilla y Mantelería (+${formatCurrency(activeConfigs.srv_tableware_price)} x pers.)`);
+    updateAddonLabelText('srv-sound', `DJ, Sonido Básico y Luces (+${formatCurrency(activeConfigs.srv_sound_price)} fijo)`);
+    updateAddonLabelText('srv-gazebo', `Gazebo Estructural (6x3m ambientado) (+${formatCurrency(activeConfigs.srv_gazebo_price)} fijo)`);
+    updateAddonLabelText('srv-screen', `Pantalla 120" y Proyector HD (+${formatCurrency(activeConfigs.srv_screen_price)} fijo)`);
+    updateAddonLabelText('srv-photo', `Fotografía Digital Profesional (+${formatCurrency(activeConfigs.srv_photo_price)} fijo)`);
+    
+    // Selector de living
+    const optLivingSelect = document.getElementById('srv-living-qty');
+    if (optLivingSelect) {
+      optLivingSelect.setAttribute('data-cost', activeConfigs.srv_living_price);
+      optLivingSelect.options[0].textContent = `Ninguno (${formatCurrency(activeConfigs.srv_living_price)} c/u)`;
+      for (let i = 1; i <= 6; i++) {
+        optLivingSelect.options[i].textContent = `${i} Juego${i>1?'s':''} de Living (+${formatCurrency(activeConfigs.srv_living_price * i)})`;
+      }
+    }
+
+    // 4. Actualizar disponibilidad (Disponibilidad en la Calculadora)
+    checkAvailability('srv-bar', activeConfigs.srv_bar_available, "Barra Móvil Libre");
+    checkAvailability('srv-tableware', activeConfigs.srv_tableware_available, "Alquiler de Vajilla y Mantelería");
+    checkAvailability('srv-sound', activeConfigs.srv_sound_available, "DJ, Sonido Básico y Luces");
+    checkAvailability('srv-gazebo', activeConfigs.srv_gazebo_available, "Gazebo Estructural (6x3m)");
+    checkAvailability('srv-screen', activeConfigs.srv_screen_available, "Pantalla 120\" y Proyector HD");
+    checkAvailability('srv-photo', activeConfigs.srv_photo_available, "Fotografía Digital Profesional");
+    checkAvailabilityLivingSelector('srv-living-qty', activeConfigs.srv_living_available);
+
+    // 5. Sincronizar datos de contacto en cabecera y footer
+    const contactLinks = document.querySelectorAll('a[href^="https://wa.me/549"]');
+    contactLinks.forEach(link => {
+      // Reemplazar número de WhatsApp conservando el mensaje predefinido
+      const urlObj = new URL(link.href);
+      const textParam = urlObj.searchParams.get('text') || '';
+      link.href = `https://wa.me/549${activeConfigs.contact_phone1}?text=${encodeURIComponent(textParam)}`;
+      if (link.textContent.includes('351') || link.textContent.includes('+54')) {
+        // Si el texto del enlace contiene un teléfono anterior, actualizarlo visualmente
+        link.textContent = activeConfigs.contact_phone1;
+      }
+    });
+
+    const mailLinks = document.querySelectorAll('a[href^="mailto:"]');
+    mailLinks.forEach(link => {
+      link.href = `mailto:${activeConfigs.contact_email}`;
+      link.textContent = activeConfigs.contact_email;
+    });
+
+    // Dirección comercial
+    const addressLabels = document.querySelectorAll('.contact-detail-item p');
+    addressLabels.forEach(p => {
+      if (p.textContent.includes('Mendoza')) {
+        p.innerHTML = `${activeConfigs.contact_address}<br><span style="font-size: 0.8rem; color: rgba(250, 246, 240, 0.5); margin-top: 3px;">Horario: Lunes a Sábados de 9 a 18 hs (avisar con 30 min de anticipación)</span>`;
+      }
+    });
+
+    const footerBottomInner = document.querySelector('.footer-bottom-inner p:last-child');
+    if (footerBottomInner) {
+      footerBottomInner.textContent = `Alta Córdoba, ${activeConfigs.contact_address.split(',')[0]}. Tel: ${activeConfigs.contact_phone1} | ${activeConfigs.contact_phone2}`;
+    }
+
+    // Ejecutar recálculo
+    calculateBudget();
+  }
+
+  // Funciones auxiliares para actualizar inputs
+  function updateAddonLabelText(id, text) {
+    const input = document.getElementById(id);
+    if (input) {
+      input.setAttribute('data-cost', activeConfigs[id.replace('-', '_') + '_price']);
+      const label = input.closest('.custom-checkbox-container');
+      if (label) {
+        const textSpan = label.querySelector('.chk-label');
+        if (textSpan) textSpan.textContent = text;
+      }
+    }
+  }
+
+  function checkAvailability(id, available, labelName) {
+    const input = document.getElementById(id);
+    if (input) {
+      const container = input.closest('.custom-checkbox-container');
+      if (container) {
+        const textSpan = container.querySelector('.chk-label');
+        if (available === 'false') {
+          input.checked = false;
+          input.disabled = true;
+          container.classList.add('disabled');
+          if (textSpan && !textSpan.textContent.includes('(No Disponible)')) {
+            textSpan.innerHTML = `${labelName} <span class="unavailable-badge">No Disponible</span>`;
+          }
+        } else {
+          input.disabled = false;
+          container.classList.remove('disabled');
+        }
+      }
+    }
+  }
+
+  function checkAvailabilityLivingSelector(id, available) {
+    const select = document.getElementById(id);
+    if (select) {
+      const formGroup = select.closest('.form-group');
+      if (formGroup) {
+        if (available === 'false') {
+          select.value = "0";
+          select.disabled = true;
+          formGroup.style.opacity = '0.5';
+          formGroup.style.pointerEvents = 'none';
+          const label = formGroup.querySelector('label');
+          if (label && !label.textContent.includes('No Disponible')) {
+            label.innerHTML = `<i class="fa-solid fa-couch text-orange"></i> Juegos de Living <span class="unavailable-badge">No Disponible</span>`;
+          }
+        } else {
+          select.disabled = false;
+          formGroup.style.opacity = '1';
+          formGroup.style.pointerEvents = 'auto';
+        }
+      }
+    }
+  }
+
 
   /* ==========================================================================
      1. Navegación y Menú Mobile
      ========================================================================== */
-  const header = document.getElementById('header');
-  const menuToggle = document.getElementById('menu-toggle');
-  const navMenu = document.getElementById('nav-menu');
-  const navLinks = document.querySelectorAll('.nav-link');
-
-  // Cambiar fondo de la cabecera al hacer scroll
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
-    }
-  });
-
-  // Activar clase active en links según la sección visible
-  const sections = document.querySelectorAll('section');
-  window.addEventListener('scroll', () => {
-    let current = '';
-    sections.forEach(section => {
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.clientHeight;
-      if (window.scrollY >= (sectionTop - 120)) {
-        current = section.getAttribute('id');
-      }
-    });
-
-    navLinks.forEach(link => {
-      link.classList.remove('active');
-      if (link.getAttribute('href').slice(1) === current) {
-        link.classList.add('active');
-      }
-    });
-  });
-
   // Toggle menú mobile
   menuToggle.addEventListener('click', () => {
     const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
@@ -62,26 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Hacer scroll suave para botones
-  const scrollBtns = document.querySelectorAll('a[href^="#"]');
-  scrollBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const targetId = btn.getAttribute('href');
-      if (targetId === '#') return;
-      const target = document.querySelector(targetId);
-      if (target) {
-        e.preventDefault();
-        window.scrollTo({
-          top: target.offsetTop - 80,
-          behavior: 'smooth'
-        });
-        menuToggle.setAttribute('aria-expanded', 'false');
-        menuToggle.classList.remove('active');
-        navMenu.classList.remove('active');
-      }
-    });
-  });
-
 
   /* ==========================================================================
      2. Sección Interactiva de la Carta / Menú de Opciones
@@ -91,11 +270,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   menuTabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      // Remover activo de botones
       menuTabBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
-      // Ocultar contenidos
       const selectedMenu = btn.getAttribute('data-menu');
       menuTabContents.forEach(content => {
         content.classList.remove('active');
@@ -121,14 +298,16 @@ document.addEventListener('DOMContentLoaded', () => {
   let slideInterval;
 
   // Crear indicadores dinámicamente
-  slides.forEach((_, idx) => {
-    const dot = document.createElement('button');
-    dot.classList.add('indicator-dot');
-    if (idx === 0) dot.classList.add('active');
-    dot.setAttribute('aria-label', `Ir a foto ${idx + 1}`);
-    dot.addEventListener('click', () => goToSlide(idx));
-    indicatorsContainer.appendChild(dot);
-  });
+  if (indicatorsContainer) {
+    slides.forEach((_, idx) => {
+      const dot = document.createElement('button');
+      dot.classList.add('indicator-dot');
+      if (idx === 0) dot.classList.add('active');
+      dot.setAttribute('aria-label', `Ir a foto ${idx + 1}`);
+      dot.addEventListener('click', () => goToSlide(idx));
+      indicatorsContainer.appendChild(dot);
+    });
+  }
 
   const dots = document.querySelectorAll('.indicator-dot');
 
@@ -157,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function startAutoPlay() {
-    if (slides.length > 0) {
+    if (slides.length > 0 && slider) {
       slideInterval = setInterval(nextSlide, 5000);
     }
   }
@@ -271,6 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function closeLightbox() {
+    if (!lightboxModal) return;
     lightboxModal.classList.remove('active');
     lightboxModal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
@@ -310,19 +490,13 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ==========================================================================
      5. Cotizador de Presupuestos Interactivo
      ========================================================================== */
-  const eventTypeSelect = document.getElementById('event-type');
-  const guestCountInput = document.getElementById('guest-count');
-  const guestCountVal = document.getElementById('guest-count-val');
-  const minGuestsWarning = document.getElementById('min-guests-warning');
-  
-  // Opciones de Adicionales
-  const srvDrinks = document.getElementById('srv-drinks');
-  const srvBar = document.getElementById('srv-bar');
-  const srvTableware = document.getElementById('srv-tableware');
-  const srvSound = document.getElementById('srv-sound');
-  const srvGazebo = document.getElementById('srv-gazebo');
-  const srvScreen = document.getElementById('srv-screen');
-  const srvPhoto = document.getElementById('srv-photo');
+  const srvDrinksInput = document.getElementById('srv-drinks');
+  const srvBarInput = document.getElementById('srv-bar');
+  const srvTablewareInput = document.getElementById('srv-tableware');
+  const srvSoundInput = document.getElementById('srv-sound');
+  const srvGazeboInput = document.getElementById('srv-gazebo');
+  const srvScreenInput = document.getElementById('srv-screen');
+  const srvPhotoInput = document.getElementById('srv-photo');
   const srvLivingQtySelect = document.getElementById('srv-living-qty');
   
   const sumBase = document.getElementById('sum-base');
@@ -330,27 +504,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const calcTotal = document.getElementById('calc-total');
   const btnCalcWhatsApp = document.getElementById('btn-calc-whatsapp');
 
-  // Formateador de moneda
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(value);
-  };
-
   function calculateBudget() {
     if (!eventTypeSelect) return;
 
     const selectedOption = eventTypeSelect.options[eventTypeSelect.selectedIndex];
-    const basePricePerPerson = parseFloat(selectedOption.getAttribute('data-base'));
+    
+    // Obtener precio desde la base de datos (activeConfigs)
+    let basePricePerPerson = 0;
+    if (selectedOption.value === 'diente-libre') basePricePerPerson = parseFloat(activeConfigs.menu_diente_libre_price);
+    else if (selectedOption.value === 'pollo-noisette') basePricePerPerson = parseFloat(activeConfigs.menu_pollo_noisette_price);
+    else if (selectedOption.value === 'parrillada') basePricePerPerson = parseFloat(activeConfigs.menu_parrillada_price);
+
     const guestCount = parseInt(guestCountInput.value);
     
-    // Actualizar valor del slider en la burbuja
+    // Actualizar burbuja
     guestCountVal.textContent = guestCount;
     
-    // Validar mínimo de 50 invitados
+    // Mínimos
     if (guestCount < 50) {
       minGuestsWarning.style.display = 'block';
     } else {
@@ -365,33 +535,33 @@ document.addEventListener('DOMContentLoaded', () => {
     let dynamicHtml = '';
     let selectedAddonsList = [];
 
-    // 1. Gaseosas, cervezas y vinos (por persona)
-    if (srvDrinks && srvDrinks.checked) {
-      const cost = parseFloat(srvDrinks.getAttribute('data-cost')) * guestCount;
+    // 1. Bebidas sin alcohol libres, vinos y cervezas
+    if (srvDrinksInput && srvDrinksInput.checked && !srvDrinksInput.disabled) {
+      const cost = parseFloat(activeConfigs.srv_drinks_price) * guestCount;
       additionalTotal += cost;
-      selectedAddonsList.push(`Bebida (Vino/Cerv/Gas) (${guestCount} pers.)`);
+      selectedAddonsList.push(`Bebidas Libres c/ alcohol (${guestCount} pers.)`);
       dynamicHtml += `
         <div class="summary-item">
-          <span>Bebidas Libres (c/ alcohol):</span>
+          <span>Bebidas Libres:</span>
           <strong>${formatCurrency(cost)}</strong>
         </div>`;
     }
 
-    // 2. Barra Móvil Coctelería 4hs (por persona)
-    if (srvBar && srvBar.checked) {
-      const cost = parseFloat(srvBar.getAttribute('data-cost')) * guestCount;
+    // 2. Barra Móvil Coctelería 4hs
+    if (srvBarInput && srvBarInput.checked && !srvBarInput.disabled) {
+      const cost = parseFloat(activeConfigs.srv_bar_price) * guestCount;
       additionalTotal += cost;
-      selectedAddonsList.push(`Barra Móvil 4hs (${guestCount} pers.)`);
+      selectedAddonsList.push(`Barra Móvil Libre 4hs (${guestCount} pers.)`);
       dynamicHtml += `
         <div class="summary-item">
-          <span>Barra Móvil (Tragos):</span>
+          <span>Barra Móvil:</span>
           <strong>${formatCurrency(cost)}</strong>
         </div>`;
     }
 
-    // 3. Vajilla y Mantelería (por persona)
-    if (srvTableware && srvTableware.checked) {
-      const cost = parseFloat(srvTableware.getAttribute('data-cost')) * guestCount;
+    // 3. Vajilla y Mantelería
+    if (srvTablewareInput && srvTablewareInput.checked && !srvTablewareInput.disabled) {
+      const cost = parseFloat(activeConfigs.srv_tableware_price) * guestCount;
       additionalTotal += cost;
       selectedAddonsList.push(`Alquiler Vajilla/Mantelería (${guestCount} pers.)`);
       dynamicHtml += `
@@ -402,8 +572,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 4. Sonido y DJ (Fijo)
-    if (srvSound && srvSound.checked) {
-      const cost = parseFloat(srvSound.getAttribute('data-cost'));
+    if (srvSoundInput && srvSoundInput.checked && !srvSoundInput.disabled) {
+      const cost = parseFloat(activeConfigs.srv_sound_price);
       additionalTotal += cost;
       selectedAddonsList.push(`DJ y Sonido básico`);
       dynamicHtml += `
@@ -414,8 +584,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 5. Gazebo Estructural (Fijo)
-    if (srvGazebo && srvGazebo.checked) {
-      const cost = parseFloat(srvGazebo.getAttribute('data-cost'));
+    if (srvGazeboInput && srvGazeboInput.checked && !srvGazeboInput.disabled) {
+      const cost = parseFloat(activeConfigs.srv_gazebo_price);
       additionalTotal += cost;
       selectedAddonsList.push(`Gazebo Estructural 6x3m`);
       dynamicHtml += `
@@ -426,8 +596,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 6. Pantalla 120" y proyector (Fijo)
-    if (srvScreen && srvScreen.checked) {
-      const cost = parseFloat(srvScreen.getAttribute('data-cost'));
+    if (srvScreenInput && srvScreenInput.checked && !srvScreenInput.disabled) {
+      const cost = parseFloat(activeConfigs.srv_screen_price);
       additionalTotal += cost;
       selectedAddonsList.push(`Pantalla 120" y Proyector`);
       dynamicHtml += `
@@ -438,8 +608,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 7. Fotografía Digital Profesional (Fijo)
-    if (srvPhoto && srvPhoto.checked) {
-      const cost = parseFloat(srvPhoto.getAttribute('data-cost'));
+    if (srvPhotoInput && srvPhotoInput.checked && !srvPhotoInput.disabled) {
+      const cost = parseFloat(activeConfigs.srv_photo_price);
       additionalTotal += cost;
       selectedAddonsList.push(`Fotografía Profesional`);
       dynamicHtml += `
@@ -449,11 +619,11 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>`;
     }
 
-    // 8. Cantidad de Juegos de Living (livingQty * $18000)
-    if (srvLivingQtySelect) {
+    // 8. Cantidad de Juegos de Living (livingQty * srv_living_price)
+    if (srvLivingQtySelect && !srvLivingQtySelect.disabled) {
       const qty = parseInt(srvLivingQtySelect.value);
       if (qty > 0) {
-        const cost = qty * parseFloat(srvLivingQtySelect.getAttribute('data-cost'));
+        const cost = qty * parseFloat(activeConfigs.srv_living_price);
         additionalTotal += cost;
         selectedAddonsList.push(`${qty} Juego(s) de Living`);
         dynamicHtml += `
@@ -464,10 +634,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    dynamicSummaryItems.innerHTML = dynamicHtml;
+    if (dynamicSummaryItems) dynamicSummaryItems.innerHTML = dynamicHtml;
     
     const grandTotal = baseCateringTotal + additionalTotal;
-    calcTotal.textContent = formatCurrency(grandTotal);
+    if (calcTotal) calcTotal.textContent = formatCurrency(grandTotal);
 
     return {
       menuName: selectedMenuName,
@@ -477,21 +647,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // Listeners para la calculadora
+  // Listeners de cambio para la calculadora
   if (eventTypeSelect && guestCountInput) {
     eventTypeSelect.addEventListener('change', calculateBudget);
     guestCountInput.addEventListener('input', calculateBudget);
     
-    if (srvDrinks) srvDrinks.addEventListener('change', calculateBudget);
-    if (srvBar) srvBar.addEventListener('change', calculateBudget);
-    if (srvTableware) srvTableware.addEventListener('change', calculateBudget);
-    if (srvSound) srvSound.addEventListener('change', calculateBudget);
-    if (srvGazebo) srvGazebo.addEventListener('change', calculateBudget);
-    if (srvScreen) srvScreen.addEventListener('change', calculateBudget);
-    if (srvPhoto) srvPhoto.addEventListener('change', calculateBudget);
+    if (srvDrinksInput) srvDrinksInput.addEventListener('change', calculateBudget);
+    if (srvBarInput) srvBarInput.addEventListener('change', calculateBudget);
+    if (srvTablewareInput) srvTablewareInput.addEventListener('change', calculateBudget);
+    if (srvSoundInput) srvSoundInput.addEventListener('change', calculateBudget);
+    if (srvGazeboInput) srvGazeboInput.addEventListener('change', calculateBudget);
+    if (srvScreenInput) srvScreenInput.addEventListener('change', calculateBudget);
+    if (srvPhotoInput) srvPhotoInput.addEventListener('change', calculateBudget);
     if (srvLivingQtySelect) srvLivingQtySelect.addEventListener('change', calculateBudget);
-    
-    calculateBudget();
   }
 
   // Botón enviar cotización a WhatsApp
@@ -510,7 +678,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const warningText = results.guestCount < 50 ? '\n⚠️ *Nota:* La cantidad de invitados es menor al mínimo de 50 requerido para contratos generales.' : '';
 
-      const waMessage = `¡Hola La Juntada! Realicé una cotización estimada de mi evento en su sitio web y me gustaría coordinar la fecha y los detalles.
+      const waMessage = `¡Hola La Juntada! Realicé una cotización estimada de mi evento en su sitio web y me interesa coordinar la fecha y los detalles.
 
 *Detalles del Presupuesto:*
 - *Menú Elegido:* ${results.menuName}
@@ -521,7 +689,7 @@ document.addEventListener('DOMContentLoaded', () => {
 *Condición de Pago de interés:* Contado Efectivo (10% Desc.) / Financiación Propia.
 ¿Me podrían confirmar disponibilidad de agenda? ¡Muchas gracias!`;
 
-      const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`;
+      const waUrl = `https://wa.me/549${activeConfigs.contact_phone1}?text=${encodeURIComponent(waMessage)}`;
       window.open(waUrl, '_blank', 'noopener,noreferrer');
     });
   }
@@ -537,7 +705,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const isExpanded = headerEl.getAttribute('aria-expanded') === 'true';
       const itemBody = headerEl.nextElementSibling;
 
-      // Cerrar los demás acordeones abiertos
       accordionHeaders.forEach(otherHeader => {
         if (otherHeader !== headerEl) {
           otherHeader.setAttribute('aria-expanded', 'false');
@@ -546,7 +713,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      // Alternar estado actual
       headerEl.setAttribute('aria-expanded', !isExpanded);
       headerEl.classList.toggle('active');
 
@@ -567,26 +733,23 @@ document.addEventListener('DOMContentLoaded', () => {
   
   serviceCtaBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const targetEvent = btn.getAttribute('data-event'); // 'casamiento', 'cumpleaños', 'general'
+      const targetEvent = btn.getAttribute('data-event');
       
-      // Pre-seleccionar opciones sugeridas en la calculadora
       if (eventTypeSelect) {
         if (targetEvent === 'casamiento') {
-          eventTypeSelect.value = 'parrillada'; // Parrillada sugerido para bodas
+          eventTypeSelect.value = 'parrillada';
         } else {
-          eventTypeSelect.value = 'diente-libre'; // Diente libre para cumpleaños / generales
+          eventTypeSelect.value = 'diente-libre';
         }
         calculateBudget();
       }
       
-      // Pre-seleccionar tipo en formulario de contacto
       if (contactFormEventSelect) {
         if (targetEvent === 'casamiento') contactFormEventSelect.value = 'Casamiento';
         else if (targetEvent === 'cumpleaños') contactFormEventSelect.value = 'Cumpleaños';
         else if (targetEvent === 'general') contactFormEventSelect.value = 'Empresarial';
       }
 
-      // Scroll suave
       const calcSection = document.getElementById('calculadora');
       if (calcSection) {
         e.preventDefault();
@@ -627,7 +790,7 @@ document.addEventListener('DOMContentLoaded', () => {
 - *Invitados Estimados:* ${guests} personas
 - *Detalles / Mensaje:* ${msg}`;
 
-      const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(contactMessage)}`;
+      const waUrl = `https://wa.me/549${activeConfigs.contact_phone1}?text=${encodeURIComponent(contactMessage)}`;
       
       // Mostrar Modal de Éxito
       const successModal = document.createElement('div');
@@ -650,7 +813,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <i class="fa-solid fa-circle-check"></i>
           </div>
           <h3 style="font-size: 1.6rem; font-weight: 800; color: #1d1715; margin-bottom: 15px;">¡Consulta Recibida!</h3>
-          <p style="color: #483d39; font-size: 0.95rem; line-height: 1.6; margin-bottom: 25px;">Tus datos fueron cargados. Para enviarle el presupuesto formal a Sánchez Leonardo, te redirigiremos a WhatsApp para finalizar la consulta.</p>
+          <p style="color: #483d39; font-size: 0.95rem; line-height: 1.6; margin-bottom: 25px;">Tus datos fueron cargados. Para enviarle el presupuesto formal a Sánchez Leonardo, te redireccionaremos a WhatsApp para finalizar la consulta.</p>
           <button id="modal-redirect-btn" style="background-color: #25d366; color: white; border: none; padding: 14px 28px; border-radius: 50px; font-weight: 700; width: 100%; font-size: 1rem; box-shadow: 0 8px 16px rgba(37,211,102,0.2); cursor: pointer; transition: all 0.3s;">
             <i class="fa-brands fa-whatsapp"></i> Enviar por WhatsApp
           </button>
@@ -666,5 +829,8 @@ document.addEventListener('DOMContentLoaded', () => {
       contactForm.reset();
     });
   }
+
+  // Cargar configuración de Supabase al iniciar
+  loadSupabaseConfigs();
 
 });
