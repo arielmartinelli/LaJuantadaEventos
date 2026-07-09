@@ -1,0 +1,9 @@
+{
+  "name": "lajuntada-eventos",
+  "version": "1.0.0",
+  "description": "Landing page de La Juntada Eventos con panel de administracion autogestionable",
+  "main": "index.html",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.8"
+  }
+}

@@ -490,6 +490,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   /* ==========================================================================
      5. Cotizador de Presupuestos Interactivo
      ========================================================================== */
+  const eventTypeSelect = document.getElementById('event-type');
+  const guestCountInput = document.getElementById('guest-count');
+  const guestCountVal = document.getElementById('guest-count-val');
+  const minGuestsWarning = document.getElementById('min-guests-warning');
+
   const srvDrinksInput = document.getElementById('srv-drinks');
   const srvBarInput = document.getElementById('srv-bar');
   const srvTablewareInput = document.getElementById('srv-tableware');

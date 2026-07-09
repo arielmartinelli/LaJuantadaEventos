@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="style.css">
   
   <style>
-    /* Specific overrides for Admin Portal Styles (to avoid breaking style.css if not loaded) */
+    /* Specific overrides for Admin Portal Styles */
     .admin-wrapper {
       min-height: 100vh;
       display: flex;
@@ -239,6 +239,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      border: none;
+      cursor: pointer;
     }
 
     .admin-btn-save:hover {
@@ -256,6 +258,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      border: none;
+      cursor: pointer;
     }
 
     .admin-btn-export:hover {
@@ -271,6 +275,8 @@
       font-weight: 600;
       font-size: 0.85rem;
       transition: var(--transition);
+      border: none;
+      cursor: pointer;
     }
 
     .admin-btn-logout:hover {
@@ -606,10 +612,9 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
   <script>
-    // Pure client-side admin controller for authentication and DB sync
-    document.addEventListener('DOMContentLoaded', () => {
+    // Serverless-enabled admin controller for authentication and DB sync
+    document.addEventListener('DOMContentLoaded', async () => {
       
       const loginSection = document.getElementById('login-section');
       const dashboardSection = document.getElementById('dashboard-section');
@@ -622,25 +627,47 @@
       const btnLogout = document.getElementById('btn-logout');
       const btnExport = document.getElementById('btn-export-json');
 
+      const ADMIN_EMAIL = 'leo@lajuntada.com.ar';
       let currentSession = null;
-      let dbConfigs = {}; // Holds configuration key-value mapping
-
-      // Initialize Supabase Client
+      let dbConfigs = {};
       let supabaseClient = null;
-      try {
-        if (typeof supabase !== 'undefined' && SUPABASE_URL && SUPABASE_ANON_KEY) {
-          supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // 1. Fetch public credentials and configuration from Vercel Serverless Function
+      async function initializeAdminPortal() {
+        try {
+          const response = await fetch('/api/config');
+          if (!response.ok) {
+            showError("No se pudo conectar a la API /api/config. Verifica que esté configurada en Vercel.");
+            return;
+          }
+
+          const data = await response.json();
+          const { supabaseUrl, supabaseAnonKey, configs } = data;
+
+          if (!supabaseUrl || !supabaseAnonKey) {
+            showError("Faltan variables de entorno SUPABASE_URL o SUPABASE_ANON_KEY en Vercel.");
+            return;
+          }
+
+          // Initialize client-side Supabase client for Authentication
+          supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
+          dbConfigs = configs || {};
+
+          // Fill inputs from DB config values
+          fillFormInputs();
+
+          // Check session
+          await checkSession();
+
+        } catch (err) {
+          showError("Error de conexión al cargar la API Serverless: " + err.message);
+          console.error(err);
         }
-      } catch (err) {
-        console.error("Error al inicializar Supabase:", err);
       }
 
       // Check current login session
       async function checkSession() {
-        if (!supabaseClient) {
-          showError("Supabase no está configurado. Edita el archivo 'supabase-config.js'.");
-          return;
-        }
+        if (!supabaseClient) return;
         
         try {
           const { data, error } = await supabaseClient.auth.getSession();
@@ -663,17 +690,16 @@
       function showDashboard() {
         loginSection.style.display = 'none';
         dashboardSection.style.display = 'block';
-        fetchConfigs();
       }
 
       function showError(msg) {
         errorText.textContent = msg;
-        loginError.classList.add('success'); // Ensure clean display class
+        loginError.style.display = 'flex';
         loginError.classList.remove('success');
         loginError.classList.add('error');
       }
 
-      // 1. Authenticate with Supabase Auth using email mapping
+      // 2. Authenticate with Supabase Auth using email mapping
       if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
           e.preventDefault();
@@ -688,12 +714,11 @@
           }
 
           if (!supabaseClient) {
-            showError("Supabase no está configurado. Configura 'supabase-config.js'.");
+            showError("El cliente Supabase no está inicializado.");
             return;
           }
 
           try {
-            // Authenticate using the mapped email credentials
             const { data, error } = await supabaseClient.auth.signInWithPassword({
               email: ADMIN_EMAIL,
               password: password
@@ -707,44 +732,13 @@
               showDashboard();
             }
           } catch (err) {
-            showError("Error de red o conexión al servidor de Supabase.");
+            showError("Error de red al intentar iniciar sesión.");
             console.error(err);
           }
         });
       }
 
-      // 2. Fetch configurations from DB
-      async function fetchConfigs() {
-        if (!supabaseClient) return;
-
-        try {
-          const { data, error } = await supabaseClient
-            .from('lajuntada_config')
-            .select('key, value');
-
-          if (error) {
-            showSaveAlert("Error al descargar las configuraciones de Supabase.", "error");
-            console.error(error);
-            return;
-          }
-
-          // Map configs array to objects
-          dbConfigs = {};
-          data.forEach(row => {
-            dbConfigs[row.key] = row.value;
-          });
-
-          // Fill inputs dynamically
-          fillFormInputs();
-
-        } catch (err) {
-          showSaveAlert("Fallo en la comunicación con la base de datos.", "error");
-          console.error(err);
-        }
-      }
-
       function fillFormInputs() {
-        // Iterate through form fields starting with id="db-..."
         const inputs = adminConfigForm.querySelectorAll('[id^="db-"]');
         inputs.forEach(input => {
           const configKey = input.id.replace('db-', '');
@@ -760,11 +754,14 @@
         });
       }
 
-      // 3. Save configs to DB
+      // 3. Save configs via POST request to Vercel Serverless Function
       if (adminConfigForm) {
         adminConfigForm.addEventListener('submit', async (e) => {
           e.preventDefault();
-          if (!supabaseClient) return;
+          if (!currentSession) {
+            showSaveAlert("Sesión expirada. Por favor, recarga e inicia sesión nuevamente.", "error");
+            return;
+          }
 
           showSaveAlert("Guardando cambios...", "success");
 
@@ -786,14 +783,19 @@
           });
 
           try {
-            // Perform batch update/insert (upsert) based on unique key constraint
-            const { error } = await supabaseClient
-              .from('lajuntada_config')
-              .upsert(payload, { onConflict: 'key' });
+            const response = await fetch('/api/config', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${currentSession.access_token}`
+              },
+              body: JSON.stringify(payload)
+            });
 
-            if (error) {
-              showSaveAlert("Error al guardar cambios: " + error.message, "error");
-              console.error(error);
+            const resData = await response.json();
+
+            if (!response.ok) {
+              showSaveAlert("Error al guardar: " + (resData.error || response.statusText), "error");
             } else {
               showSaveAlert("¡Configuraciones guardadas y actualizadas en Supabase con éxito!", "success");
               // Update local state copy
@@ -802,7 +804,7 @@
               });
             }
           } catch (err) {
-            showSaveAlert("Error de red al intentar guardar cambios.", "error");
+            showSaveAlert("Error de red al enviar la configuración.", "error");
             console.error(err);
           }
         });
@@ -816,7 +818,6 @@
         const icon = type === 'success' ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-solid fa-triangle-exclamation"></i>';
         saveAlert.innerHTML = `${icon} <span>${msg}</span>`;
 
-        // Hide success banners after 5 seconds
         if (type === 'success') {
           setTimeout(() => {
             saveAlert.style.display = 'none';
@@ -856,8 +857,8 @@
         });
       }
 
-      // Initial session verify
-      checkSession();
+      // Start initialization
+      await initializeAdminPortal();
     });
   </script>
 </body>
