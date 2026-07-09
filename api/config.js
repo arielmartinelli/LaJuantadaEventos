@@ -65,7 +65,7 @@ export default async function handler(req, res) {
       }
 
       // Validar que el usuario sea Leo
-      if (user.email !== 'leo@lajuntada.com.ar') {
+      if (user.email !== 'leo@lajuntada.com.ar' && user.email !== 'lajuntadaeventos@gmail.com') {
         return res.status(403).json({ error: 'Forbidden: Access denied' });
       }
 

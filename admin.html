@@ -760,10 +760,21 @@
           }
 
           try {
-            const { data, error } = await supabaseClient.auth.signInWithPassword({
-              email: ADMIN_EMAIL,
+            // Intentar primero con lajuntadaeventos@gmail.com
+            let authResult = await supabaseClient.auth.signInWithPassword({
+              email: 'lajuntadaeventos@gmail.com',
               password: password
             });
+
+            // Si falla, probar con leo@lajuntada.com.ar
+            if (authResult.error) {
+              authResult = await supabaseClient.auth.signInWithPassword({
+                email: 'leo@lajuntada.com.ar',
+                password: password
+              });
+            }
+
+            const { data, error } = authResult;
 
             if (error) {
               let errMsg = "Contraseña incorrecta para el usuario Leo.";
