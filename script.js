@@ -6,6 +6,66 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
   /* ==========================================================================
+     Navegación y Estados del Header
+     ========================================================================== */
+  const header = document.getElementById('header');
+  const menuToggle = document.getElementById('menu-toggle');
+  const navMenu = document.getElementById('nav-menu');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  // Cambiar fondo de la cabecera al hacer scroll
+  if (header) {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+  }
+
+  // Activar enlace activo de navegación según scroll
+  const sections = document.querySelectorAll('section');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop;
+      if (window.scrollY >= (sectionTop - 120)) {
+        current = section.getAttribute('id');
+      }
+    });
+
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href').slice(1) === current) {
+        link.classList.add('active');
+      }
+    });
+  });
+
+  // Scroll suave al hacer click en enlaces
+  const scrollBtns = document.querySelectorAll('a[href^="#"]');
+  scrollBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const targetId = btn.getAttribute('href');
+      if (targetId === '#') return;
+      const target = document.querySelector(targetId);
+      if (target) {
+        e.preventDefault();
+        window.scrollTo({
+          top: target.offsetTop - 80,
+          behavior: 'smooth'
+        });
+        if (menuToggle && navMenu) {
+          menuToggle.setAttribute('aria-expanded', 'false');
+          menuToggle.classList.remove('active');
+          navMenu.classList.remove('active');
+        }
+      }
+    });
+  });
+
+  /* ==========================================================================
      0. Configuración por Defecto (Fallback) y Conexión con Supabase
      ========================================================================== */
   const DEFAULT_CONFIGS = {
