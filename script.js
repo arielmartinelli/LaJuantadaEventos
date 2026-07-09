@@ -5,6 +5,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // WhatsApp de Contacto Comercial (Córdoba)
+  const WHATSAPP_NUMBER = '5493516069743';
+
   /* ==========================================================================
      1. Navegación y Menú Mobile
      ========================================================================== */
@@ -59,13 +62,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Hacer scroll suave para botones "Contactar"
-  const navContactBtn = document.querySelector('.nav-link-btn');
-  if (navContactBtn) {
-    navContactBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const target = document.querySelector(navContactBtn.getAttribute('href'));
+  // Hacer scroll suave para botones
+  const scrollBtns = document.querySelectorAll('a[href^="#"]');
+  scrollBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const targetId = btn.getAttribute('href');
+      if (targetId === '#') return;
+      const target = document.querySelector(targetId);
       if (target) {
+        e.preventDefault();
         window.scrollTo({
           top: target.offsetTop - 80,
           behavior: 'smooth'
@@ -75,11 +80,35 @@ document.addEventListener('DOMContentLoaded', () => {
         navMenu.classList.remove('active');
       }
     });
-  }
+  });
 
 
   /* ==========================================================================
-     2. Carrusel / Slider de Fotos
+     2. Sección Interactiva de la Carta / Menú de Opciones
+     ========================================================================== */
+  const menuTabBtns = document.querySelectorAll('.menu-tab-btn');
+  const menuTabContents = document.querySelectorAll('.menu-tab-content');
+
+  menuTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Remover activo de botones
+      menuTabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Ocultar contenidos
+      const selectedMenu = btn.getAttribute('data-menu');
+      menuTabContents.forEach(content => {
+        content.classList.remove('active');
+        if (content.getAttribute('id') === `menu-${selectedMenu}`) {
+          content.classList.add('active');
+        }
+      });
+    });
+  });
+
+
+  /* ==========================================================================
+     3. Carrusel / Slider de Fotos (Nuestra Cocina)
      ========================================================================== */
   const slider = document.getElementById('slider');
   const slides = document.querySelectorAll('.slide');
@@ -104,6 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const dots = document.querySelectorAll('.indicator-dot');
 
   function updateSlider() {
+    if (!slider) return;
     slider.style.transform = `translateX(-${currentSlide * 100}%)`;
     dots.forEach((dot, idx) => {
       dot.classList.toggle('active', idx === currentSlide);
@@ -127,7 +157,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function startAutoPlay() {
-    slideInterval = setInterval(nextSlide, 5000); // Cambiar cada 5 segundos
+    if (slides.length > 0) {
+      slideInterval = setInterval(nextSlide, 5000);
+    }
   }
 
   function resetInterval() {
@@ -146,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Soporte para swipe táctil en carrusel
+  // Soporte para swipe táctil
   let startX = 0;
   let endX = 0;
   
@@ -164,10 +196,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleSwipe() {
     const threshold = 50;
     if (startX - endX > threshold) {
-      nextSlide(); // Deslizar izquierda -> siguiente
+      nextSlide();
       resetInterval();
     } else if (endX - startX > threshold) {
-      prevSlide(); // Deslizar derecha -> anterior
+      prevSlide();
       resetInterval();
     }
   }
@@ -176,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   /* ==========================================================================
-     3. Galería de Fotos con Filtros y Lightbox Modal
+     4. Galería de Fotos con Filtros y Lightbox Modal
      ========================================================================== */
   const tabBtns = document.querySelectorAll('.tab-btn');
   const galleryItems = document.querySelectorAll('.gallery-item');
@@ -235,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     lightboxModal.classList.add('active');
     lightboxModal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden'; // Evitar scroll de fondo
+    document.body.style.overflow = 'hidden';
   }
 
   function closeLightbox() {
@@ -266,9 +298,9 @@ document.addEventListener('DOMContentLoaded', () => {
     lightboxPrev.addEventListener('click', prevLightbox);
   }
 
-  // Teclas de dirección para Lightbox
+  // Teclas de dirección
   document.addEventListener('keydown', (e) => {
-    if (!lightboxModal.classList.contains('active')) return;
+    if (!lightboxModal || !lightboxModal.classList.contains('active')) return;
     if (e.key === 'Escape') closeLightbox();
     if (e.key === 'ArrowRight') nextLightbox();
     if (e.key === 'ArrowLeft') prevLightbox();
@@ -276,22 +308,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   /* ==========================================================================
-     4. Cotizador de Presupuestos Interactivo
+     5. Cotizador de Presupuestos Interactivo
      ========================================================================== */
   const eventTypeSelect = document.getElementById('event-type');
   const guestCountInput = document.getElementById('guest-count');
   const guestCountVal = document.getElementById('guest-count-val');
+  const minGuestsWarning = document.getElementById('min-guests-warning');
+  
+  // Opciones de Adicionales
   const srvDrinks = document.getElementById('srv-drinks');
+  const srvBar = document.getElementById('srv-bar');
   const srvTableware = document.getElementById('srv-tableware');
-  const srvDecor = document.getElementById('srv-decor');
   const srvSound = document.getElementById('srv-sound');
+  const srvGazebo = document.getElementById('srv-gazebo');
+  const srvScreen = document.getElementById('srv-screen');
+  const srvPhoto = document.getElementById('srv-photo');
+  const srvLivingQtySelect = document.getElementById('srv-living-qty');
   
   const sumBase = document.getElementById('sum-base');
   const dynamicSummaryItems = document.getElementById('dynamic-summary-items');
   const calcTotal = document.getElementById('calc-total');
-  const btnCalcWhatsapp = document.getElementById('btn-calc-whatsapp');
+  const btnCalcWhatsApp = document.getElementById('btn-calc-whatsapp');
 
-  // Formateador de moneda (Pesos Argentinos / General)
+  // Formateador de moneda
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('es-AR', {
       style: 'currency',
@@ -302,78 +341,139 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   function calculateBudget() {
+    if (!eventTypeSelect) return;
+
     const selectedOption = eventTypeSelect.options[eventTypeSelect.selectedIndex];
     const basePricePerPerson = parseFloat(selectedOption.getAttribute('data-base'));
     const guestCount = parseInt(guestCountInput.value);
     
-    // Actualizar valor numérico del slider
+    // Actualizar valor del slider en la burbuja
     guestCountVal.textContent = guestCount;
     
+    // Validar mínimo de 50 invitados
+    if (guestCount < 50) {
+      minGuestsWarning.style.display = 'block';
+    } else {
+      minGuestsWarning.style.display = 'none';
+    }
+
     const baseCateringTotal = basePricePerPerson * guestCount;
+    const selectedMenuName = selectedOption.text.split(' ($')[0];
     sumBase.textContent = `${formatCurrency(baseCateringTotal)} (${guestCount} invitados)`;
     
     let additionalTotal = 0;
     let dynamicHtml = '';
-    
-    // Adicional 1: Barra Libre
-    if (srvDrinks.checked) {
-      const drinksCost = parseFloat(srvDrinks.getAttribute('data-cost')) * guestCount;
-      additionalTotal += drinksCost;
+    let selectedAddonsList = [];
+
+    // 1. Gaseosas, cervezas y vinos (por persona)
+    if (srvDrinks && srvDrinks.checked) {
+      const cost = parseFloat(srvDrinks.getAttribute('data-cost')) * guestCount;
+      additionalTotal += cost;
+      selectedAddonsList.push(`Bebida (Vino/Cerv/Gas) (${guestCount} pers.)`);
       dynamicHtml += `
         <div class="summary-item">
-          <span>Barra Libre Premium:</span>
-          <strong>${formatCurrency(drinksCost)}</strong>
+          <span>Bebidas Libres (c/ alcohol):</span>
+          <strong>${formatCurrency(cost)}</strong>
         </div>`;
     }
-    
-    // Adicional 2: Vajilla
-    if (srvTableware.checked) {
-      const tablewareCost = parseFloat(srvTableware.getAttribute('data-cost')) * guestCount;
-      additionalTotal += tablewareCost;
+
+    // 2. Barra Móvil Coctelería 4hs (por persona)
+    if (srvBar && srvBar.checked) {
+      const cost = parseFloat(srvBar.getAttribute('data-cost')) * guestCount;
+      additionalTotal += cost;
+      selectedAddonsList.push(`Barra Móvil 4hs (${guestCount} pers.)`);
       dynamicHtml += `
         <div class="summary-item">
-          <span>Alquiler de Vajilla Completa:</span>
-          <strong>${formatCurrency(tablewareCost)}</strong>
+          <span>Barra Móvil (Tragos):</span>
+          <strong>${formatCurrency(cost)}</strong>
         </div>`;
     }
-    
-    // Adicional 3: Decoración (Fijo)
-    if (srvDecor.checked) {
-      const decorCost = parseFloat(srvDecor.getAttribute('data-cost'));
-      additionalTotal += decorCost;
+
+    // 3. Vajilla y Mantelería (por persona)
+    if (srvTableware && srvTableware.checked) {
+      const cost = parseFloat(srvTableware.getAttribute('data-cost')) * guestCount;
+      additionalTotal += cost;
+      selectedAddonsList.push(`Alquiler Vajilla/Mantelería (${guestCount} pers.)`);
       dynamicHtml += `
         <div class="summary-item">
-          <span>Ambientación y Luces (Fijo):</span>
-          <strong>${formatCurrency(decorCost)}</strong>
+          <span>Vajilla y Mantelería:</span>
+          <strong>${formatCurrency(cost)}</strong>
         </div>`;
     }
-    
-    // Adicional 4: Sonido (Fijo)
-    if (srvSound.checked) {
-      const soundCost = parseFloat(srvSound.getAttribute('data-cost'));
-      additionalTotal += soundCost;
+
+    // 4. Sonido y DJ (Fijo)
+    if (srvSound && srvSound.checked) {
+      const cost = parseFloat(srvSound.getAttribute('data-cost'));
+      additionalTotal += cost;
+      selectedAddonsList.push(`DJ y Sonido básico`);
       dynamicHtml += `
         <div class="summary-item">
-          <span>Sonido, DJ e Iluminación (Fijo):</span>
-          <strong>${formatCurrency(soundCost)}</strong>
+          <span>Sonido y DJ (Fijo):</span>
+          <strong>${formatCurrency(cost)}</strong>
         </div>`;
     }
-    
+
+    // 5. Gazebo Estructural (Fijo)
+    if (srvGazebo && srvGazebo.checked) {
+      const cost = parseFloat(srvGazebo.getAttribute('data-cost'));
+      additionalTotal += cost;
+      selectedAddonsList.push(`Gazebo Estructural 6x3m`);
+      dynamicHtml += `
+        <div class="summary-item">
+          <span>Gazebo Estructural (Fijo):</span>
+          <strong>${formatCurrency(cost)}</strong>
+        </div>`;
+    }
+
+    // 6. Pantalla 120" y proyector (Fijo)
+    if (srvScreen && srvScreen.checked) {
+      const cost = parseFloat(srvScreen.getAttribute('data-cost'));
+      additionalTotal += cost;
+      selectedAddonsList.push(`Pantalla 120" y Proyector`);
+      dynamicHtml += `
+        <div class="summary-item">
+          <span>Pantalla y Proyector (Fijo):</span>
+          <strong>${formatCurrency(cost)}</strong>
+        </div>`;
+    }
+
+    // 7. Fotografía Digital Profesional (Fijo)
+    if (srvPhoto && srvPhoto.checked) {
+      const cost = parseFloat(srvPhoto.getAttribute('data-cost'));
+      additionalTotal += cost;
+      selectedAddonsList.push(`Fotografía Profesional`);
+      dynamicHtml += `
+        <div class="summary-item">
+          <span>Fotografía Digital (Fijo):</span>
+          <strong>${formatCurrency(cost)}</strong>
+        </div>`;
+    }
+
+    // 8. Cantidad de Juegos de Living (livingQty * $18000)
+    if (srvLivingQtySelect) {
+      const qty = parseInt(srvLivingQtySelect.value);
+      if (qty > 0) {
+        const cost = qty * parseFloat(srvLivingQtySelect.getAttribute('data-cost'));
+        additionalTotal += cost;
+        selectedAddonsList.push(`${qty} Juego(s) de Living`);
+        dynamicHtml += `
+          <div class="summary-item">
+            <span>${qty} Juegos de Living:</span>
+            <strong>${formatCurrency(cost)}</strong>
+          </div>`;
+      }
+    }
+
     dynamicSummaryItems.innerHTML = dynamicHtml;
     
     const grandTotal = baseCateringTotal + additionalTotal;
     calcTotal.textContent = formatCurrency(grandTotal);
 
     return {
-      eventType: selectedOption.text.split(' ($')[0],
+      menuName: selectedMenuName,
       guestCount,
       grandTotal,
-      addons: {
-        drinks: srvDrinks.checked,
-        tableware: srvTableware.checked,
-        decor: srvDecor.checked,
-        sound: srvSound.checked
-      }
+      addons: selectedAddonsList
     };
   }
 
@@ -381,46 +481,86 @@ document.addEventListener('DOMContentLoaded', () => {
   if (eventTypeSelect && guestCountInput) {
     eventTypeSelect.addEventListener('change', calculateBudget);
     guestCountInput.addEventListener('input', calculateBudget);
-    srvDrinks.addEventListener('change', calculateBudget);
-    srvTableware.addEventListener('change', calculateBudget);
-    srvDecor.addEventListener('change', calculateBudget);
-    srvSound.addEventListener('change', calculateBudget);
     
-    // Cálculo inicial
+    if (srvDrinks) srvDrinks.addEventListener('change', calculateBudget);
+    if (srvBar) srvBar.addEventListener('change', calculateBudget);
+    if (srvTableware) srvTableware.addEventListener('change', calculateBudget);
+    if (srvSound) srvSound.addEventListener('change', calculateBudget);
+    if (srvGazebo) srvGazebo.addEventListener('change', calculateBudget);
+    if (srvScreen) srvScreen.addEventListener('change', calculateBudget);
+    if (srvPhoto) srvPhoto.addEventListener('change', calculateBudget);
+    if (srvLivingQtySelect) srvLivingQtySelect.addEventListener('change', calculateBudget);
+    
     calculateBudget();
   }
 
   // Botón enviar cotización a WhatsApp
-  if (btnCalcWhatsapp) {
-    btnCalcWhatsapp.addEventListener('click', () => {
+  if (btnCalcWhatsApp) {
+    btnCalcWhatsApp.addEventListener('click', () => {
       const results = calculateBudget();
       
-      let addonText = '';
-      if (results.addons.drinks) addonText += '\n- Barra Libre Premium';
-      if (results.addons.tableware) addonText += '\n- Alquiler de Vajilla Completa';
-      if (results.addons.decor) addonText += '\n- Ambientación y Luces';
-      if (results.addons.sound) addonText += '\n- Sonido, DJ e Iluminación';
-      if (!addonText) addonText = ' Ninguno';
+      let addonsText = '';
+      if (results.addons.length > 0) {
+        results.addons.forEach(item => {
+          addonsText += `\n- ${item}`;
+        });
+      } else {
+        addonsText = '\n- Ninguno';
+      }
 
-      const waNumber = '5491123456789'; // Número ficticio de WhatsApp
-      const waMessage = `¡Hola La Juntada! Coticé mi evento en su sitio web y me interesa recibir un presupuesto formal.
+      const warningText = results.guestCount < 50 ? '\n⚠️ *Nota:* La cantidad de invitados es menor al mínimo de 50 requerido para contratos generales.' : '';
 
-*Detalles de mi Evento:*
-- *Tipo:* ${results.eventType}
-- *Cantidad de Invitados:* ${results.guestCount} personas
-- *Servicios Adicionales:* ${addonText}
-- *Total Estimado:* ${formatCurrency(results.grandTotal)}
+      const waMessage = `¡Hola La Juntada! Realicé una cotización estimada de mi evento en su sitio web y me gustaría coordinar la fecha y los detalles.
 
-¿Podrían indicarme disponibilidad y pasos a seguir? ¡Muchas gracias!`;
+*Detalles del Presupuesto:*
+- *Menú Elegido:* ${results.menuName}
+- *Invitados:* ${results.guestCount} personas ${warningText}
+- *Servicios Adicionales Seleccionados:${addonsText}*
+- *Monto Estimado:* ${formatCurrency(results.grandTotal)}
 
-      const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
+*Condición de Pago de interés:* Contado Efectivo (10% Desc.) / Financiación Propia.
+¿Me podrían confirmar disponibilidad de agenda? ¡Muchas gracias!`;
+
+      const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`;
       window.open(waUrl, '_blank', 'noopener,noreferrer');
     });
   }
 
 
   /* ==========================================================================
-     5. Vinculación de tarjetas de servicio con cotizador y contacto
+     6. Condiciones de Contratación (Acordeón FAQs)
+     ========================================================================== */
+  const accordionHeaders = document.querySelectorAll('.accordion-header');
+
+  accordionHeaders.forEach(headerEl => {
+    headerEl.addEventListener('click', () => {
+      const isExpanded = headerEl.getAttribute('aria-expanded') === 'true';
+      const itemBody = headerEl.nextElementSibling;
+
+      // Cerrar los demás acordeones abiertos
+      accordionHeaders.forEach(otherHeader => {
+        if (otherHeader !== headerEl) {
+          otherHeader.setAttribute('aria-expanded', 'false');
+          otherHeader.classList.remove('active');
+          otherHeader.nextElementSibling.style.maxHeight = null;
+        }
+      });
+
+      // Alternar estado actual
+      headerEl.setAttribute('aria-expanded', !isExpanded);
+      headerEl.classList.toggle('active');
+
+      if (!isExpanded) {
+        itemBody.style.maxHeight = itemBody.scrollHeight + "px";
+      } else {
+        itemBody.style.maxHeight = null;
+      }
+    });
+  });
+
+
+  /* ==========================================================================
+     7. Vinculación de botones de tarjeta de servicios al cotizador
      ========================================================================== */
   const serviceCtaBtns = document.querySelectorAll('.service-btn');
   const contactFormEventSelect = document.getElementById('frm-event');
@@ -429,20 +569,24 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', (e) => {
       const targetEvent = btn.getAttribute('data-event'); // 'casamiento', 'cumpleaños', 'general'
       
-      // 1. Pre-seleccionar en la calculadora
+      // Pre-seleccionar opciones sugeridas en la calculadora
       if (eventTypeSelect) {
-        eventTypeSelect.value = targetEvent;
+        if (targetEvent === 'casamiento') {
+          eventTypeSelect.value = 'parrillada'; // Parrillada sugerido para bodas
+        } else {
+          eventTypeSelect.value = 'diente-libre'; // Diente libre para cumpleaños / generales
+        }
         calculateBudget();
       }
       
-      // 2. Pre-seleccionar en el formulario de contacto si es posible
+      // Pre-seleccionar tipo en formulario de contacto
       if (contactFormEventSelect) {
         if (targetEvent === 'casamiento') contactFormEventSelect.value = 'Casamiento';
         else if (targetEvent === 'cumpleaños') contactFormEventSelect.value = 'Cumpleaños';
         else if (targetEvent === 'general') contactFormEventSelect.value = 'Empresarial';
       }
 
-      // 3. Scroll suave directo al cotizador
+      // Scroll suave
       const calcSection = document.getElementById('calculadora');
       if (calcSection) {
         e.preventDefault();
@@ -456,7 +600,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   /* ==========================================================================
-     6. Formulario de Contacto
+     8. Formulario de Contacto
      ========================================================================== */
   const contactForm = document.getElementById('contact-form');
   
@@ -472,22 +616,20 @@ document.addEventListener('DOMContentLoaded', () => {
       const guests = document.getElementById('frm-guests').value;
       const msg = document.getElementById('frm-msg').value;
 
-      // Generar mensaje de confirmación/Redirigir a WhatsApp (opcional pero muy directo)
-      const waNumber = '5491123456789';
-      const contactMessage = `¡Hola La Juntada! Les dejo mis datos de contacto para coordinar un presupuesto para mi evento.
+      const contactMessage = `¡Hola La Juntada! Les dejo mis datos cargados desde el formulario web de consultas comerciales.
 
-*Mis Datos:*
-- *Nombre:* ${name}
+*Datos del Solicitante:*
+- *Nombre y Apellido:* ${name}
 - *Teléfono:* ${phone}
 - *Email:* ${email}
-- *Evento:* ${eventType}
-- *Fecha:* ${date}
-- *Invitados:* ${guests} personas
-- *Mensaje:* ${msg}`;
+- *Tipo de Evento:* ${eventType}
+- *Fecha Tentativa:* ${date}
+- *Invitados Estimados:* ${guests} personas
+- *Detalles / Mensaje:* ${msg}`;
 
-      const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(contactMessage)}`;
+      const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(contactMessage)}`;
       
-      // Alert premium antes de redirigir
+      // Mostrar Modal de Éxito
       const successModal = document.createElement('div');
       successModal.style.position = 'fixed';
       successModal.style.top = '0';
@@ -507,10 +649,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="width: 70px; height: 70px; background-color: #fdf1ed; color: #e05326; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 2rem;">
             <i class="fa-solid fa-circle-check"></i>
           </div>
-          <h3 style="font-size: 1.6rem; font-weight: 800; color: #1d1715; margin-bottom: 15px;">¡Mensaje Recibido!</h3>
-          <p style="color: #483d39; font-size: 0.95rem; line-height: 1.6; margin-bottom: 25px;">Tu consulta ha sido procesada. Para agilizar el presupuesto, te redireccionaremos a WhatsApp para chatear directamente con nosotros.</p>
+          <h3 style="font-size: 1.6rem; font-weight: 800; color: #1d1715; margin-bottom: 15px;">¡Consulta Recibida!</h3>
+          <p style="color: #483d39; font-size: 0.95rem; line-height: 1.6; margin-bottom: 25px;">Tus datos fueron cargados. Para enviarle el presupuesto formal a Sánchez Leonardo, te redirigiremos a WhatsApp para finalizar la consulta.</p>
           <button id="modal-redirect-btn" style="background-color: #25d366; color: white; border: none; padding: 14px 28px; border-radius: 50px; font-weight: 700; width: 100%; font-size: 1rem; box-shadow: 0 8px 16px rgba(37,211,102,0.2); cursor: pointer; transition: all 0.3s;">
-            <i class="fa-brands fa-whatsapp"></i> Abrir Chat de WhatsApp
+            <i class="fa-brands fa-whatsapp"></i> Enviar por WhatsApp
           </button>
         </div>`;
 
@@ -521,7 +663,6 @@ document.addEventListener('DOMContentLoaded', () => {
         successModal.remove();
       });
 
-      // Resetear el formulario
       contactForm.reset();
     });
   }
