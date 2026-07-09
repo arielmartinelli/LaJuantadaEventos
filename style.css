@@ -2047,6 +2047,22 @@ button {
   border: 1px solid #f5c6cb;
 }
 
+/* --- Admin Navigation Link Styling --- */
+.admin-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary-orange) !important;
+}
+
+.admin-nav-link i {
+  font-size: 1.1rem;
+}
+
+.admin-text-mobile {
+  display: none;
+}
+
 /* --- Responsive Media Queries --- */
 @media (max-width: 1024px) {
   .hero-title {
@@ -2087,6 +2103,10 @@ button {
 }
 
 @media (max-width: 768px) {
+  .admin-text-mobile {
+    display: inline;
+  }
+
   .main-header {
     background-color: var(--bg-light);
     border-bottom: 1px solid var(--border-light);
