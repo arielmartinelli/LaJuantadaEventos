@@ -192,23 +192,16 @@
       background: var(--bg-white, #ffffff);
       border: 1px solid var(--border-light, #ebdcd5);
       border-radius: var(--radius-md, 16px);
-      padding: 20px;
+      padding: 15px;
       display: flex;
-      gap: 20px;
-      align-items: center;
+      flex-direction: column;
+      gap: 15px;
       position: relative;
-    }
-    
-    @media (max-width: 768px) {
-      .slide-edit-card {
-        flex-direction: column;
-        align-items: stretch;
-      }
     }
 
     .slide-preview-img {
-      width: 150px;
-      height: 100px;
+      width: 100%;
+      height: 150px;
       object-fit: cover;
       border-radius: 8px;
       border: 1px solid var(--border-light, #ebdcd5);
@@ -216,7 +209,19 @@
     }
 
     .slide-edit-inputs {
-      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Service card edit styles */
+    .service-card-edit {
+      background: var(--bg-white, #ffffff);
+      border: 1px solid var(--border-light, #ebdcd5);
+      border-radius: var(--radius-md, 16px);
+      padding: 15px;
+      position: relative;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -551,22 +556,8 @@
               Crea, edita o elimina los servicios adicionales de la calculadora y la sección de alquileres.
             </p>
             
-            <div style="overflow-x: auto; margin-bottom: 15px;">
-              <table class="admin-table" id="services-table" style="width: 100%; border-collapse: collapse; text-align: left;">
-                <thead>
-                  <tr style="border-bottom: 2px solid var(--border-light, #ebdcd5);">
-                    <th style="padding: 10px 8px;">Clave (ID único)</th>
-                    <th style="padding: 10px 8px;">Nombre del Servicio</th>
-                    <th style="padding: 10px 8px;">Precio ($)</th>
-                    <th style="padding: 10px 8px;">Cobro</th>
-                    <th style="padding: 10px 8px;">Disponible</th>
-                    <th style="padding: 10px 8px; text-align: center;">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody id="services-tbody">
-                  <!-- Carga dinámica -->
-                </tbody>
-              </table>
+            <div id="services-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin-bottom: 15px;">
+              <!-- Carga dinámica -->
             </div>
             <button type="button" class="admin-btn-export" id="btn-add-service" style="background-color: var(--primary-orange); padding: 8px 16px; font-size: 0.85rem;">
               <i class="fa-solid fa-plus"></i> Agregar Nuevo Servicio
@@ -890,18 +881,18 @@
       // RENDER SERVICIOS ADICIONALES
       // ==========================================================================
       function renderServicesTable(services) {
-        const tbody = document.getElementById('services-tbody');
-        if (!tbody) return;
-        tbody.innerHTML = '';
+        const grid = document.getElementById('services-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
         
         services.forEach(srv => {
-          tbody.appendChild(createServiceRow(srv));
+          grid.appendChild(createServiceCard(srv));
         });
       }
 
-      function createServiceRow(srv) {
-        const tr = document.createElement('tr');
-        tr.className = 'service-row';
+      function createServiceCard(srv) {
+        const div = document.createElement('div');
+        div.className = 'service-card-edit';
         
         const isPerPersonChecked = srv.is_per_person ? 'selected' : '';
         const isFixedChecked = !srv.is_per_person ? 'selected' : '';
@@ -910,41 +901,48 @@
         
         const isKeyReadOnly = srv.key.startsWith('srv_') ? 'readonly' : '';
         
-        tr.innerHTML = `
-          <td>
+        div.innerHTML = `
+          <div class="admin-form-group" style="margin-bottom: 0;">
+            <label style="font-size: 0.75rem;">Identificador (Clave única)</label>
             <input type="text" class="srv-input-key" value="${srv.key}" ${isKeyReadOnly} required placeholder="ej. srv_luces">
-          </td>
-          <td>
+          </div>
+          <div class="admin-form-group" style="margin-bottom: 0;">
+            <label style="font-size: 0.75rem;">Nombre del Servicio</label>
             <input type="text" class="srv-input-name" value="${srv.name}" required placeholder="Nombre del servicio">
-          </td>
-          <td>
-            <input type="number" class="srv-input-price" value="${srv.price}" required min="0">
-          </td>
-          <td>
-            <select class="srv-input-type" ${isSrvLiving ? 'disabled' : ''}>
-              <option value="per_person" ${isPerPersonChecked}>Por persona</option>
-              <option value="fixed" ${isFixedChecked}>Fijo</option>
-            </select>
-          </td>
-          <td>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="admin-form-group" style="margin-bottom: 0;">
+              <label style="font-size: 0.75rem;">Precio ($)</label>
+              <input type="number" class="srv-input-price" value="${srv.price}" required min="0">
+            </div>
+            <div class="admin-form-group" style="margin-bottom: 0;">
+              <label style="font-size: 0.75rem;">Cobro</label>
+              <select class="srv-input-type" ${isSrvLiving ? 'disabled' : ''}>
+                <option value="per_person" ${isPerPersonChecked}>Por persona</option>
+                <option value="fixed" ${isFixedChecked}>Fijo</option>
+              </select>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--charcoal-light);">Disponible</span>
             <label class="admin-switch">
               <input type="checkbox" class="srv-input-available" ${isAvailableChecked}>
               <span class="slider-switch"></span>
             </label>
-          </td>
-          <td style="text-align: center;">
-            <button type="button" class="btn-delete-row" ${isSrvLiving ? 'disabled' : ''} onclick="this.closest('tr').remove()"><i class="fa-solid fa-trash"></i></button>
-          </td>
+          </div>
+          <button type="button" class="btn-delete-row" ${isSrvLiving ? 'disabled' : ''} style="position: absolute; top: 10px; right: 10px; padding: 4px 8px; font-size: 0.8rem;" onclick="this.closest('.service-card-edit').remove()">
+            <i class="fa-solid fa-trash"></i>
+          </button>
         `;
         
-        return tr;
+        return div;
       }
 
       if (btnAddService) {
         btnAddService.addEventListener('click', () => {
-          const tbody = document.getElementById('services-tbody');
-          if (tbody) {
-            tbody.appendChild(createServiceRow({
+          const grid = document.getElementById('services-grid');
+          if (grid) {
+            grid.appendChild(createServiceCard({
               key: 'srv_nuevo_' + Math.random().toString(36).substring(2, 7),
               name: '',
               price: 0,
@@ -1142,7 +1140,7 @@
 
           // 2. Recopilar servicios
           const servicesPayload = [];
-          const serviceRows = document.querySelectorAll('.service-row');
+          const serviceRows = document.querySelectorAll('.service-card-edit');
           serviceRows.forEach(row => {
             const key = row.querySelector('.srv-input-key').value.trim();
             const name = row.querySelector('.srv-input-name').value.trim();
