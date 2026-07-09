@@ -601,7 +601,7 @@
             <i class="fa-solid fa-file-arrow-down"></i> Exportar Config. (JSON)
           </button>
           <button type="submit" class="admin-btn-save" id="btn-save-configs">
-            <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios en Supabase
+            <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
           </button>
         </div>
 
@@ -613,7 +613,7 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Serverless-enabled admin controller for authentication and DB sync
+    // Serverless-enabled admin controller with dual auth support (Supabase and Local Mode fallback)
     document.addEventListener('DOMContentLoaded', async () => {
       
       const loginSection = document.getElementById('login-section');
@@ -631,13 +631,14 @@
       let currentSession = null;
       let dbConfigs = {};
       let supabaseClient = null;
+      let isLocalMode = false;
 
       // 1. Fetch public credentials and configuration from Vercel Serverless Function
       async function initializeAdminPortal() {
         try {
           const response = await fetch('/api/config');
           if (!response.ok) {
-            showError("No se pudo conectar a la API /api/config. Verifica que esté configurada en Vercel.");
+            enableLocalMode("API Vercel no disponible. Entrando en Modo Local.");
             return;
           }
 
@@ -645,7 +646,7 @@
           const { supabaseUrl, supabaseAnonKey, configs } = data;
 
           if (!supabaseUrl || !supabaseAnonKey) {
-            showError("Faltan variables de entorno SUPABASE_URL o SUPABASE_ANON_KEY en Vercel.");
+            enableLocalMode("Variables Supabase faltantes en Vercel. Entrando en Modo Local.");
             return;
           }
 
@@ -660,8 +661,36 @@
           await checkSession();
 
         } catch (err) {
-          showError("Error de conexión al cargar la API Serverless: " + err.message);
-          console.error(err);
+          enableLocalMode("Fallo al conectar con la API serverless. Entrando en Modo Local.");
+          console.warn("Fallo en la inicialización, activando Modo Local:", err);
+        }
+      }
+
+      function enableLocalMode(reason) {
+        isLocalMode = true;
+        console.log(reason + " Las configuraciones se guardarán localmente en este navegador.");
+        
+        // Load configurations from localStorage
+        const localData = localStorage.getItem('lajuntada_config');
+        if (localData) {
+          try {
+            dbConfigs = JSON.parse(localData);
+          } catch(e) {
+            dbConfigs = {};
+          }
+        } else {
+          dbConfigs = {};
+        }
+
+        fillFormInputs();
+        
+        // In local mode, check if we already have a mock local session
+        const localSession = sessionStorage.getItem('lajuntada_logged_in');
+        if (localSession === 'true') {
+          showDashboard();
+          showSaveAlert("Modo Local Activo: Los cambios se guardarán en este navegador.", "success");
+        } else {
+          showLogin();
         }
       }
 
@@ -699,7 +728,7 @@
         loginError.classList.add('error');
       }
 
-      // 2. Authenticate with Supabase Auth using email mapping
+      // 2. Authenticate with Supabase Auth or Local credentials
       if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
           e.preventDefault();
@@ -710,6 +739,18 @@
 
           if (username.toLowerCase() !== 'leo') {
             showError("Usuario incorrecto. El usuario administrador es 'Leo'.");
+            return;
+          }
+
+          // FALLBACK LOCAL: Si no pudimos conectar con Supabase, validamos localmente
+          if (isLocalMode) {
+            if (password === 'leo123') {
+              sessionStorage.setItem('lajuntada_logged_in', 'true');
+              showDashboard();
+              showSaveAlert("Modo Local Activo: Los cambios se guardarán en este navegador.", "success");
+            } else {
+              showError("Contraseña incorrecta para el usuario Leo.");
+            }
             return;
           }
 
@@ -725,7 +766,12 @@
             });
 
             if (error) {
-              showError("Contraseña incorrecta para el usuario Leo.");
+              let errMsg = "Contraseña incorrecta para el usuario Leo.";
+              // Validar si es por falta de confirmación de email
+              if (error.message.includes("Email not confirmed")) {
+                errMsg = "Acceso bloqueado: Confirmación de Email pendiente en Supabase. Por favor, desactiva 'Confirm Email' en Supabase Auth o confirma el usuario en el panel.";
+              }
+              showError(errMsg);
               console.error(error);
             } else {
               currentSession = data.session;
@@ -754,11 +800,12 @@
         });
       }
 
-      // 3. Save configs via POST request to Vercel Serverless Function
+      // 3. Save configs via POST request or localStorage fallback
       if (adminConfigForm) {
         adminConfigForm.addEventListener('submit', async (e) => {
           e.preventDefault();
-          if (!currentSession) {
+
+          if (!isLocalMode && !currentSession) {
             showSaveAlert("Sesión expirada. Por favor, recarga e inicia sesión nuevamente.", "error");
             return;
           }
@@ -782,6 +829,18 @@
             });
           });
 
+          // GUARDADO LOCAL FALLBACK
+          if (isLocalMode) {
+            const configObj = {};
+            payload.forEach(item => {
+              configObj[item.key] = item.value;
+            });
+            localStorage.setItem('lajuntada_config', JSON.stringify(configObj));
+            showSaveAlert("¡Configuraciones guardadas localmente en este navegador con éxito!", "success");
+            return;
+          }
+
+          // GUARDADO EN SUPABASE VIA VERCEL PROXY
           try {
             const response = await fetch('/api/config', {
               method: 'POST',
@@ -797,7 +856,7 @@
             if (!response.ok) {
               showSaveAlert("Error al guardar: " + (resData.error || response.statusText), "error");
             } else {
-              showSaveAlert("¡Configuraciones guardadas y actualizadas en Supabase con éxito!", "success");
+              showSaveAlert("¡Configuraciones guardadas y actualizadas en la base de datos de Supabase con éxito!", "success");
               // Update local state copy
               payload.forEach(item => {
                 dbConfigs[item.key] = item.value;
@@ -828,7 +887,9 @@
       // 4. Log out handler
       if (btnLogout) {
         btnLogout.addEventListener('click', async () => {
-          if (supabaseClient) {
+          if (isLocalMode) {
+            sessionStorage.removeItem('lajuntada_logged_in');
+          } else if (supabaseClient) {
             await supabaseClient.auth.signOut();
           }
           currentSession = null;

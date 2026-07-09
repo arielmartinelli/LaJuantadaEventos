@@ -106,43 +106,42 @@ document.addEventListener('DOMContentLoaded', async () => {
     }).format(value);
   };
 
-  // Intentar cargar la configuración en tiempo real desde Supabase
+  // Intentar cargar la configuración en tiempo real desde la API de Vercel/Supabase
   async function loadSupabaseConfigs() {
-    // Verificar si las credenciales y el SDK de Supabase están cargados
-    const isSupabaseConfigured = typeof supabase !== 'undefined' 
-      && typeof SUPABASE_URL !== 'undefined' 
-      && typeof SUPABASE_ANON_KEY !== 'undefined'
-      && SUPABASE_URL !== 'https://tu-proyecto.supabase.co';
-
-    if (!isSupabaseConfigured) {
-      console.log("Supabase no configurado o cargado. Usando configuración local por defecto.");
-      applyDOMConfigurations();
-      return;
-    }
-
     try {
-      const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      const { data, error } = await supabaseClient
-        .from('lajuntada_config')
-        .select('key, value');
-
-      if (error) {
-        console.error("Error al descargar de Supabase:", error);
-        applyDOMConfigurations();
+      const response = await fetch('/api/config');
+      if (!response.ok) {
+        console.warn("API /api/config no disponible. Cargando fallback local.");
+        loadLocalFallback();
         return;
       }
-
-      if (data && data.length > 0) {
-        data.forEach(item => {
-          activeConfigs[item.key] = item.value;
-        });
-        console.log("Configuraciones descargadas y sincronizadas desde Supabase con éxito.");
+      
+      const data = await response.json();
+      if (data.configs) {
+        activeConfigs = { ...DEFAULT_CONFIGS, ...data.configs };
+        console.log("Configuraciones cargadas desde la API de Vercel/Supabase con éxito.");
       }
     } catch (err) {
-      console.error("Fallo de red al conectar con Supabase:", err);
+      console.warn("Fallo de red al conectar con /api/config. Cargando fallback local:", err);
+      loadLocalFallback();
     }
 
     applyDOMConfigurations();
+  }
+
+  function loadLocalFallback() {
+    const localData = localStorage.getItem('lajuntada_config');
+    if (localData) {
+      try {
+        const parsed = JSON.parse(localData);
+        activeConfigs = { ...DEFAULT_CONFIGS, ...parsed };
+        console.log("Sincronizado con configuraciones guardadas localmente (localStorage).");
+      } catch (e) {
+        activeConfigs = { ...DEFAULT_CONFIGS };
+      }
+    } else {
+      activeConfigs = { ...DEFAULT_CONFIGS };
+    }
   }
 
   // Actualizar todos los elementos del DOM basados en activeConfigs
