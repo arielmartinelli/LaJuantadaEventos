@@ -78,7 +78,17 @@ export default async function handler(req, res) {
     const token = authHeader.replace('Bearer ', '');
     
     try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+      // Inicializar el cliente Supabase pasando el token del usuario en las cabeceras globales
+      // para que PostgreSQL herede el rol 'authenticated' y cumpla con las políticas RLS.
+      const authenticatedSupabase = createClient(supabaseUrl, supabaseAnonKey, {
+        global: {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      });
+
+      const { data: { user }, error: authError } = await authenticatedSupabase.auth.getUser();
       
       if (authError || !user) {
         return res.status(401).json({ error: 'Unauthorized: Invalid token' });
@@ -92,7 +102,7 @@ export default async function handler(req, res) {
 
       // 1. Guardar configs
       if (configs && Array.isArray(configs)) {
-        const { error: err } = await supabase
+        const { error: err } = await authenticatedSupabase
           .from('lajuntada_config')
           .upsert(configs, { onConflict: 'key' });
         if (err) throw err;
@@ -100,14 +110,14 @@ export default async function handler(req, res) {
 
       // 2. Guardar servicios y eliminar los eliminados
       if (services && Array.isArray(services)) {
-        const { error: err } = await supabase
+        const { error: err } = await authenticatedSupabase
           .from('lajuntada_services')
           .upsert(services, { onConflict: 'key' });
         if (err) throw err;
 
         const activeKeys = services.map(s => s.key);
         if (activeKeys.length > 0) {
-          const { error: delErr } = await supabase
+          const { error: delErr } = await authenticatedSupabase
             .from('lajuntada_services')
             .delete()
             .not('key', 'in', `(${activeKeys.join(',')})`);
@@ -117,20 +127,20 @@ export default async function handler(req, res) {
 
       // 3. Guardar carrusel y eliminar los eliminados
       if (carousel && Array.isArray(carousel)) {
-        const { error: err } = await supabase
+        const { error: err } = await authenticatedSupabase
           .from('lajuntada_carousel')
           .upsert(carousel);
         if (err) throw err;
 
         const activeIds = carousel.filter(c => c.id).map(c => c.id);
         if (activeIds.length > 0) {
-          const { error: delErr } = await supabase
+          const { error: delErr } = await authenticatedSupabase
             .from('lajuntada_carousel')
             .delete()
             .not('id', 'in', `(${activeIds.join(',')})`);
           if (delErr) throw delErr;
         } else {
-          const { error: delErr } = await supabase
+          const { error: delErr } = await authenticatedSupabase
             .from('lajuntada_carousel')
             .delete()
             .neq('image_url', '');
@@ -140,20 +150,20 @@ export default async function handler(req, res) {
 
       // 4. Guardar galeria y eliminar los eliminados
       if (gallery && Array.isArray(gallery)) {
-        const { error: err } = await supabase
+        const { error: err } = await authenticatedSupabase
           .from('lajuntada_gallery')
           .upsert(gallery);
         if (err) throw err;
 
         const activeIds = gallery.filter(g => g.id).map(g => g.id);
         if (activeIds.length > 0) {
-          const { error: delErr } = await supabase
+          const { error: delErr } = await authenticatedSupabase
             .from('lajuntada_gallery')
             .delete()
             .not('id', 'in', `(${activeIds.join(',')})`);
           if (delErr) throw delErr;
         } else {
-          const { error: delErr } = await supabase
+          const { error: delErr } = await authenticatedSupabase
             .from('lajuntada_gallery')
             .delete()
             .neq('image_url', '');
