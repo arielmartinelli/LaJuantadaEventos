@@ -760,13 +760,21 @@ document.addEventListener('DOMContentLoaded', () => {
         accordionItems.forEach(otherItem => {
           otherItem.classList.remove('active');
           const otherBtn = otherItem.querySelector('.accordion-header');
-          if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+          if (otherBtn) {
+            otherBtn.classList.remove('active');
+            otherBtn.setAttribute('aria-expanded', 'false');
+          }
         });
 
-        // Abrir el actual si no estaba activo
+        // Abrir/Cerrar el actual
         if (!isActive) {
           item.classList.add('active');
+          headerBtn.classList.add('active');
           headerBtn.setAttribute('aria-expanded', 'true');
+        } else {
+          item.classList.remove('active');
+          headerBtn.classList.remove('active');
+          headerBtn.setAttribute('aria-expanded', 'false');
         }
       });
     }
@@ -828,9 +836,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  /* ==========================================================================
+     8. Pestañas de Menú Gastronómico (Menu Tabs)
+     ========================================================================== */
+  function initializeMenuTabs() {
+    const menuTabs = document.querySelectorAll('.menu-tab-btn');
+    const menuContents = document.querySelectorAll('.menu-tab-content');
+    
+    if (menuTabs.length === 0) return;
+    
+    menuTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetMenu = tab.getAttribute('data-menu');
+        
+        // Desactivar todas las pestañas y contenidos
+        menuTabs.forEach(t => t.classList.remove('active'));
+        menuContents.forEach(c => c.classList.remove('active'));
+        
+        // Activar la pestaña cliqueada y su respectivo contenido
+        tab.classList.add('active');
+        const targetEl = document.getElementById(`menu-${targetMenu}`);
+        if (targetEl) {
+          targetEl.classList.add('active');
+        }
+      });
+    });
+  }
+
   // Cargar datos al iniciar y registrar animaciones
   loadDataAndRender().then(() => {
-    // Inicializar reveal después de que los datos dinámicos iniciales se rendericen
+    // Inicializar reveal y componentes después del renderizado dinámico
     initScrollReveal();
+    initializeMenuTabs();
   });
 });
