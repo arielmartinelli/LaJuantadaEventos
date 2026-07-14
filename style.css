@@ -2531,7 +2531,7 @@ button {
    Animaciones de Entrada (Scroll Reveal) & Micro-interacciones Hover
    ========================================================================== */
 
-/* Animación de entrada por scroll */
+/* Animación de entrada por scroll - Deslizar hacia Arriba */
 .reveal {
   opacity: 0;
   transform: translateY(35px);
@@ -2539,43 +2539,77 @@ button {
               transform 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000);
   will-change: opacity, transform;
 }
-
 .reveal.active {
   opacity: 1;
   transform: translateY(0);
 }
 
+/* Animación de entrada por scroll - Deslizar desde la Izquierda */
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-45px);
+  transition: opacity 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000), 
+              transform 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000);
+  will-change: opacity, transform;
+}
+.reveal-left.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Animación de entrada por scroll - Deslizar desde la Derecha */
+.reveal-right {
+  opacity: 0;
+  transform: translateX(45px);
+  transition: opacity 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000), 
+              transform 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000);
+  will-change: opacity, transform;
+}
+.reveal-right.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Animación de entrada por scroll - Zoom Suave */
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.93);
+  transition: opacity 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000), 
+              transform 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000);
+  will-change: opacity, transform;
+}
+.reveal-scale.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
 /* Retrasos escalonados para grillas */
 .delay-1 { transition-delay: 0.1s; }
-.delay-2 { transition-delay: 0.2s; }
-.delay-3 { transition-delay: 0.3s; }
-.delay-4 { transition-delay: 0.4s; }
+.delay-2 { transition-delay: 0.25s; }
+.delay-3 { transition-delay: 0.4s; }
+.delay-4 { transition-delay: 0.55s; }
 
 /* Efecto de Zoom en Fotos de Galería al pasar el mouse */
 .gallery-card {
   overflow: hidden;
 }
-
 .gallery-card img {
   transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
-
 .gallery-card:hover img {
   transform: scale(1.08);
 }
 
 /* Efectos de Hover mejorados para botones principales */
-.btn-primary, .btn-secondary, .service-btn, .calc-btn-whatsapp {
+.btn-primary, .btn-secondary, .service-btn, .calc-btn-whatsapp, .admin-back-link {
   transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
   position: relative;
   overflow: hidden;
 }
-
 .btn-primary:hover, .btn-secondary:hover, .service-btn:hover, .calc-btn-whatsapp:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(224, 83, 38, 0.25);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(224, 83, 38, 0.28);
 }
-
 .btn-primary:active, .btn-secondary:active, .service-btn:active, .calc-btn-whatsapp:active {
   transform: translateY(0);
   box-shadow: 0 4px 10px rgba(224, 83, 38, 0.15);
@@ -2586,7 +2620,6 @@ button {
   position: relative;
   transition: color 0.3s ease;
 }
-
 .nav-link::after {
   content: '';
   position: absolute;
@@ -2597,11 +2630,9 @@ button {
   background-color: var(--primary-orange);
   transition: width 0.3s ease;
 }
-
 .nav-link:hover {
   color: var(--primary-orange) !important;
 }
-
 .nav-link:hover::after {
   width: 100%;
 }
@@ -2610,14 +2641,98 @@ button {
 .menu-tab-btn {
   transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
-
 .menu-tab-btn:hover {
   background-color: var(--primary-alpha);
   color: var(--primary-orange);
   transform: translateY(-1px);
 }
-
 .menu-tab-btn.active {
+  transform: translateY(-2px);
+}
+
+/* Animación de Entrada del Hero al cargar la página */
+.hero-content h1 {
+  opacity: 0;
+  transform: translateY(25px);
+  animation: heroSlideUpFade 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+  animation-delay: 0.15s;
+}
+.hero-content p {
+  opacity: 0;
+  transform: translateY(25px);
+  animation: heroSlideUpFade 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+  animation-delay: 0.35s;
+}
+.hero-actions {
+  opacity: 0;
+  transform: translateY(25px);
+  animation: heroSlideUpFade 0.8s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+  animation-delay: 0.55s;
+}
+@keyframes heroSlideUpFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Efecto de Spotlight (brillo de cursor) en tarjetas */
+.service-card, .menu-item-card, .rental-card-pricing, .calculator-card {
+  position: relative;
+  overflow: hidden;
+}
+.service-card::before, .menu-item-card::before, .rental-card-pricing::before, .calculator-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(300px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(224, 83, 38, 0.08), transparent 70%);
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.service-card:hover::before, .menu-item-card:hover::before, .rental-card-pricing:hover::before, .calculator-card:hover::before {
+  opacity: 1;
+}
+
+/* Floating Back-to-Top Button */
+.back-to-top {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background-color: var(--primary-orange);
+  color: white;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(224, 83, 38, 0.4);
+  cursor: pointer;
+  z-index: 99;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(15px);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.back-to-top.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.back-to-top:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(224, 83, 38, 0.5);
+}
+.back-to-top i {
+  transition: transform 0.3s ease;
+}
+.back-to-top:hover i {
   transform: translateY(-2px);
 }
 

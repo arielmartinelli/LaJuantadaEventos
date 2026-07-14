@@ -774,10 +774,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   /* ==========================================================================
-     7. Animaciones de Scroll (Scroll Reveal)
+     7. Animaciones de Scroll (Scroll Reveal) & Spotlight Cursor Effect
      ========================================================================== */
   function initScrollReveal() {
-    const revealElements = document.querySelectorAll('.reveal');
+    const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
     
     if ('IntersectionObserver' in window) {
       const observer = new IntersectionObserver((entries) => {
@@ -795,6 +795,36 @@ document.addEventListener('DOMContentLoaded', () => {
       revealElements.forEach(el => observer.observe(el));
     } else {
       revealElements.forEach(el => el.classList.add('active'));
+    }
+
+    // Efecto de brillo de cursor (spotlight) en tarjetas
+    const spotlightCards = document.querySelectorAll('.service-card, .menu-item-card, .rental-card-pricing, .calculator-card');
+    spotlightCards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+    });
+
+    // Botón Volver al Inicio (Back-to-Top)
+    const btnBackToTop = document.getElementById('btn-back-to-top');
+    if (btnBackToTop) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 400) {
+          btnBackToTop.classList.add('show');
+        } else {
+          btnBackToTop.classList.remove('show');
+        }
+      });
+      btnBackToTop.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
     }
   }
 
