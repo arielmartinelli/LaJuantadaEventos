@@ -749,24 +749,24 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ==========================================================================
      6. Acordeón de Preguntas Frecuentes (FAQ)
      ========================================================================== */
-  const faqItems = document.querySelectorAll('.faq-item');
-  faqItems.forEach(item => {
-    const questionBtn = item.querySelector('.faq-question');
-    if (questionBtn) {
-      questionBtn.addEventListener('click', () => {
+  const accordionItems = document.querySelectorAll('.accordion-item');
+  accordionItems.forEach(item => {
+    const headerBtn = item.querySelector('.accordion-header');
+    if (headerBtn) {
+      headerBtn.addEventListener('click', () => {
         const isActive = item.classList.contains('active');
         
         // Cerrar todos los demás
-        faqItems.forEach(otherItem => {
+        accordionItems.forEach(otherItem => {
           otherItem.classList.remove('active');
-          const otherBtn = otherItem.querySelector('.faq-question');
+          const otherBtn = otherItem.querySelector('.accordion-header');
           if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
         });
 
         // Abrir el actual si no estaba activo
         if (!isActive) {
           item.classList.add('active');
-          questionBtn.setAttribute('aria-expanded', 'true');
+          headerBtn.setAttribute('aria-expanded', 'true');
         }
       });
     }
