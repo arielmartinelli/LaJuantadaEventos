@@ -773,6 +773,34 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
-  // Cargar datos al iniciar
-  loadDataAndRender();
+  /* ==========================================================================
+     7. Animaciones de Scroll (Scroll Reveal)
+     ========================================================================== */
+  function initScrollReveal() {
+    const revealElements = document.querySelectorAll('.reveal');
+    
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: "0px 0px -40px 0px"
+      });
+
+      revealElements.forEach(el => observer.observe(el));
+    } else {
+      revealElements.forEach(el => el.classList.add('active'));
+    }
+  }
+
+  // Cargar datos al iniciar y registrar animaciones
+  loadDataAndRender().then(() => {
+    // Inicializar reveal después de que los datos dinámicos iniciales se rendericen
+    initScrollReveal();
+  });
 });
