@@ -21,10 +21,26 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
-    /* Specific styles for Salones page */
+    /* Specific styles for Salones page header scroll transitions */
+    .main-header:not(.scrolled) .logo-title {
+      fill: #ffffff !important;
+    }
+    .main-header:not(.scrolled) .nav-link {
+      color: #ffffff !important;
+    }
+    .main-header:not(.scrolled) .mobile-menu-toggle .bar {
+      background-color: #ffffff !important;
+    }
+    .main-header.scrolled {
+      background-color: rgba(250, 246, 240, 0.95) !important;
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    /* Header styling */
     .salones-header {
       background: linear-gradient(135deg, #1d1715 0%, #3a312e 100%);
-      padding: 100px 20px 60px;
+      padding: 140px 20px 80px;
       text-align: center;
       color: white;
       position: relative;
@@ -36,20 +52,20 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 15px;
+      height: 20px;
       background-color: var(--bg-light);
       clip-path: polygon(0 100%, 100% 100%, 100% 0);
     }
 
     .salones-container {
       max-width: 1200px;
-      margin: -30px auto 80px;
+      margin: -40px auto 80px;
       padding: 0 20px;
       position: relative;
       z-index: 10;
       display: flex;
       flex-direction: column;
-      gap: 50px;
+      gap: 60px;
     }
 
     .salon-card {
@@ -59,7 +75,7 @@
       box-shadow: var(--shadow-lg);
       border: 1px solid var(--border-light);
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.1fr 0.9fr;
       gap: 0;
       transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       position: relative;
@@ -96,22 +112,94 @@
       }
     }
 
-    .salon-visual-panel {
+    /* Carousel styles for salon cards */
+    .salon-carousel {
       position: relative;
       height: 100%;
-      min-height: 380px;
+      min-height: 420px;
       overflow: hidden;
     }
 
-    .salon-img {
+    .salon-carousel-slides {
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      transition: var(--transition);
+      display: flex;
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
-    .salon-card:hover .salon-img {
-      transform: scale(1.05);
+    .salon-carousel-slide {
+      min-width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .salon-carousel:hover .salon-carousel-slide {
+      transform: scale(1.02);
+    }
+
+    .salon-carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(29, 23, 21, 0.6);
+      color: white;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 0.3s ease, background 0.3s ease, transform 0.2s ease;
+    }
+
+    .salon-carousel:hover .salon-carousel-btn {
+      opacity: 1;
+    }
+
+    .salon-carousel-btn:hover {
+      background: var(--primary-orange);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .salon-carousel-btn.prev {
+      left: 20px;
+    }
+
+    .salon-carousel-btn.next {
+      right: 20px;
+    }
+
+    .salon-carousel-dots {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 5;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+
+    .salon-carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .salon-carousel-dot.active {
+      background: var(--primary-orange);
+      width: 18px;
+      border-radius: 10px;
     }
 
     .salon-overlay-tag {
@@ -127,6 +215,7 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       box-shadow: var(--shadow-sm);
+      z-index: 6;
     }
 
     .salon-details-panel {
@@ -142,7 +231,7 @@
 
     @media (max-width: 576px) {
       .salon-details-panel {
-        padding: 25px 20px;
+        padding: 30px 20px;
       }
     }
 
@@ -213,7 +302,6 @@
       border: 0;
     }
 
-    /* Back-to-Top custom override */
     .back-to-top {
       bottom: 25px;
       right: 25px;
@@ -225,7 +313,7 @@
 <body>
 
   <!-- Header Navigation -->
-  <header class="main-header sticky">
+  <header class="main-header" id="header">
     <div class="container header-container">
       <a href="index.html" class="nav-logo">
         <svg class="nav-logo-svg" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg">
@@ -272,8 +360,20 @@
 
     <!-- Salón Norte Card -->
     <div class="salon-card reveal-left">
-      <div class="salon-visual-panel">
-        <img src="assets/wedding_event.png" alt="Salón La Juntada Norte - Villa Allende" class="salon-img">
+      <!-- Image Carousel -->
+      <div class="salon-carousel" id="carousel-norte">
+        <div class="salon-carousel-slides">
+          <img src="assets/wedding_event.png" alt="Salón Norte - Fachada" class="salon-carousel-slide">
+          <img src="assets/hero_bg.png" alt="Salón Norte - Catering e Infraestructura" class="salon-carousel-slide">
+          <img src="assets/catering_premium.png" alt="Salón Norte - Platos premium" class="salon-carousel-slide">
+        </div>
+        <button class="salon-carousel-btn prev" aria-label="Anterior foto"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="salon-carousel-btn next" aria-label="Siguiente foto"><i class="fa-solid fa-chevron-right"></i></button>
+        <div class="salon-carousel-dots">
+          <span class="salon-carousel-dot active"></span>
+          <span class="salon-carousel-dot"></span>
+          <span class="salon-carousel-dot"></span>
+        </div>
         <span class="salon-overlay-tag">Zona Norte</span>
       </div>
       
@@ -314,12 +414,11 @@
 
           <!-- Maps Embed -->
           <div class="salon-map-container">
-            <!-- Mock Villa Allende Google Map Embed -->
             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13636.858022878477!2d-64.30138245!3d-31.29778235!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94329ddb53c7c251%3A0xc3c5f2122b512c0!2sVilla%20Allende%2C%20C%C3%B3rdoba!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
         </div>
 
-        <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20consultar%20disponibilidad%20y%20precios%20para%20el%20%2aSal%C3%B3n%20La%20Juntada%20Norte%2a%20en%20Villa%20Allende." target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align: center; justify-content: center;">
+        <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20consultar%20disponibilidad%20y%20precios%20para%20el%20%2aSal%C3%B3n%20La%20Juntada%20Norte%2a%20en%20Villa%20Allende." target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align: center; justify-content: center; text-decoration: none; display: flex; align-items: center; gap: 8px;">
           <i class="fa-brands fa-whatsapp"></i> Consultar Disponibilidad Salón Norte
         </a>
       </div>
@@ -327,8 +426,20 @@
 
     <!-- Salón Centro Card -->
     <div class="salon-card reveal-right">
-      <div class="salon-visual-panel">
-        <img src="assets/social_event.png" alt="Salón La Juntada Centro - Alta Córdoba" class="salon-img">
+      <!-- Image Carousel -->
+      <div class="salon-carousel" id="carousel-centro">
+        <div class="salon-carousel-slides">
+          <img src="assets/social_event.png" alt="Salón Centro - Interior" class="salon-carousel-slide">
+          <img src="assets/birthday_sweet.png" alt="Salón Centro - Mesas de postres" class="salon-carousel-slide">
+          <img src="assets/birthday_event.png" alt="Salón Centro - Iluminación y pista" class="salon-carousel-slide">
+        </div>
+        <button class="salon-carousel-btn prev" aria-label="Anterior foto"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="salon-carousel-btn next" aria-label="Siguiente foto"><i class="fa-solid fa-chevron-right"></i></button>
+        <div class="salon-carousel-dots">
+          <span class="salon-carousel-dot active"></span>
+          <span class="salon-carousel-dot"></span>
+          <span class="salon-carousel-dot"></span>
+        </div>
         <span class="salon-overlay-tag">Zona Centro</span>
       </div>
       
@@ -369,12 +480,11 @@
 
           <!-- Maps Embed -->
           <div class="salon-map-container">
-            <!-- Mock Alta Cordoba Google Map Embed -->
             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3405.513233816666!2d-64.1856711!3d-31.4005615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94329864227f4e91%3A0xe54d3dfbb7ba3a32!2sMendoza%203147%2C%20X5000%20C%C3%B3rdoba!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
         </div>
 
-        <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20consultar%20disponibilidad%20y%20precios%20para%20el%20%2aSal%C3%B3n%20La%20Juntada%20Centro%2a%20en%20Alta%20C%C3%B3rdoba." target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align: center; justify-content: center;">
+        <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20consultar%20disponibilidad%20y%20precios%20para%20el%20%2aSal%C3%B3n%20La%20Juntada%20Centro%2a%20en%20Alta%20C%C3%B3rdoba." target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align: center; justify-content: center; text-decoration: none; display: flex; align-items: center; gap: 8px;">
           <i class="fa-brands fa-whatsapp"></i> Consultar Disponibilidad Salón Centro
         </a>
       </div>
@@ -396,7 +506,7 @@
 
       <div class="footer-links">
         <h3>Enlaces Rápidos</h3>
-        <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; padding: 0;">
           <li><a href="index.html#hero" style="color: white; text-decoration: none; opacity: 0.8;">Inicio</a></li>
           <li><a href="index.html#servicios" style="color: white; text-decoration: none; opacity: 0.8;">Servicios</a></li>
           <li><a href="index.html#menu-carta" style="color: white; text-decoration: none; opacity: 0.8;">Nuestra Carta</a></li>
@@ -428,6 +538,20 @@
   <!-- Scripts -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Navigation Header scroll listener to toggle background transparency
+      const header = document.getElementById('header');
+      if (header) {
+        const checkScroll = () => {
+          if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+          } else {
+            header.classList.remove('scrolled');
+          }
+        };
+        window.addEventListener('scroll', checkScroll);
+        checkScroll(); // Trigger initial check
+      }
+
       // Menu Toggle mobile
       const menuToggle = document.getElementById('menu-toggle');
       const navMenu = document.getElementById('nav-menu');
@@ -440,6 +564,66 @@
           menuToggle.classList.toggle('active');
         });
       }
+
+      // Carousel slide controller
+      window.initSalonCarousel = function(carouselId) {
+        const carousel = document.getElementById(carouselId);
+        if (!carousel) return;
+
+        const slidesContainer = carousel.querySelector('.salon-carousel-slides');
+        const dots = carousel.querySelectorAll('.salon-carousel-dot');
+        const prevBtn = carousel.querySelector('.salon-carousel-btn.prev');
+        const nextBtn = carousel.querySelector('.salon-carousel-btn.next');
+        let currentIdx = 0;
+        const totalSlides = dots.length;
+
+        function updateCarousel() {
+          slidesContainer.style.transform = `translateX(-${currentIdx * 100}%)`;
+          dots.forEach((dot, idx) => {
+            dot.classList.toggle('active', idx === currentIdx);
+          });
+        }
+
+        prevBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          currentIdx = (currentIdx - 1 + totalSlides) % totalSlides;
+          updateCarousel();
+        });
+
+        nextBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          currentIdx = (currentIdx + 1) % totalSlides;
+          updateCarousel();
+        });
+
+        dots.forEach((dot, idx) => {
+          dot.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentIdx = idx;
+            updateCarousel();
+          });
+        });
+
+        // Autoplay
+        let autoplayInterval = setInterval(() => {
+          currentIdx = (currentIdx + 1) % totalSlides;
+          updateCarousel();
+        }, 6000);
+
+        carousel.addEventListener('mouseenter', () => {
+          clearInterval(autoplayInterval);
+        });
+
+        carousel.addEventListener('mouseleave', () => {
+          autoplayInterval = setInterval(() => {
+            currentIdx = (currentIdx + 1) % totalSlides;
+            updateCarousel();
+          }, 6000);
+        });
+      };
+
+      initSalonCarousel('carousel-norte');
+      initSalonCarousel('carousel-centro');
 
       // Spotlight effect on salon cards
       const cards = document.querySelectorAll('.salon-card');
