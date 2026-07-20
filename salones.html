@@ -21,21 +21,6 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
-    /* Specific styles for Salones page header scroll transitions */
-    .main-header:not(.scrolled) .logo-title {
-      fill: #ffffff !important;
-    }
-    .main-header:not(.scrolled) .nav-link {
-      color: #ffffff !important;
-    }
-    .main-header:not(.scrolled) .mobile-menu-toggle .bar {
-      background-color: #ffffff !important;
-    }
-    .main-header.scrolled {
-      background-color: rgba(250, 246, 240, 0.95) !important;
-      backdrop-filter: blur(15px);
-      border-bottom: 1px solid var(--border-light);
-    }
 
     /* Header styling */
     .salones-header {
@@ -313,7 +298,7 @@
 <body>
 
   <!-- Header Navigation -->
-  <header class="main-header" id="header">
+  <header class="main-header scrolled" id="header">
     <div class="container header-container">
       <a href="index.html" class="nav-logo">
         <svg class="nav-logo-svg" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg">
@@ -538,19 +523,7 @@
   <!-- Scripts -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Navigation Header scroll listener to toggle background transparency
-      const header = document.getElementById('header');
-      if (header) {
-        const checkScroll = () => {
-          if (window.scrollY > 50) {
-            header.classList.add('scrolled');
-          } else {
-            header.classList.remove('scrolled');
-          }
-        };
-        window.addEventListener('scroll', checkScroll);
-        checkScroll(); // Trigger initial check
-      }
+
 
       // Menu Toggle mobile
       const menuToggle = document.getElementById('menu-toggle');
