@@ -1060,22 +1060,42 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
 
-    // Generar PDF usando html2pdf
-    const element = document.createElement('div');
-    element.innerHTML = optHtml;
-    document.body.appendChild(element);
+    try {
+      if (typeof html2pdf === 'undefined') {
+        alert("La librería de exportación de PDF no se cargó correctamente. Por favor, asegúrate de estar conectado a Internet o recarga la página.");
+        return;
+      }
 
-    const opt = {
-      margin:       10,
-      filename:     `la_juntada_presupuesto_${results.menuName.toLowerCase().replace(/\s+/g, '_')}.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+      // Generar PDF usando html2pdf
+      const element = document.createElement('div');
+      element.innerHTML = optHtml;
+      document.body.appendChild(element);
 
-    html2pdf().from(element).set(opt).save().then(() => {
-      document.body.removeChild(element);
-    });
+      const isFileProtocol = window.location.protocol === 'file:';
+      const opt = {
+        margin:       10,
+        filename:     `la_juntada_presupuesto_${results.menuName.toLowerCase().replace(/\s+/g, '_')}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { 
+          scale: 2, 
+          useCORS: !isFileProtocol, 
+          allowTaint: isFileProtocol,
+          letterRendering: true 
+        },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().from(element).set(opt).save().then(() => {
+        document.body.removeChild(element);
+      }).catch(err => {
+        console.error("Error al generar PDF:", err);
+        alert("Ocurrió un error al generar el PDF: " + err.message);
+        document.body.removeChild(element);
+      });
+    } catch (e) {
+      console.error("Error en downloadBudgetPDF:", e);
+      alert("Error inesperado en downloadBudgetPDF: " + e.message);
+    }
   }
 
 
