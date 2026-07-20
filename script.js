@@ -319,18 +319,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const buttonClass = isSelected ? 'btn-secondary' : 'btn-primary';
         
         grid.innerHTML += `
-          <div class="menu-item-card ${activeClass} ${disabledClass}" id="menu-card-${srv.key}" style="transition: all 0.3s ease; position: relative;">
+          <div class="menu-item-card ${activeClass} ${disabledClass}" id="menu-card-${srv.key}" style="transition: all 0.3s ease; position: relative; height: 100%; display: flex; flex-direction: column;">
             ${tagHtml}
             <h4 style="margin-top: 10px;">${srv.name}</h4>
-            <p>${srv.description}</p>
+            <p style="flex-grow: 1;">${srv.description}</p>
             ${isAvailable ? `
-              <div style="margin-top: 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--border-light); padding-top: 10px;">
+              <div style="margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--border-light); padding-top: 15px;">
                 <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-orange);">${priceInfo}</span>
                 <button type="button" class="${buttonClass} btn-menu-toggle-quote" data-key="${srv.key}" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 50px; cursor: pointer; border: none; font-weight: 700;">
                   ${buttonText}
                 </button>
               </div>
-            ` : `<span class="unavailable-badge" style="font-size: 0.75rem; margin-top: 10px; display: inline-block;">No Disponible</span>`}
+            ` : `<span class="unavailable-badge" style="font-size: 0.75rem; margin-top: auto; display: inline-block; padding-top: 10px;">No Disponible</span>`}
           </div>
         `;
       });
