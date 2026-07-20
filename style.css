@@ -1906,6 +1906,12 @@ button {
   box-shadow: var(--shadow-md);
 }
 
+.menu-item-card.active {
+  border-color: var(--primary-orange);
+  background-color: var(--primary-light);
+  box-shadow: 0 8px 20px rgba(224, 83, 38, 0.12);
+}
+
 .menu-item-card h4 {
   font-size: 1.15rem;
   font-weight: 700;

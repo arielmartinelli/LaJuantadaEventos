@@ -46,6 +46,7 @@
           <li class="nav-item"><a href="#hero" class="nav-link active">Inicio</a></li>
           <li class="nav-item"><a href="#servicios" class="nav-link">Servicios</a></li>
           <li class="nav-item"><a href="#menu-carta" class="nav-link">Nuestra Carta</a></li>
+          <li class="nav-item"><a href="salones.html" class="nav-link">Salones</a></li>
           <li class="nav-item"><a href="#alquiler" class="nav-link">Alquileres</a></li>
           <li class="nav-item"><a href="#calculadora" class="nav-link">Cotizador</a></li>
           <li class="nav-item"><a href="#condiciones" class="nav-link">Condiciones</a></li>
@@ -169,7 +170,10 @@
         <span class="sub-header">Nuestra Gastronomía</span>
         <h2 class="section-title">Opciones de Menú</h2>
         <div class="divider"></div>
-        <p class="menu-header-note" style="font-size: 0.85rem; color: var(--charcoal-muted); margin-top: 15px;">
+        <p style="font-size: 1.15rem; font-weight: 600; color: var(--primary-orange); margin-top: 15px;">
+          Conocé nuestras opciones y también podés empezar a generar tu presupuesto.
+        </p>
+        <p class="menu-header-note" style="font-size: 0.85rem; color: var(--charcoal-muted); margin-top: 5px;">
           * Aclaración: En los presupuestos finales se incluye únicamente lo que tenga cantidad marcada en el contrato.
         </p>
       </div>
@@ -188,150 +192,37 @@
         
         <!-- Recepción Content -->
         <div class="menu-tab-content active" id="menu-recepcion">
-          <div class="menu-category-grid">
-            <div class="menu-item-card">
-              <h4>Bocaditos Surtidos</h4>
-              <p>Tartaletas de hojaldre rellenas de queso crema saborizado: Queso Azul, Choclo, Jamón Cocido y Atún.</p>
-            </div>
-            <div class="menu-item-card">
-              <h4>Sándwich de Miga Copetín</h4>
-              <p>Clásicos sándwiches triangulares en sus variedades: Jamón y Queso, Jamón y Verdura, o Queso y Verdura.</p>
-            </div>
-            <div class="menu-item-card">
-              <h4>Empanadas Copetín</h4>
-              <p>Empanaditas crujientes al horno. Sabores: Criollas Saladas, Árabes, Pollo o Verdura.</p>
-            </div>
-            <div class="menu-item-card">
-              <h4>Pinchos Calientes</h4>
-              <p>Bocados a la plancha/parrilla: Chinchulines a la provenzal, Riñoncitos a la crema y Mollejitas al limón.</p>
-            </div>
-            <div class="menu-item-card">
-              <h4>Mini Pizzetas</h4>
-              <p>Base crocante con salsas caseras. Variedades: Mozzarella, Napolitana, Jamón y Morrones, o Fugazzeta.</p>
-            </div>
+          <div class="menu-category-grid" id="grid-recepcion">
+            <!-- Carga dinámica -->
           </div>
         </div>
 
         <!-- Entradas Content -->
         <div class="menu-tab-content" id="menu-entradas">
-          <div class="menu-category-grid">
-            <div class="menu-item-card">
-              <h4>Tablas de Fiambres y Quesos</h4>
-              <p>Quesos y embutidos regionales de primera: Salame de la Colonia, Bondiola, Jamón Cocido, Mozzarella, Pategras y Dambo.</p>
-            </div>
-            <div class="menu-item-card">
-              <h4>Tostadas de Pan Casero o Panes Árabes Relleno</h4>
-              <p>Dos opciones: Jamón Crudo, queso saborizado, hebras de queso y rúcula fresca con oliva; o Jamón Cocido, feta de queso, huevo rallado y tomate con untable saborizado.</p>
-            </div>
-            <div class="menu-item-card">
-              <h4>Mini Tartas de Pollo y Ajíes</h4>
-              <p>Masa de hojaldre con relleno salteado de pollo desmenuzado, pimientos rojos y verdes, decorados con tomate concasse y cebolla de verdeo.</p>
-            </div>
+          <div class="menu-category-grid" id="grid-entradas">
+            <!-- Carga dinámica -->
           </div>
         </div>
 
         <!-- Platos Principales Content -->
         <div class="menu-tab-content" id="menu-principales">
           <p class="menu-tab-info-text">* Las primeras 6 opciones tienen el mismo valor y son bajo modalidad <strong>Diente Libre</strong>.</p>
-          <div class="menu-category-grid">
-            <div class="menu-item-card principal-card">
-              <span class="menu-tag orange">Diente Libre</span>
-              <h4>Pata Flambeada</h4>
-              <p>Ternera y Cerdo caliente trinchada en vivo con panes blancos y saborizados negros, vegetales salteados, lechuga, tomate y 10 salsas caseras.</p>
-            </div>
-            <div class="menu-item-card principal-card">
-              <span class="menu-tag orange">Diente Libre</span>
-              <h4>Variedad de Cazuelas</h4>
-              <p>Servicio libre de cazuelas. Opciones: Tradicionales (Pollo con puerros/champiñones a la crema y Ternera al verdeo), Criollas (Locro o Humita) y de Campo (Pollo al disco o Bondiolitas al disco).</p>
-            </div>
-            <div class="menu-item-card principal-card">
-              <span class="menu-tag orange">Diente Libre</span>
-              <h4>Hamburguesas y Choripán</h4>
-              <p>Medallón de ternera y chorizo de cerdo cocidos a las brasas. Servidos en pan de papa y milonguita con queso cheddar, vegetales y aderezos (salsa criolla, chimichurri y mayonesa casera).</p>
-            </div>
-            <div class="menu-item-card principal-card">
-              <span class="menu-tag orange">Diente Libre</span>
-              <h4>Pizza a la Parrilla</h4>
-              <p>Show de pizzas a las brasas con 10 variedades diferentes (Fugazza, 4 Quesos, Rúcula y Jamón Crudo, Jamón con morrones, Calabresa, Provenzal, etc.).</p>
-            </div>
-            <div class="menu-item-card principal-card">
-              <span class="menu-tag orange">Diente Libre</span>
-              <h4>Fajitas y Sándwich Criollos</h4>
-              <p>Tiras de ternera, cerdo, pollo, chorizo y vegetales salteados con tortillas calientes, pan milonguita y 4 salsas (mayonesa, mostaza, palta y aderezo picante).</p>
-            </div>
-            <div class="menu-item-card principal-card">
-              <span class="menu-tag orange">Diente Libre</span>
-              <h4>Sándwich de Campo Desmechado</h4>
-              <p>Cortes ultra tiernos desmechados de Bondiola de cerdo y Vacío de ternera acompañados de panes crocantes, vegetales salteados y salsas.</p>
-            </div>
-            <div class="menu-item-card">
-              <span class="menu-tag dark">Premium</span>
-              <h4>Parrillada Completa a las Brasas</h4>
-              <p>Asado libre: Chorizo, morcilla, costilla, vacío, matambre, pechito de cerdo y pollo. Acompañado de ensaladas frescas de estación y papas fritas con huevo revuelto.</p>
-            </div>
-            <div class="menu-item-card">
-              <span class="menu-tag dark">Plato Servido</span>
-              <h4>Pollo Deshuesado Noisette</h4>
-              <p>Roulete de pollo deshuesado relleno de jamón cocido, queso, pimientos morrones y huevo. Acompañado de papas noisette doradas.</p>
-            </div>
-            <div class="menu-item-card">
-              <span class="menu-tag soft">Especial</span>
-              <h4>Menú Dietas Especiales</h4>
-              <p>Viandas calientes listas para consumir, adaptadas para invitados vegetarianos, veganos y celíacos (Libre de TACC / sin gluten).</p>
-            </div>
+          <div class="menu-category-grid" id="grid-principales">
+            <!-- Carga dinámica -->
           </div>
         </div>
 
         <!-- Postres y Mesa Dulce Content -->
         <div class="menu-tab-content" id="menu-postres">
-          <div class="menu-category-grid">
-            <div class="menu-item-card">
-              <h4>Postres Clásicos individuales</h4>
-              <p>Opciones tradicionales: Budín de pan o Flan casero con crema chantilly y dulce de leche; Macedonia con helado y oblea; o Mini brownie con helado y salsa de chocolate.</p>
-            </div>
-            <div class="menu-item-card">
-              <h4>Copas y Postres de Autor</h4>
-              <p>Formatos individuales y elegantes: Chocotorta clásica, Tiramisú italiano al mascarpone o Cheesecake frío de frutos rojos.</p>
-            </div>
-            <div class="menu-item-card">
-              <h4>Tartas Dulces (12 Porciones)</h4>
-              <p>Variedad de tartas artesanales: Lemon Pie, Frutilla, Durazno, Multi-frutal, Mousse de chocolate, Coco con dulce de leche y Ricota.</p>
-            </div>
-            <div class="menu-item-card">
-              <h4>Especialidades de Panadería por Kg</h4>
-              <p>Mini alfajores de chocolate o maicena, cañoncitos con dulce de leche, conitos rellenos, palmeritas y ojitos de buey.</p>
-            </div>
-            <div class="menu-item-card">
-              <h4>Torta de Evento o Simbólica</h4>
-              <p>Torta de bodas/cumpleaños calculada a 100gr por invitado o torta de corte simbólica con relleno y decoración a elección.</p>
-            </div>
-            <div class="menu-item-card">
-              <h4>Candy Bar & Cafetería</h4>
-              <p>Candy bar surtido: Gomitas, maní con chocolate, Rocklets, Titas, Rhodesias y Block. Incluye el servicio final de Cafetería caliente.</p>
-            </div>
+          <div class="menu-category-grid" id="grid-postres">
+            <!-- Carga dinámica -->
           </div>
         </div>
 
         <!-- Bebidas y Barras Content -->
         <div class="menu-tab-content" id="menu-bebidas">
-          <div class="menu-category-grid">
-            <div class="menu-item-card">
-              <h4>Bebidas Sin Alcohol (Libre)</h4>
-              <p>Línea Pepsi (Pepsi, 7-up, Mirinda), agua saborizada y agua mineral con y sin gas.</p>
-            </div>
-            <div class="menu-item-card">
-              <h4>Cervezas (Libre)</h4>
-              <p>Canilla libre durante todo el servicio de cervezas Quilmes o Brahma frías.</p>
-            </div>
-            <div class="menu-item-card">
-              <h4>Vinos & Espumante</h4>
-              <p>Vinos blanco y tinto de la línea "Otro Loco Más" servidos desde la recepción. Incluye Copa de brindis con Espumante DU Renaissance demi-sec.</p>
-            </div>
-            <div class="menu-item-card">
-              <span class="menu-tag orange">Opcional</span>
-              <h4>Barra Móvil Libre (4 Horas)</h4>
-              <p>Tragos ilimitados con y sin alcohol preparados por barmans en vivo: Fernet Branca con cola, Campari, Gancia, Gin, Vodka y licuados frutales.</p>
-            </div>
+          <div class="menu-category-grid" id="grid-bebidas">
+            <!-- Carga dinámica -->
           </div>
         </div>
 
@@ -497,15 +388,26 @@
 
                 <div class="summary-divider"></div>
 
-                <div class="total-display">
-                  <span>Total Estimado</span>
-                  <strong class="total-price" id="calc-total">$2.000.000</strong>
-                  <p class="vat-disclaimer">* Financiación disponible. 10% de descuento abonando de contado efectivo.</p>
+                <div class="total-display" style="display: flex; flex-direction: column; gap: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-size: 0.95rem; font-weight: 600;">Estimado por Persona:</span>
+                    <strong style="font-size: 1.4rem; color: var(--primary-orange);" id="calc-per-person">$25.000</strong>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 5px;">
+                    <span style="font-size: 1rem; font-weight: 700;">Total del Evento:</span>
+                    <strong class="total-price" id="calc-total" style="font-size: 2rem;">$2.000.000</strong>
+                  </div>
+                  <p class="vat-disclaimer" style="margin-top: 5px;">* Financiación disponible. 10% de descuento abonando de contado efectivo.</p>
                 </div>
 
-                <button type="button" class="btn-whatsapp-send" id="btn-calc-whatsapp">
-                  <i class="fa-brands fa-whatsapp"></i> Enviar Cotización a WhatsApp
-                </button>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                  <button type="button" class="btn-whatsapp-send" id="btn-calc-whatsapp" style="margin-top: 0; width: 100%;">
+                    <i class="fa-brands fa-whatsapp"></i> Enviar Cotización a WhatsApp
+                  </button>
+                  <button type="button" class="btn-primary" id="btn-calc-pdf" style="background-color: var(--charcoal); display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; border-radius: 50px; padding: 14px 20px; font-weight: 700; color: white; border: none; cursor: pointer;">
+                    <i class="fa-solid fa-file-pdf"></i> Descargar Cotización (PDF)
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -791,6 +693,7 @@
   </div>
 
   <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
 </body>

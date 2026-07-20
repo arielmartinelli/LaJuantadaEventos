@@ -28,14 +28,51 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const DEFAULT_SERVICES = [
-    { key: 'srv_drinks', name: 'Gaseosas libres, Vinos y Cervezas', description: 'Gaseosas Pepsi/7up, cerveza Quilmes/Brahma libre y vinos Otro Loco Mas.', price: 4500, is_per_person: true, is_available: true },
-    { key: 'srv_bar', name: 'Barra Movil Libre (Tragos)', description: 'Fernet, Campari, Gancia, Gin y Vodka libre por 4 horas con barmans.', price: 6500, is_per_person: true, is_available: true },
-    { key: 'srv_tableware', name: 'Alquiler de Vajilla y Manteleria', description: 'Vajilla de loza, cubiertos, cristalería y mantelería a tono.', price: 2500, is_per_person: true, is_available: true },
-    { key: 'srv_living', name: 'Alquiler de Juego de Living (10 pers.)', description: 'Juegos de living de ecocuero blanco con mesa ratona (precio por juego).', price: 18000, is_per_person: false, is_available: true },
-    { key: 'srv_sound', name: 'DJ, Sonido Basico y Luces', description: 'Cabina de DJ, parlantes activos, luces roboticas e iluminacion de pista.', price: 90000, is_per_person: false, is_available: true },
-    { key: 'srv_gazebo', name: 'Gazebo Estructural (6x3m)', description: 'Gazebo estructural cerrado con guirnaldas de luces led decorativas.', price: 45000, is_per_person: false, is_available: true },
-    { key: 'srv_screen', name: 'Pantalla 120" y Proyector HD', description: 'Pantalla gigante y proyector de alta luminosidad para videos.', price: 35000, is_per_person: false, is_available: true },
-    { key: 'srv_photo', name: 'Fotografia Digital Profesional', description: 'Cobertura completa del evento con entrega digital de fotografias.', price: 80000, is_per_person: false, is_available: true }
+    // Recepción
+    { key: 'rec_bocaditos', name: 'Bocaditos Surtidos', description: 'Tartaletas de hojaldre rellenas de queso crema saborizado: Queso Azul, Choclo, Jamón Cocido y Atún.', price: 1800, is_per_person: true, is_available: true, category: 'recepcion', tag: 'Copetín' },
+    { key: 'rec_miga', name: 'Sándwich de Miga Copetín', description: 'Clásicos sándwiches triangulares en sus variedades: Jamón/Queso, Jamón/Verdura o Queso/Verdura.', price: 2200, is_per_person: true, is_available: true, category: 'recepcion', tag: 'Copetín' },
+    { key: 'rec_empanadas', name: 'Empanadas Copetín', description: 'Empanaditas crujientes al horno. Sabores: Criollas Saladas, Árabes, Pollo o Verdura.', price: 2000, is_per_person: true, is_available: true, category: 'recepcion', tag: 'Horno' },
+    { key: 'rec_pinchos', name: 'Pinchos Calientes', description: 'Bocados a la plancha/parrilla: Chinchulines a la provenzal, Riñoncitos a la crema y Mollejitas al limón.', price: 2800, is_per_person: true, is_available: true, category: 'recepcion', tag: 'Parrilla' },
+    { key: 'rec_pizzetas', name: 'Mini Pizzetas', description: 'Base crocante con salsas caseras: Mozzarella, Napolitana, Jamón y Morrones, o Fugazzeta.', price: 1500, is_per_person: true, is_available: true, category: 'recepcion', tag: 'Horno' },
+
+    // Entradas
+    { key: 'ent_fiambres', name: 'Tablas de Fiambres y Quesos', description: 'Regionales: Salame de la Colonia, Bondiola, Jamón Cocido, Mozzarella, Pategras y Dambo.', price: 3800, is_per_person: true, is_available: true, category: 'entradas', tag: 'Regional' },
+    { key: 'ent_tostadas', name: 'Tostadas de Pan Casero o Árabes Relleno', description: 'Opción jamón crudo con rúcula y oliva, o jamón cocido con huevo y tomate.', price: 3200, is_per_person: true, is_available: true, category: 'entradas', tag: 'Especial' },
+    { key: 'ent_tartas', name: 'Mini Tartas de Pollo y Ajíes', description: 'Hojaldre salteado con pollo desmenuzado, pimientos rojos y verdes, tomate y verdeo.', price: 3000, is_per_person: true, is_available: true, category: 'entradas', tag: 'Caliente' },
+
+    // Platos Principales
+    { key: 'pri_pata', name: 'Pata Flambeada', description: 'Ternera y Cerdo caliente trinchada en vivo con panes saborizados y 10 salsas caseras.', price: 0, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+    { key: 'pri_cazuelas', name: 'Variedad de Cazuelas', description: 'Pollo con puerros/champiñones, Ternera al verdeo, Locro, Humita, Pollo al disco o Bondiola.', price: 0, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+    { key: 'pri_burgers', name: 'Hamburguesas y Choripán', description: 'Medallón de ternera y chorizo a las brasas en pan de papa con cheddar y salsas.', price: 0, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+    { key: 'pri_pizza', name: 'Pizza a la Parrilla', description: 'Show de pizzas a las brasas con 10 variedades diferentes (Fugazza, 4 Quesos, etc.).', price: 0, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+    { key: 'pri_fajitas', name: 'Fajitas y Sándwich Criollos', description: 'Tiras de ternera, cerdo, pollo y vegetales con tortillas calientes y panes.', price: 0, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+    { key: 'pri_desmechado', name: 'Sándwich de Campo Desmechado', description: 'Cortes ultra tiernos desmechados de Bondiola de cerdo y Vacío de ternera.', price: 0, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+    { key: 'pri_parrillada', name: 'Parrillada Completa a las Brasas', description: 'Asado libre: Costilla, vacío, matambre, chorizo, morcilla y ensaladas.', price: 8000, is_per_person: true, is_available: true, category: 'principales', tag: 'Premium' },
+    { key: 'pri_pollo', name: 'Pollo Deshuesado Noisette', description: 'Roulete de pollo deshuesado relleno con papas noisette doradas.', price: 3000, is_per_person: true, is_available: true, category: 'principales', tag: 'Plato Servido' },
+    { key: 'pri_dietas', name: 'Menú Dietas Especiales', description: 'Viandas calientes adaptadas para invitados vegetarianos, veganos y celíacos.', price: 0, is_per_person: true, is_available: true, category: 'principales', tag: 'Especial' },
+
+    // Postres
+    { key: 'pos_individuales', name: 'Postres Clásicos individuales', description: 'Budín de pan o Flan casero con dulce de leche; Macedonia con helado; o Brownie.', price: 2200, is_per_person: true, is_available: true, category: 'postres', tag: 'Clásico' },
+    { key: 'pos_autor', name: 'Copas y Postres de Autor', description: 'Formatos individuales: Chocotorta clásica, Tiramisú italiano o Cheesecake.', price: 2800, is_per_person: true, is_available: true, category: 'postres', tag: 'De Autor' },
+    { key: 'pos_tartas', name: 'Tartas Dulces (12 Porciones)', description: 'Lemon Pie, Frutilla, Durazno, Multi-frutal, Mousse, Coco o Ricota.', price: 2500, is_per_person: true, is_available: true, category: 'postres', tag: 'Artesanal' },
+    { key: 'pos_panaderia', name: 'Especialidades de Panadería por Kg', description: 'Mini alfajores de chocolate/maicena, cañoncitos, conitos y palmeritas.', price: 1800, is_per_person: true, is_available: true, category: 'postres', tag: 'Panadería' },
+    { key: 'pos_torta', name: 'Torta de Evento o Simbólica', description: 'Torta de bodas/cumpleaños calculada a 100gr por invitado o torta simbólica.', price: 3000, is_per_person: true, is_available: true, category: 'postres', tag: 'Torta' },
+    { key: 'pos_candy', name: 'Candy Bar & Cafetería', description: 'Candy bar surtido (Rocklets, Titas, etc.) con servicio final de Cafetería caliente.', price: 2000, is_per_person: true, is_available: true, category: 'postres', tag: 'Candy Bar' },
+
+    // Bebidas
+    { key: 'beb_sin_alcohol', name: 'Bebidas Sin Alcohol (Libre)', description: 'Línea Pepsi, agua saborizada y agua mineral con y sin gas.', price: 2500, is_per_person: true, is_available: true, category: 'bebidas', tag: 'Sin Alcohol' },
+    { key: 'beb_cervezas', name: 'Cervezas (Libre)', description: 'Canilla libre de cervezas Quilmes o Brahma frías durante el servicio.', price: 3500, is_per_person: true, is_available: true, category: 'bebidas', tag: 'Con Alcohol' },
+    { key: 'beb_vinos', name: 'Vinos & Espumante', description: 'Vinos Otro Loco Más y Copa de brindis con Espumante DU Renaissance.', price: 3800, is_per_person: true, is_available: true, category: 'bebidas', tag: 'Vinos' },
+
+    // Adicionales
+    { key: 'srv_drinks', name: 'Gaseosas libres, Vinos y Cervezas', description: 'Gaseosas Pepsi/7up, cerveza Quilmes/Brahma libre y vinos Otro Loco Mas.', price: 4500, is_per_person: true, is_available: true, category: 'adicional', tag: 'Adicional' },
+    { key: 'srv_bar', name: 'Barra Movil Libre (Tragos)', description: 'Fernet, Campari, Gancia, Gin y Vodka libre por 4 horas con barmans.', price: 6500, is_per_person: true, is_available: true, category: 'adicional', tag: 'Adicional' },
+    { key: 'srv_tableware', name: 'Alquiler de Vajilla y Manteleria', description: 'Vajilla de loza, cubiertos, cristalería y mantelería a tono.', price: 2500, is_per_person: true, is_available: true, category: 'adicional', tag: 'Adicional' },
+    { key: 'srv_living', name: 'Alquiler de Juego de Living (10 pers.)', description: 'Juegos de living de ecocuero blanco con mesa ratona (precio por juego).', price: 18000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Living' },
+    { key: 'srv_sound', name: 'DJ, Sonido Basico y Luces', description: 'Cabina de DJ, parlantes activos, luces roboticas e iluminacion de pista.', price: 90000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
+    { key: 'srv_gazebo', name: 'Gazebo Estructural (6x3m)', description: 'Gazebo estructural cerrado con guirnaldas de luces led decorativas.', price: 45000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
+    { key: 'srv_screen', name: 'Pantalla 120" y Proyector HD', description: 'Pantalla gigante y proyector de alta luminosidad para videos.', price: 35000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
+    { key: 'srv_photo', name: 'Fotografia Digital Profesional', description: 'Cobertura completa del evento con entrega digital de fotografias.', price: 80000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Servicio' }
   ];
 
   const DEFAULT_CAROUSEL = [
@@ -55,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let activeConfigs = { ...DEFAULT_CONFIGS };
   let activeServices = [...DEFAULT_SERVICES];
+  let selectedMenuItems = new Set();
 
   /* ==========================================================================
      1. Menú de Navegación y Scroll
@@ -161,6 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       renderServicesDOM();
+      renderMenuDOM();
       renderCarouselDOM(data.carousel || DEFAULT_CAROUSEL);
       renderGalleryDOM(data.gallery || DEFAULT_GALLERY);
       
@@ -200,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     renderServicesDOM();
+    renderMenuDOM();
     renderCarouselDOM(DEFAULT_CAROUSEL);
     renderGalleryDOM(DEFAULT_GALLERY);
   }
@@ -212,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Checkboxes calculadora
     if (addonsContainer) {
       addonsContainer.innerHTML = '';
-      activeServices.forEach(srv => {
+      activeServices.filter(srv => srv.category === 'adicional' || !srv.category).forEach(srv => {
         // living_qty se maneja por selector numérico separado en el html
         if (srv.key === 'srv_living') {
           updateLivingSelector(srv);
@@ -244,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Lista de Precios de Alquiler
     if (rentalPriceList) {
       rentalPriceList.innerHTML = '';
-      activeServices.forEach(srv => {
+      activeServices.filter(srv => srv.category === 'adicional' || !srv.category).forEach(srv => {
         const priceSuffix = srv.is_per_person ? '<small>(por persona)</small>' : '<small>(fijo)</small>';
         rentalPriceList.innerHTML += `
           <li>
@@ -254,6 +294,77 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       });
     }
+  }
+
+  // Renderizar Platos y Opciones de Menú
+  function renderMenuDOM() {
+    const categories = ['recepcion', 'entradas', 'principales', 'postres', 'bebidas'];
+    
+    categories.forEach(cat => {
+      const grid = document.getElementById(`grid-${cat}`);
+      if (!grid) return;
+      grid.innerHTML = '';
+      
+      const items = activeServices.filter(s => s.category === cat);
+      items.forEach(srv => {
+        const isAvailable = srv.is_available;
+        const disabledClass = isAvailable ? '' : 'disabled';
+        const tagHtml = srv.tag ? `<span class="menu-tag orange">${srv.tag}</span>` : '';
+        const priceInfo = srv.price > 0 ? `+${formatCurrency(srv.price)} x pers.` : 'Incluido en Menú Base';
+        
+        // Determinar si está seleccionado
+        const isSelected = selectedMenuItems.has(srv.key);
+        const activeClass = isSelected ? 'active' : '';
+        const buttonText = isSelected ? 'Quitar de Cotización' : 'Sumar a Cotización';
+        const buttonClass = isSelected ? 'btn-secondary' : 'btn-primary';
+        
+        grid.innerHTML += `
+          <div class="menu-item-card ${activeClass} ${disabledClass}" id="menu-card-${srv.key}" style="transition: all 0.3s ease; position: relative;">
+            ${tagHtml}
+            <h4 style="margin-top: 10px;">${srv.name}</h4>
+            <p>${srv.description}</p>
+            ${isAvailable ? `
+              <div style="margin-top: 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--border-light); padding-top: 10px;">
+                <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-orange);">${priceInfo}</span>
+                <button type="button" class="${buttonClass} btn-menu-toggle-quote" data-key="${srv.key}" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 50px; cursor: pointer; border: none; font-weight: 700;">
+                  ${buttonText}
+                </button>
+              </div>
+            ` : `<span class="unavailable-badge" style="font-size: 0.75rem; margin-top: 10px; display: inline-block;">No Disponible</span>`}
+          </div>
+        `;
+      });
+    });
+
+    // Re-registrar escuchadores de clics
+    document.querySelectorAll('.btn-menu-toggle-quote').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.getAttribute('data-key');
+        toggleMenuItemInQuote(key);
+      });
+    });
+
+    // Re-registrar spotlight en las nuevas tarjetas de menú
+    const spotlightMenuCards = document.querySelectorAll('.menu-item-card');
+    spotlightMenuCards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+    });
+  }
+
+  function toggleMenuItemInQuote(key) {
+    if (selectedMenuItems.has(key)) {
+      selectedMenuItems.delete(key);
+    } else {
+      selectedMenuItems.add(key);
+    }
+    renderMenuDOM();
+    calculateBudget();
   }
 
   // Actualizar selector de livings
@@ -646,10 +757,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sumBase) sumBase.textContent = `${formatCurrency(baseCateringTotal)} (${guestCount} invitados)`;
     
     let additionalTotal = 0;
+    let menuItemsTotal = 0;
     let dynamicHtml = '';
     let selectedAddonsList = [];
+    let selectedMenuOptionsList = [];
 
-    // 1. Recorrer dinámicamente los adicionales del contenedor
+    // 1. Sumar los platos seleccionados desde el menú dinámico (Set)
+    selectedMenuItems.forEach(key => {
+      const srv = activeServices.find(s => s.key === key);
+      if (srv) {
+        const cost = parseFloat(srv.price) || 0;
+        const totalCost = cost * guestCount;
+        menuItemsTotal += totalCost;
+        selectedMenuOptionsList.push(srv.name);
+        
+        dynamicHtml += `
+          <div class="summary-item">
+            <span>+ ${srv.name}:</span>
+            <strong>${formatCurrency(totalCost)}</strong>
+          </div>`;
+      }
+    });
+
+    // 2. Recorrer dinámicamente los adicionales del contenedor
     const addonsContainer = document.getElementById('calc-addons-container');
     if (addonsContainer) {
       const checkboxes = addonsContainer.querySelectorAll('input[type="checkbox"]');
@@ -672,7 +802,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // 2. Cantidad de Juegos de Living (livingQty * srv_living_price)
+    // 3. Cantidad de Juegos de Living (livingQty * srv_living_price)
     if (srvLivingQtySelect && !srvLivingQtySelect.disabled) {
       const qty = parseInt(srvLivingQtySelect.value);
       const costPerUnit = parseFloat(srvLivingQtySelect.getAttribute('data-cost')) || 0;
@@ -690,14 +820,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (dynamicSummaryItems) dynamicSummaryItems.innerHTML = dynamicHtml;
     
-    const grandTotal = baseCateringTotal + additionalTotal;
+    const grandTotal = baseCateringTotal + menuItemsTotal + additionalTotal;
+    const pricePerPerson = guestCount > 0 ? grandTotal / guestCount : 0;
+    
     if (calcTotal) calcTotal.textContent = formatCurrency(grandTotal);
+    
+    const calcPerPerson = document.getElementById('calc-per-person');
+    if (calcPerPerson) calcPerPerson.textContent = formatCurrency(pricePerPerson);
 
     return {
       menuName: selectedMenuName,
       guestCount,
       grandTotal,
-      addons: selectedAddonsList
+      perPerson: pricePerPerson,
+      addons: selectedAddonsList,
+      menuItems: selectedMenuOptionsList
     };
   }
 
@@ -716,13 +853,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const results = calculateBudget();
       if (!results) return;
       
+      let menuItemsText = '';
+      if (results.menuItems.length > 0) {
+        results.menuItems.forEach(item => {
+          menuItemsText += `\n  • ${item}`;
+        });
+      } else {
+        menuItemsText = '\n  • Ninguno';
+      }
+
       let addonsText = '';
       if (results.addons.length > 0) {
         results.addons.forEach(item => {
-          addonsText += `\n- ${item}`;
+          addonsText += `\n  • ${item}`;
         });
       } else {
-        addonsText = '\n- Ninguno';
+        addonsText = '\n  • Ninguno';
       }
 
       const warningText = results.guestCount < 50 ? '\n⚠️ *Nota:* La cantidad de invitados es menor al mínimo de 50 requerido para contratos generales.' : '';
@@ -732,9 +878,11 @@ document.addEventListener('DOMContentLoaded', () => {
 *Detalles del Presupuesto:*
 - *Menú Elegido:* ${results.menuName}
 - *Invitados:* ${results.guestCount} personas ${warningText}
+- *Platos de Menú Seleccionados:${menuItemsText}*
 - *Servicios Adicionales Seleccionados:${addonsText}*
 
-*Total Estimado:* ${formatCurrency(results.grandTotal)}
+*Estimado Por Persona:* ${formatCurrency(results.perPerson)}
+*Total Estimado del Evento:* ${formatCurrency(results.grandTotal)}
 
 ¿Podrían confirmarme disponibilidad para presupuesto formal y reserva? ¡Muchas gracias!`;
 
@@ -742,6 +890,191 @@ document.addEventListener('DOMContentLoaded', () => {
       const cleanPhone = activeConfigs.contact_phone1.replace(/\s+/g, '');
       const waUrl = `https://wa.me/549${cleanPhone}?text=${encodeURIComponent(waMessage)}`;
       window.open(waUrl, '_blank', 'noopener,noreferrer');
+    });
+  }
+
+  // Botón descargar PDF
+  const btnCalcPDF = document.getElementById('btn-calc-pdf');
+  if (btnCalcPDF) {
+    btnCalcPDF.addEventListener('click', downloadBudgetPDF);
+  }
+
+  // Generación y descarga de PDF con formato estético corporativo
+  function downloadBudgetPDF() {
+    const results = calculateBudget();
+    if (!results) return;
+
+    // Obtener la fecha de hoy
+    const today = new Date().toLocaleDateString('es-AR');
+
+    // Construir lista de platos de menú
+    let menuItemsHtml = '';
+    if (results.menuItems.length > 0) {
+      results.menuItems.forEach(item => {
+        // Encontrar precio
+        const srv = activeServices.find(s => s.name === item);
+        const price = srv ? parseFloat(srv.price) : 0;
+        menuItemsHtml += `
+          <tr style="border-bottom: 1px solid #ebdcd5;">
+            <td style="padding: 10px; text-align: left; font-weight: 500;">${srv ? srv.name : item}</td>
+            <td style="padding: 10px; text-align: right;">${formatCurrency(price)} x pers.</td>
+            <td style="padding: 10px; text-align: right; font-weight: 700; color: #e05326;">${formatCurrency(price * results.guestCount)}</td>
+          </tr>
+        `;
+      });
+    } else {
+      menuItemsHtml = `<tr><td colspan="3" style="padding: 15px; color: #80706b; font-style: italic; text-align: center;">Ningún plato adicional seleccionado.</td></tr>`;
+    }
+
+    // Construir lista de servicios adicionales
+    let addonsHtml = '';
+    if (results.addons.length > 0) {
+      results.addons.forEach(item => {
+        // Buscar servicio original
+        let cleanedName = item.split(' (')[0];
+        let srv;
+        let qty = 1;
+        let isLiving = item.includes('Juego(s) de Living');
+        if (isLiving) {
+          qty = parseInt(item.split(' ')[0]) || 1;
+          srv = activeServices.find(s => s.key === 'srv_living');
+        } else {
+          srv = activeServices.find(s => s.name === cleanedName);
+        }
+        
+        if (srv) {
+          const cost = parseFloat(srv.price);
+          const totalCost = srv.is_per_person ? cost * results.guestCount : cost * qty;
+          addonsHtml += `
+            <tr style="border-bottom: 1px solid #ebdcd5;">
+              <td style="padding: 10px; text-align: left; font-weight: 500;">${srv.name} ${isLiving ? '(' + qty + ' juegos)' : ''}</td>
+              <td style="padding: 10px; text-align: right;">${formatCurrency(cost)} ${srv.is_per_person ? 'x pers.' : 'fijo'}</td>
+              <td style="padding: 10px; text-align: right; font-weight: 700; color: #e05326;">${formatCurrency(totalCost)}</td>
+            </tr>
+          `;
+        }
+      });
+    } else {
+      addonsHtml = `<tr><td colspan="3" style="padding: 15px; color: #80706b; font-style: italic; text-align: center;">Ningún servicio adicional seleccionado.</td></tr>`;
+    }
+
+    // Buscar precio unitario base del menu elegido
+    const selectedOption = eventTypeSelect.options[eventTypeSelect.selectedIndex];
+    const basePricePerPerson = parseFloat(selectedOption.getAttribute('data-base')) || 0;
+
+    // Crear contenedor temporal con estilos refinados de impresión
+    const optHtml = `
+      <div style="font-family: 'Outfit', sans-serif; color: #1d1715; padding: 40px; background-color: #ffffff; max-width: 800px; margin: 0 auto; box-sizing: border-box;">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #e05326; padding-bottom: 20px; margin-bottom: 30px;">
+          <div>
+            <h1 style="margin: 0; color: #e05326; font-size: 28px; font-weight: 800; text-transform: uppercase;">La Juntada</h1>
+            <p style="margin: 5px 0 0 0; color: #80706b; font-size: 14px; font-weight: 600; font-style: italic;">Le agrega sabor a tus encuentros!</p>
+          </div>
+          <div style="text-align: right;">
+            <h2 style="margin: 0; color: #1d1715; font-size: 18px; font-weight: 700; letter-spacing: 0.5px;">PRESUPUESTO ESTIMADO</h2>
+            <p style="margin: 5px 0 0 0; color: #80706b; font-size: 12px; font-weight: 500;">Fecha de Emisión: ${today}</p>
+          </div>
+        </div>
+
+        <!-- Info Evento -->
+        <div style="background-color: #faf6f0; border-radius: 8px; padding: 20px; margin-bottom: 30px; border-left: 5px solid #e05326; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
+          <h3 style="margin-top: 0; color: #e05326; font-size: 15px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px;">Detalles del Evento</h3>
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <tr>
+              <td style="padding: 5px 0; color: #80706b;"><strong>Menú Base Elegido:</strong></td>
+              <td style="padding: 5px 0; text-align: right; font-weight: 600;">${results.menuName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 5px 0; color: #80706b;"><strong>Cantidad de Invitados:</strong></td>
+              <td style="padding: 5px 0; text-align: right; font-weight: 600;">${results.guestCount} personas</td>
+            </tr>
+            <tr>
+              <td style="padding: 5px 0; color: #80706b;"><strong>Valor Base Unitario:</strong></td>
+              <td style="padding: 5px 0; text-align: right; font-weight: 600;">${formatCurrency(basePricePerPerson)} x pers.</td>
+            </tr>
+            <tr style="border-top: 1px solid #ebdcd5;">
+              <td style="padding: 10px 0 5px 0; color: #1d1715; font-weight: 700;">Subtotal Gastronomía Base:</td>
+              <td style="padding: 10px 0 5px 0; text-align: right; font-weight: 700; color: #e05326; font-size: 16px;">${formatCurrency(basePricePerPerson * results.guestCount)}</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Opciones de Menu -->
+        <div style="margin-bottom: 35px;">
+          <h3 style="color: #e05326; font-size: 14px; font-weight: 700; border-bottom: 2px solid #ebdcd5; padding-bottom: 6px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px;">Platos Adicionales del Menú</h3>
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <thead>
+              <tr style="background-color: #faf6f0; color: #1d1715; font-weight: 700; border-bottom: 1px solid #ebdcd5;">
+                <th style="padding: 10px; text-align: left;">Descripción del Plato</th>
+                <th style="padding: 10px; text-align: right; width: 140px;">Valor Unitario</th>
+                <th style="padding: 10px; text-align: right; width: 120px;">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${menuItemsHtml}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Servicios Adicionales -->
+        <div style="margin-bottom: 45px;">
+          <h3 style="color: #e05326; font-size: 14px; font-weight: 700; border-bottom: 2px solid #ebdcd5; padding-bottom: 6px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px;">Servicios & Alquiler de Equipamiento</h3>
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <thead>
+              <tr style="background-color: #faf6f0; color: #1d1715; font-weight: 700; border-bottom: 1px solid #ebdcd5;">
+                <th style="padding: 10px; text-align: left;">Descripción del Servicio</th>
+                <th style="padding: 10px; text-align: right; width: 140px;">Valor Unitario</th>
+                <th style="padding: 10px; text-align: right; width: 120px;">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${addonsHtml}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Resumen Financiero -->
+        <div style="background-color: #1d1715; color: #ffffff; border-radius: 8px; padding: 25px; margin-bottom: 35px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 25px rgba(29, 23, 21, 0.15);">
+          <div>
+            <p style="margin: 0; font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Presupuesto Estimado</p>
+            <h2 style="margin: 5px 0 0 0; color: #e05326; font-size: 24px; font-weight: 800; font-family: 'Outfit', sans-serif;">POR PERSONA: ${formatCurrency(results.perPerson)}</h2>
+          </div>
+          <div style="text-align: right;">
+            <p style="margin: 0; font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Valor Total Estimado</p>
+            <h2 style="margin: 5px 0 0 0; color: #ffffff; font-size: 24px; font-weight: 800; font-family: 'Outfit', sans-serif;">${formatCurrency(results.grandTotal)}</h2>
+          </div>
+        </div>
+
+        <!-- Nota / Terminos -->
+        <div style="border-top: 1px solid #ebdcd5; padding-top: 20px; font-size: 11px; color: #80706b; line-height: 1.6;">
+          <p style="font-weight: 700; color: #1d1715; margin-bottom: 5px; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px;">Aclaraciones e Información Importante:</p>
+          <ul style="margin: 0; padding-left: 15px;">
+            <li>El presente presupuesto constituye una estimación inicial en base a las opciones cargadas online. No asegura disponibilidad de fecha ni congelamiento de precios.</li>
+            <li><strong>Descuento Especial:</strong> Bonificación del 10% sobre el saldo final abonando de contado efectivo.</li>
+            <li>Financiación disponible: consultá planes de pago adaptados a tu comodidad.</li>
+            <li>Los precios informados tienen validez por 15 días corridos a partir de la fecha de generación.</li>
+          </ul>
+          <p style="margin-top: 25px; text-align: center; font-weight: 700; color: #e05326; font-size: 12px;">La Juntada Eventos | Mendoza 3147, Alta Córdoba | Tel: 351 606 9743</p>
+        </div>
+      </div>
+    `;
+
+    // Generar PDF usando html2pdf
+    const element = document.createElement('div');
+    element.innerHTML = optHtml;
+    document.body.appendChild(element);
+
+    const opt = {
+      margin:       10,
+      filename:     `la_juntada_presupuesto_${results.menuName.toLowerCase().replace(/\s+/g, '_')}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().from(element).set(opt).save().then(() => {
+      document.body.removeChild(element);
     });
   }
 

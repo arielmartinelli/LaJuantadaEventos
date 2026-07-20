@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuestros Salones | La Juntada Eventos</title>
+  <meta name="description" content="Alquiler de salones exclusivos en Córdoba con La Juntada. Villa Allende y Alta Córdoba con la mejor infraestructura y catering.">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* Specific styles for Salones page */
+    .salones-header {
+      background: linear-gradient(135deg, #1d1715 0%, #3a312e 100%);
+      padding: 100px 20px 60px;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+
+    .salones-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 15px;
+      background-color: var(--bg-light);
+      clip-path: polygon(0 100%, 100% 100%, 100% 0);
+    }
+
+    .salones-container {
+      max-width: 1200px;
+      margin: -30px auto 80px;
+      padding: 0 20px;
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 50px;
+    }
+
+    .salon-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-light);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      position: relative;
+      isolation: isolate;
+    }
+
+    .salon-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(350px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(224, 83, 38, 0.05), transparent 70%);
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .salon-card:hover::before {
+      opacity: 1;
+    }
+
+    .salon-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 30px 60px rgba(29, 23, 21, 0.15);
+      border-color: var(--primary-orange);
+    }
+
+    @media (max-width: 992px) {
+      .salon-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .salon-visual-panel {
+      position: relative;
+      height: 100%;
+      min-height: 380px;
+      overflow: hidden;
+    }
+
+    .salon-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+
+    .salon-card:hover .salon-img {
+      transform: scale(1.05);
+    }
+
+    .salon-overlay-tag {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: var(--primary-orange);
+      color: white;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 6px 14px;
+      border-radius: 50px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .salon-details-panel {
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 30px;
+      background-color: var(--bg-white);
+      position: relative;
+      z-index: 2;
+    }
+
+    @media (max-width: 576px) {
+      .salon-details-panel {
+        padding: 25px 20px;
+      }
+    }
+
+    .salon-info h3 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--charcoal);
+      margin-bottom: 10px;
+    }
+
+    .salon-location {
+      font-size: 0.9rem;
+      color: var(--charcoal-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .salon-location i {
+      color: var(--primary-orange);
+    }
+
+    .salon-amenities {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    @media (max-width: 480px) {
+      .salon-amenities {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .amenity-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--charcoal-light);
+    }
+
+    .amenity-item i {
+      color: var(--primary-orange);
+      font-size: 1rem;
+      background-color: var(--primary-light);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .salon-map-container {
+      width: 100%;
+      height: 180px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+    }
+
+    .salon-map-container iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* Back-to-Top custom override */
+    .back-to-top {
+      bottom: 25px;
+      right: 25px;
+      width: 45px;
+      height: 45px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Navigation -->
+  <header class="main-header sticky">
+    <div class="container header-container">
+      <a href="index.html" class="nav-logo">
+        <svg class="nav-logo-svg" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg">
+          <text x="10" y="65" class="logo-title">La Juntada</text>
+          <text x="140" y="105" class="logo-sub1">Le agrega sabor</text>
+          <text x="175" y="135" class="logo-sub2">a tus encuentros!</text>
+        </svg>
+      </a>
+      
+      <button class="mobile-menu-toggle" id="menu-toggle" aria-expanded="false" aria-label="Abrir menú">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+
+      <nav class="nav-menu" id="nav-menu">
+        <ul class="nav-list">
+          <li class="nav-item"><a href="index.html#hero" class="nav-link">Inicio</a></li>
+          <li class="nav-item"><a href="index.html#servicios" class="nav-link">Servicios</a></li>
+          <li class="nav-item"><a href="index.html#menu-carta" class="nav-link">Nuestra Carta</a></li>
+          <li class="nav-item"><a href="salones.html" class="nav-link active">Salones</a></li>
+          <li class="nav-item"><a href="index.html#alquiler" class="nav-link">Alquileres</a></li>
+          <li class="nav-item"><a href="index.html#calculadora" class="nav-link">Cotizador</a></li>
+          <li class="nav-item"><a href="index.html#condiciones" class="nav-link">Condiciones</a></li>
+          <li class="nav-item"><a href="admin.html" class="nav-link admin-nav-link" title="Acceso Admin"><i class="fa-solid fa-shield-halved"></i><span class="admin-text-mobile"> Panel Admin</span></a></li>
+          <li class="nav-item"><a href="index.html#contacto" class="nav-link-btn">Contactar</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Banner Header -->
+  <section class="salones-header">
+    <div class="container">
+      <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;">Espacios Exclusivos</h1>
+      <p style="font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto;">
+        Te presentamos nuestras dos propuestas de salones completamente equipados para todo tipo de eventos con el sello gastronómico de La Juntada.
+      </p>
+    </div>
+  </section>
+
+  <!-- Salones Listing -->
+  <main class="salones-container">
+
+    <!-- Salón Norte Card -->
+    <div class="salon-card reveal-left">
+      <div class="salon-visual-panel">
+        <img src="assets/wedding_event.png" alt="Salón La Juntada Norte - Villa Allende" class="salon-img">
+        <span class="salon-overlay-tag">Zona Norte</span>
+      </div>
+      
+      <div class="salon-details-panel">
+        <div class="salon-info">
+          <h3>Salón La Juntada Norte</h3>
+          <div class="salon-location">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>Av. Tissera 3400, Villa Allende, Córdoba</span>
+          </div>
+          
+          <div class="salon-amenities">
+            <div class="amenity-item">
+              <i class="fa-solid fa-users"></i>
+              <span>Capacidad: 200 personas</span>
+            </div>
+            <div class="amenity-item">
+              <i class="fa-solid fa-tree"></i>
+              <span>Parque verde y piscina</span>
+            </div>
+            <div class="amenity-item">
+              <i class="fa-solid fa-snowflake"></i>
+              <span>Climatización central</span>
+            </div>
+            <div class="amenity-item">
+              <i class="fa-solid fa-fire-burner"></i>
+              <span>Asadores de gran capacidad</span>
+            </div>
+            <div class="amenity-item">
+              <i class="fa-solid fa-square-parking"></i>
+              <span>Estacionamiento privado</span>
+            </div>
+            <div class="amenity-item">
+              <i class="fa-solid fa-wifi"></i>
+              <span>Conectividad de alta velocidad</span>
+            </div>
+          </div>
+
+          <!-- Maps Embed -->
+          <div class="salon-map-container">
+            <!-- Mock Villa Allende Google Map Embed -->
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13636.858022878477!2d-64.30138245!3d-31.29778235!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94329ddb53c7c251%3A0xc3c5f2122b512c0!2sVilla%20Allende%2C%20C%C3%B3rdoba!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+
+        <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20consultar%20disponibilidad%20y%20precios%20para%20el%20%2aSal%C3%B3n%20La%20Juntada%20Norte%2a%20en%20Villa%20Allende." target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align: center; justify-content: center;">
+          <i class="fa-brands fa-whatsapp"></i> Consultar Disponibilidad Salón Norte
+        </a>
+      </div>
+    </div>
+
+    <!-- Salón Centro Card -->
+    <div class="salon-card reveal-right">
+      <div class="salon-visual-panel">
+        <img src="assets/social_event.png" alt="Salón La Juntada Centro - Alta Córdoba" class="salon-img">
+        <span class="salon-overlay-tag">Zona Centro</span>
+      </div>
+      
+      <div class="salon-details-panel">
+        <div class="salon-info">
+          <h3>Salón La Juntada Centro</h3>
+          <div class="salon-location">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>Mendoza 3147, Alta Córdoba, Córdoba</span>
+          </div>
+          
+          <div class="salon-amenities">
+            <div class="amenity-item">
+              <i class="fa-solid fa-users"></i>
+              <span>Capacidad: 120 personas</span>
+            </div>
+            <div class="amenity-item">
+              <i class="fa-solid fa-building-user"></i>
+              <span>Ubicación céntrica accesible</span>
+            </div>
+            <div class="amenity-item">
+              <i class="fa-solid fa-snowflake"></i>
+              <span>Ambiente completamente climatizado</span>
+            </div>
+            <div class="amenity-item">
+              <i class="fa-solid fa-compact-disc"></i>
+              <span>Equipamiento de DJ e audio integrado</span>
+            </div>
+            <div class="amenity-item">
+              <i class="fa-solid fa-lightbulb"></i>
+              <span>Iluminación perimetral led</span>
+            </div>
+            <div class="amenity-item">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Seguridad médica integrada</span>
+            </div>
+          </div>
+
+          <!-- Maps Embed -->
+          <div class="salon-map-container">
+            <!-- Mock Alta Cordoba Google Map Embed -->
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3405.513233816666!2d-64.1856711!3d-31.4005615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94329864227f4e91%3A0xe54d3dfbb7ba3a32!2sMendoza%203147%2C%20X5000%20C%C3%B3rdoba!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+
+        <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20consultar%20disponibilidad%20y%20precios%20para%20el%20%2aSal%C3%B3n%20La%20Juntada%20Centro%2a%20en%20Alta%20C%C3%B3rdoba." target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align: center; justify-content: center;">
+          <i class="fa-brands fa-whatsapp"></i> Consultar Disponibilidad Salón Centro
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" style="padding-top: 50px;">
+    <div class="container footer-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 45px;">
+      <div class="footer-brand">
+        <svg class="footer-logo-svg" viewBox="0 0 380 160" style="width: 180px; height: 75px; margin-bottom: 20px;">
+          <text x="10" y="65" style="font-family:'Pacifico', cursive; fill:#ffffff; font-size: 52px;">La Juntada</text>
+          <text x="140" y="105" style="font-family:'Caveat', cursive; fill:#e05326; font-size: 20px; font-weight:700;">Le agrega sabor</text>
+          <text x="175" y="135" style="font-family:'Caveat', cursive; fill:#e05326; font-size: 20px; font-weight:700;">a tus encuentros!</text>
+        </svg>
+        <p style="font-size: 0.9rem; opacity: 0.7;">Organización integral y logística de eventos en Córdoba. Catering premium, barras móviles, vajilla y salones propios.</p>
+      </div>
+
+      <div class="footer-links">
+        <h3>Enlaces Rápidos</h3>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px;">
+          <li><a href="index.html#hero" style="color: white; text-decoration: none; opacity: 0.8;">Inicio</a></li>
+          <li><a href="index.html#servicios" style="color: white; text-decoration: none; opacity: 0.8;">Servicios</a></li>
+          <li><a href="index.html#menu-carta" style="color: white; text-decoration: none; opacity: 0.8;">Nuestra Carta</a></li>
+          <li><a href="salones.html" style="color: white; text-decoration: none; opacity: 0.8;">Salones</a></li>
+          <li><a href="index.html#calculadora" style="color: white; text-decoration: none; opacity: 0.8;">Cotizador Online</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-services-list">
+        <h3>Nuestros Salones</h3>
+        <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px;"><strong>La Juntada Norte:</strong> Villa Allende (capacidad 200 pers. con parque).</p>
+        <p style="font-size: 0.9rem; opacity: 0.7;"><strong>La Juntada Centro:</strong> Alta Córdoba (capacidad 120 pers. climatizado).</p>
+      </div>
+    </div>
+    
+    <div class="footer-bottom" style="background-color: #120e0d; padding: 25px 0; font-size: 0.85rem; opacity: 0.8;">
+      <div class="container footer-bottom-inner" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+        <p>&copy; 2026 La Juntada Eventos. Todos los derechos reservados.</p>
+        <p>Alta Córdoba, Mendoza 3147. Tel: 351 606 9743 | 351 216 0141</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Back-to-Top Button -->
+  <div class="back-to-top" id="btn-back-to-top" role="button" aria-label="Volver al inicio">
+    <i class="fa-solid fa-arrow-up"></i>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Menu Toggle mobile
+      const menuToggle = document.getElementById('menu-toggle');
+      const navMenu = document.getElementById('nav-menu');
+      
+      if (menuToggle && navMenu) {
+        menuToggle.addEventListener('click', () => {
+          const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+          menuToggle.setAttribute('aria-expanded', !expanded);
+          navMenu.classList.toggle('active');
+          menuToggle.classList.toggle('active');
+        });
+      }
+
+      // Spotlight effect on salon cards
+      const cards = document.querySelectorAll('.salon-card');
+      cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty('--mouse-x', `${x}px`);
+          card.style.setProperty('--mouse-y', `${y}px`);
+        });
+      });
+
+      // Scroll Reveal logic
+      const revealElements = document.querySelectorAll('.reveal-left, .reveal-right');
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('active');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, {
+          threshold: 0.1,
+          rootMargin: "0px 0px -40px 0px"
+        });
+        revealElements.forEach(el => observer.observe(el));
+      } else {
+        revealElements.forEach(el => el.classList.add('active'));
+      }
+
+      // Back-to-top floating button
+      const btnBackToTop = document.getElementById('btn-back-to-top');
+      if (btnBackToTop) {
+        window.addEventListener('scroll', () => {
+          if (window.scrollY > 300) {
+            btnBackToTop.classList.add('show');
+          } else {
+            btnBackToTop.classList.remove('show');
+          }
+        });
+        btnBackToTop.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+    });
+  </script>
+</body>
+</html>

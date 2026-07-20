@@ -1112,16 +1112,39 @@
         const isAvailableChecked = srv.is_available ? 'checked' : '';
         const isSrvLiving = srv.key === 'srv_living';
         
-        const isKeyReadOnly = srv.key.startsWith('srv_') ? 'readonly' : '';
+        const isKeyReadOnly = srv.key.startsWith('srv_') || srv.key.startsWith('rec_') || srv.key.startsWith('ent_') || srv.key.startsWith('pri_') || srv.key.startsWith('pos_') || srv.key.startsWith('beb_') ? 'readonly' : '';
         
+        const descVal = srv.description || '';
+        const tagVal = srv.tag || '';
+        const categoryVal = srv.category || 'adicional';
+        
+        const categories = [
+          { value: 'adicional', label: 'Servicio Adicional / Alquiler' },
+          { value: 'recepcion', label: 'Recepción' },
+          { value: 'entradas', label: 'Entradas' },
+          { value: 'principales', label: 'Platos Principales' },
+          { value: 'postres', label: 'Postres & Mesa Dulce' },
+          { value: 'bebidas', label: 'Bebidas & Barras' }
+        ];
+        
+        let categoryOptions = '';
+        categories.forEach(c => {
+          const selected = c.value === categoryVal ? 'selected' : '';
+          categoryOptions += `<option value="${c.value}" ${selected}>${c.label}</option>`;
+        });
+
         div.innerHTML = `
           <div class="admin-form-group" style="margin-bottom: 0;">
             <label style="font-size: 0.75rem;">Identificador (Clave única)</label>
             <input type="text" class="srv-input-key" value="${srv.key}" ${isKeyReadOnly} required placeholder="ej. srv_luces">
           </div>
           <div class="admin-form-group" style="margin-bottom: 0;">
-            <label style="font-size: 0.75rem;">Nombre del Servicio</label>
+            <label style="font-size: 0.75rem;">Nombre del Servicio/Plato</label>
             <input type="text" class="srv-input-name" value="${srv.name}" required placeholder="Nombre del servicio">
+          </div>
+          <div class="admin-form-group" style="margin-bottom: 0;">
+            <label style="font-size: 0.75rem;">Descripción</label>
+            <textarea class="srv-input-desc" required style="width: 100%; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 8px; font-family: inherit; font-size: 0.85rem;" rows="2" placeholder="Breve descripción del servicio o plato">${descVal}</textarea>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <div class="admin-form-group" style="margin-bottom: 0;">
@@ -1129,14 +1152,26 @@
               <input type="number" class="srv-input-price" value="${srv.price}" required min="0">
             </div>
             <div class="admin-form-group" style="margin-bottom: 0;">
+              <label style="font-size: 0.75rem;">Categoría</label>
+              <select class="srv-input-category" style="width: 100%; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 8px; font-family: inherit; font-size: 0.85rem;">
+                ${categoryOptions}
+              </select>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: center; margin-top: 5px;">
+            <div class="admin-form-group" style="margin-bottom: 0;">
+              <label style="font-size: 0.75rem;">Etiqueta (Tag)</label>
+              <input type="text" class="srv-input-tag" value="${tagVal}" placeholder="ej. Premium, Diente Libre">
+            </div>
+            <div class="admin-form-group" style="margin-bottom: 0;">
               <label style="font-size: 0.75rem;">Cobro</label>
-              <select class="srv-input-type" ${isSrvLiving ? 'disabled' : ''}>
+              <select class="srv-input-type" ${isSrvLiving ? 'disabled' : ''} style="width: 100%; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 8px; font-family: inherit; font-size: 0.85rem;">
                 <option value="per_person" ${isPerPersonChecked}>Por persona</option>
                 <option value="fixed" ${isFixedChecked}>Fijo</option>
               </select>
             </div>
           </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
             <span style="font-size: 0.85rem; font-weight: 700; color: var(--charcoal-light);">Disponible</span>
             <label class="admin-switch">
               <input type="checkbox" class="srv-input-available" ${isAvailableChecked}>
@@ -1158,9 +1193,12 @@
             grid.appendChild(createServiceCard({
               key: 'srv_nuevo_' + Math.random().toString(36).substring(2, 7),
               name: '',
+              description: '',
               price: 0,
               is_per_person: false,
-              is_available: true
+              is_available: true,
+              category: 'adicional',
+              tag: ''
             }));
           }
         });
@@ -1357,16 +1395,22 @@
           serviceRows.forEach(row => {
             const key = row.querySelector('.srv-input-key').value.trim();
             const name = row.querySelector('.srv-input-name').value.trim();
+            const description = row.querySelector('.srv-input-desc').value.trim();
             const price = parseFloat(row.querySelector('.srv-input-price').value) || 0;
             const isPerPerson = row.querySelector('.srv-input-type').value === 'per_person';
             const isAvailable = row.querySelector('.srv-input-available').checked;
+            const category = row.querySelector('.srv-input-category').value;
+            const tag = row.querySelector('.srv-input-tag').value.trim();
             
             servicesPayload.push({
               key,
               name,
+              description,
               price,
               is_per_person: isPerPerson,
-              is_available: isAvailable
+              is_available: isAvailable,
+              category,
+              tag
             });
           });
 
