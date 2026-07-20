@@ -40,7 +40,7 @@
     /* Header styling */
     .salones-header {
       background: linear-gradient(135deg, #1d1715 0%, #3a312e 100%);
-      padding: 110px 20px 45px;
+      padding: 170px 20px 80px;
       text-align: center;
       color: white;
       position: relative;
@@ -58,14 +58,14 @@
     }
 
     .salones-container {
-      max-width: 1100px;
-      margin: -30px auto 60px;
+      max-width: 1200px;
+      margin: 60px auto 80px;
       padding: 0 20px;
       position: relative;
       z-index: 10;
       display: flex;
       flex-direction: column;
-      gap: 35px;
+      gap: 60px;
     }
 
     .salon-card {
@@ -75,7 +75,7 @@
       box-shadow: var(--shadow-lg);
       border: 1px solid var(--border-light);
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.15fr 0.85fr;
       gap: 0;
       transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       position: relative;
@@ -116,7 +116,7 @@
     .salon-carousel {
       position: relative;
       height: 100%;
-      min-height: 350px;
+      min-height: 480px;
       overflow: hidden;
     }
 
@@ -219,11 +219,11 @@
     }
 
     .salon-details-panel {
-      padding: 24px 30px;
+      padding: 40px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 20px;
+      gap: 25px;
       background-color: var(--bg-white);
       position: relative;
       z-index: 2;
@@ -231,24 +231,24 @@
 
     @media (max-width: 576px) {
       .salon-details-panel {
-        padding: 20px;
+        padding: 30px 20px;
       }
     }
 
     .salon-info h3 {
-      font-size: 1.45rem;
+      font-size: 1.75rem;
       font-weight: 800;
       color: var(--charcoal);
-      margin-bottom: 6px;
+      margin-bottom: 10px;
     }
 
     .salon-location {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: var(--charcoal-muted);
       display: flex;
       align-items: center;
       gap: 6px;
-      margin-bottom: 12px;
+      margin-bottom: 20px;
     }
 
     .salon-location i {
@@ -258,8 +258,8 @@
     .salon-amenities {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px 12px;
-      margin-bottom: 15px;
+      gap: 15px 20px;
+      margin-bottom: 25px;
     }
 
     @media (max-width: 480px) {
@@ -272,16 +272,16 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: var(--charcoal-light);
     }
 
     .amenity-item i {
       color: var(--primary-orange);
-      font-size: 0.8rem;
+      font-size: 1rem;
       background-color: var(--primary-light);
-      width: 22px;
-      height: 22px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -290,7 +290,7 @@
 
     .salon-map-container {
       width: 100%;
-      height: 130px;
+      height: 180px;
       border-radius: var(--radius-sm);
       overflow: hidden;
       border: 1px solid var(--border-light);
@@ -348,8 +348,8 @@
   <!-- Banner Header -->
   <section class="salones-header">
     <div class="container">
-      <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 8px;">Espacios Exclusivos</h1>
-      <p style="font-size: 0.95rem; opacity: 0.9; max-width: 600px; margin: 0 auto;">
+      <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;">Espacios Exclusivos</h1>
+      <p style="font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto;">
         Te presentamos nuestras dos propuestas de salones completamente equipados para todo tipo de eventos con el sello gastronómico de La Juntada.
       </p>
     </div>
@@ -493,8 +493,8 @@
   </main>
 
   <!-- Footer -->
-  <footer class="footer" style="padding-top: 50px;">
-    <div class="container footer-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 45px;">
+  <footer class="main-footer">
+    <div class="container footer-grid">
       <div class="footer-brand">
         <svg class="footer-logo-svg" viewBox="0 0 380 160" style="width: 180px; height: 75px; margin-bottom: 20px;">
           <text x="10" y="65" style="font-family:'Pacifico', cursive; fill:#ffffff; font-size: 52px;">La Juntada</text>
