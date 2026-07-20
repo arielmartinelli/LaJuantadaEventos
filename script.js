@@ -1068,7 +1068,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Generar PDF usando html2pdf
       const element = document.createElement('div');
-      element.style.position = 'absolute';
+      element.style.position = 'fixed';
       element.style.left = '0';
       element.style.top = '0';
       element.style.width = '800px';
@@ -1084,7 +1084,10 @@ document.addEventListener('DOMContentLoaded', () => {
         html2canvas:  { 
           scale: 2, 
           letterRendering: true,
-          logging: false
+          logging: false,
+          scrollX: 0,
+          scrollY: 0,
+          useCORS: true
         },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
