@@ -44,11 +44,11 @@
       <nav class="nav-menu" id="nav-menu">
         <ul class="nav-list">
           <li class="nav-item"><a href="#hero" class="nav-link active">Inicio</a></li>
-          <li class="nav-item"><a href="#servicios" class="nav-link">Servicios</a></li>
+          <li class="nav-item"><a href="#servicios" class="nav-link">Servicio</a></li>
           <li class="nav-item"><a href="#menu-carta" class="nav-link">Nuestra Carta</a></li>
+          <li class="nav-item"><a href="#calculadora" class="nav-link">Cotizador</a></li>
           <li class="nav-item"><a href="salones.html" class="nav-link">Salones</a></li>
           <li class="nav-item"><a href="#alquiler" class="nav-link">Alquileres</a></li>
-          <li class="nav-item"><a href="#calculadora" class="nav-link">Cotizador</a></li>
           <li class="nav-item"><a href="#condiciones" class="nav-link">Condiciones</a></li>
           <li class="nav-item"><a href="admin.html" class="nav-link admin-nav-link" title="Acceso Admin"><i class="fa-solid fa-shield-halved"></i><span class="admin-text-mobile"> Panel Admin</span></a></li>
           <li class="nav-item"><a href="#contacto" class="nav-link-btn">Contactar</a></li>
@@ -247,54 +247,6 @@
     </div>
   </section>
 
-  <!-- Salones Section Intro -->
-  <section class="salones-section-intro" style="padding: 80px 0; background-color: var(--bg-white); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);">
-    <div class="container">
-      <div class="section-header reveal">
-        <span class="sub-header">Salones de Eventos</span>
-        <h2 class="section-title">Encontrá el espacio ideal</h2>
-        <div class="divider"></div>
-      </div>
-      
-      <div class="salones-intro-grid" style="margin-top: 50px;">
-        <div class="reveal-left" style="position: relative; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg); height: 350px;">
-          <img src="assets/wedding_event.png" alt="Salón La Juntada Norte" style="width: 100%; height: 100%; object-fit: cover; transition: var(--transition);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-          <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(transparent, rgba(29, 23, 21, 0.95)); padding: 30px; color: white; box-sizing: border-box;">
-            <span style="background-color: var(--primary-orange); font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.5px;">Zona Norte</span>
-            <h3 style="margin-top: 10px; font-size: 1.5rem; font-weight: 800;">La Juntada Norte (Villa Allende)</h3>
-            <p style="font-size: 0.9rem; opacity: 0.9; margin-top: 5px;">Hasta 200 personas, parque arbolado, piscina y estacionamiento privado.</p>
-          </div>
-        </div>
-
-        <div class="reveal-right" style="display: flex; flex-direction: column; justify-content: center; gap: 20px;">
-          <h3 style="font-size: 2rem; font-weight: 800; color: var(--charcoal);">Alquiler de Salones Propios</h3>
-          <p style="color: var(--charcoal-light); font-size: 1.05rem; line-height: 1.7;">
-            Te ofrecemos dos ubicaciones exclusivas en Córdoba adaptadas para todo tipo de festejos. Desde un amplio parque verde en Villa Allende hasta un salón cerrado totalmente climatizado en Alta Córdoba.
-          </p>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; margin: 10px 0; padding: 0;">
-            <li style="display: flex; align-items: center; gap: 10px; font-size: 0.95rem; color: var(--charcoal-light);">
-              <i class="fa-solid fa-check" style="color: var(--primary-orange); font-weight: 700;"></i>
-              <span>Servicio integral de catering de La Juntada incluido.</span>
-            </li>
-            <li style="display: flex; align-items: center; gap: 10px; font-size: 0.95rem; color: var(--charcoal-light);">
-              <i class="fa-solid fa-check" style="color: var(--primary-orange); font-weight: 700;"></i>
-              <span>Pantallas gigantes y equipamiento de sonido/DJ instalados.</span>
-            </li>
-            <li style="display: flex; align-items: center; gap: 10px; font-size: 0.95rem; color: var(--charcoal-light);">
-              <i class="fa-solid fa-check" style="color: var(--primary-orange); font-weight: 700;"></i>
-              <span>Estacionamiento cerrado y seguridad privada permanente.</span>
-            </li>
-          </ul>
-          <a href="salones.html" class="btn-primary" style="align-self: flex-start; margin-top: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-            <i class="fa-solid fa-building"></i> Explorar Salones y Fotos
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-
   <!-- Budget Calculator Section -->
   <section class="calculator-section" id="calculadora">
     <div class="container">
@@ -313,9 +265,12 @@
               <input type="hidden" id="event-type" data-base="25000" value="diente-libre">
 
               <div class="form-group">
-                <div class="label-with-value">
+                <div class="label-with-value" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
                   <label for="guest-count"><i class="fa-solid fa-users text-orange"></i> Cantidad de Invitados</label>
-                  <span class="range-val-bubble" id="guest-count-val">80</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <input type="number" id="guest-count-input" class="guest-num-box" min="15" max="500" value="80" style="width: 80px; text-align: center; font-weight: 800; font-size: 1.05rem; color: var(--primary-orange); border: 2px solid var(--primary-orange); border-radius: 12px; padding: 4px 8px; background: #ffffff; outline: none;">
+                    <span style="font-size: 0.85rem; font-weight: 700; color: var(--charcoal-muted);">pers.</span>
+                  </div>
                 </div>
                 <input type="range" id="guest-count" class="form-range" min="15" max="300" step="5" value="80">
                 <div id="min-guests-warning" class="min-warning-msg" style="display: none; color: var(--primary-orange); font-size: 0.85rem; font-weight: 700; margin-top: 5px;">
@@ -362,14 +317,12 @@
                 <div class="summary-divider"></div>
 
                 <div class="total-display" style="display: flex; flex-direction: column; gap: 8px;">
-                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                    <span style="font-size: 0.95rem; font-weight: 600;">Estimado por Persona:</span>
-                    <strong style="font-size: 1.4rem; color: var(--primary-orange);" id="calc-per-person">$25.000</strong>
+                  <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(224, 83, 38, 0.08); padding: 15px 20px; border-radius: 16px; border: 1px dashed var(--primary-orange);">
+                    <span style="font-size: 1rem; font-weight: 700; color: var(--charcoal);">Estimado por Persona:</span>
+                    <strong style="font-size: 1.6rem; color: var(--primary-orange);" id="calc-per-person">$25.000</strong>
                   </div>
-                  <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 5px;">
-                    <span style="font-size: 1rem; font-weight: 700;">Total del Evento:</span>
-                    <strong class="total-price" id="calc-total" style="font-size: 2rem;">$2.000.000</strong>
-                  </div>
+                  <!-- Total del Evento oculto -->
+                  <span id="calc-total" style="display: none;">$0</span>
                   <p class="vat-disclaimer" style="margin-top: 5px;">* Financiación disponible. 10% de descuento abonando de contado efectivo.</p>
                 </div>
 
@@ -385,6 +338,52 @@
             </div>
           </div>
         </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Salones Section Intro -->
+  <section class="salones-section-intro" style="padding: 80px 0; background-color: var(--bg-white); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="sub-header">Salones de Eventos</span>
+        <h2 class="section-title">Encontrá el espacio ideal</h2>
+        <div class="divider"></div>
+      </div>
+      
+      <div class="salones-intro-grid" style="margin-top: 50px;">
+        <div class="reveal-left" style="position: relative; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg); height: 350px;">
+          <img src="assets/wedding_event.png" alt="Salón La Juntada Norte" style="width: 100%; height: 100%; object-fit: cover; transition: var(--transition);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+          <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(transparent, rgba(29, 23, 21, 0.95)); padding: 30px; color: white; box-sizing: border-box;">
+            <span style="background-color: var(--primary-orange); font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.5px;">Zona Norte</span>
+            <h3 style="margin-top: 10px; font-size: 1.5rem; font-weight: 800;">La Juntada Norte (Villa Allende)</h3>
+            <p style="font-size: 0.9rem; opacity: 0.9; margin-top: 5px;">Hasta 200 personas, parque arbolado, piscina y estacionamiento privado.</p>
+          </div>
+        </div>
+
+        <div class="reveal-right" style="display: flex; flex-direction: column; justify-content: center; gap: 20px;">
+          <h3 style="font-size: 2rem; font-weight: 800; color: var(--charcoal);">Alquiler de Salones Propios</h3>
+          <p style="color: var(--charcoal-light); font-size: 1.05rem; line-height: 1.7;">
+            Te ofrecemos dos ubicaciones exclusivas en Córdoba adaptadas para todo tipo de festejos. Desde un amplio parque verde en Villa Allende hasta un salón cerrado totalmente climatizado en Alta Córdoba.
+          </p>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; margin: 10px 0; padding: 0;">
+            <li style="display: flex; align-items: center; gap: 10px; font-size: 0.95rem; color: var(--charcoal-light);">
+              <i class="fa-solid fa-check" style="color: var(--primary-orange); font-weight: 700;"></i>
+              <span>Servicio integral de catering de La Juntada incluido.</span>
+            </li>
+            <li style="display: flex; align-items: center; gap: 10px; font-size: 0.95rem; color: var(--charcoal-light);">
+              <i class="fa-solid fa-check" style="color: var(--primary-orange); font-weight: 700;"></i>
+              <span>Pantallas gigantes y equipamiento de sonido/DJ instalados.</span>
+            </li>
+            <li style="display: flex; align-items: center; gap: 10px; font-size: 0.95rem; color: var(--charcoal-light);">
+              <i class="fa-solid fa-check" style="color: var(--primary-orange); font-weight: 700;"></i>
+              <span>Estacionamiento cerrado y seguridad privada permanente.</span>
+            </li>
+          </ul>
+          <a href="salones.html" class="btn-primary" style="align-self: flex-start; margin-top: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-building"></i> Explorar Salones y Fotos
+          </a>
+        </div>
       </div>
     </div>
   </section>

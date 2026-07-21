@@ -839,6 +839,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const dynamicSummaryItems = document.getElementById('dynamic-summary-items');
   const calcTotal = document.getElementById('calc-total');
   const btnCalcWhatsApp = document.getElementById('btn-calc-whatsapp');
+  const guestCountNumBox = document.getElementById('guest-count-input');
 
   function calculateBudget() {
     if (!guestCountInput) return;
@@ -859,10 +860,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    const guestCount = parseInt(guestCountInput.value);
+    const guestCount = parseInt(guestCountInput.value) || 80;
     
-    // Actualizar burbuja de invitados
+    // Actualizar campo de invitados numérico y burbuja
     if (guestCountVal) guestCountVal.textContent = guestCount;
+    if (guestCountNumBox && document.activeElement !== guestCountNumBox) {
+      guestCountNumBox.value = guestCount;
+    }
     
     // Validar mínimos de invitados
     if (minGuestsWarning) {
@@ -964,8 +968,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return {
       menuName: selectedMenuName,
       guestCount,
-      grandTotal,
       perPerson: pricePerPerson,
+      grandTotal,
       addons: selectedAddonsList,
       menuItems: selectedMenuOptionsList,
       optionalRentals: selectedOptionalList
@@ -976,6 +980,22 @@ document.addEventListener('DOMContentLoaded', () => {
   if (eventTypeSelect && guestCountInput) {
     eventTypeSelect.addEventListener('change', calculateBudget);
     guestCountInput.addEventListener('input', calculateBudget);
+  }
+  if (guestCountNumBox && guestCountInput) {
+    guestCountNumBox.addEventListener('input', () => {
+      let val = parseInt(guestCountNumBox.value);
+      if (!isNaN(val)) {
+        guestCountInput.value = val;
+        calculateBudget();
+      }
+    });
+    guestCountNumBox.addEventListener('change', () => {
+      let val = parseInt(guestCountNumBox.value);
+      if (isNaN(val) || val < 15) val = 15;
+      guestCountNumBox.value = val;
+      guestCountInput.value = val;
+      calculateBudget();
+    });
   }
   if (srvLivingQtySelect) {
     srvLivingQtySelect.addEventListener('change', calculateBudget);
