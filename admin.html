@@ -217,13 +217,13 @@
 
     /* Tab Panels */
     .tab-panel {
-      display: none;
+      display: none !important;
       animation: tabFadeIn 0.35s ease;
     }
 
     .tab-panel.active {
-      display: flex;
-      flex-direction: column;
+      display: flex !important;
+      flex-direction: column !important;
       gap: 30px;
     }
 
@@ -1382,12 +1382,14 @@
         if (!grid) return;
         grid.innerHTML = '';
         
+        const list = (services && Array.isArray(services) && services.length > 0) ? services : DEFAULT_SERVICES;
+        
         const filterSelect = document.getElementById('admin-category-filter');
         const filterVal = filterSelect ? filterSelect.value : 'all';
 
         const filteredServices = filterVal === 'all' 
-          ? services 
-          : services.filter(srv => (srv.category || 'adicional') === filterVal);
+          ? list 
+          : list.filter(srv => (srv.category || 'adicional') === filterVal);
 
         if (filteredServices.length === 0) {
           grid.innerHTML = `<div style="grid-column: 1/-1; padding: 20px; text-align: center; color: var(--charcoal-muted); font-style: italic;">No hay elementos cargados en esta categoría.</div>`;
@@ -1395,7 +1397,11 @@
         }
 
         filteredServices.forEach(srv => {
-          grid.appendChild(createServiceCard(srv));
+          try {
+            grid.appendChild(createServiceCard(srv));
+          } catch(e) {
+            console.error("Error al renderizar tarjeta de servicio:", e);
+          }
         });
       }
 
@@ -1421,16 +1427,20 @@
         const div = document.createElement('div');
         div.className = 'service-card-edit';
         
-        const isPerPersonChecked = srv.is_per_person ? 'selected' : '';
-        const isFixedChecked = !srv.is_per_person ? 'selected' : '';
-        const isAvailableChecked = srv.is_available ? 'checked' : '';
-        const isSrvLiving = srv.key === 'srv_living';
+        const srvKey = (srv && srv.key) ? String(srv.key) : ('srv_' + Math.random().toString(36).substring(2, 7));
+        const srvName = (srv && srv.name) ? srv.name : '';
+        const srvPrice = (srv && srv.price !== undefined) ? srv.price : 0;
         
-        const isKeyReadOnly = srv.key.startsWith('srv_') || srv.key.startsWith('rec_') || srv.key.startsWith('ent_') || srv.key.startsWith('pri_') || srv.key.startsWith('pos_') || srv.key.startsWith('beb_') || srv.key.startsWith('fin_') ? 'readonly' : '';
+        const isPerPersonChecked = (srv && srv.is_per_person) ? 'selected' : '';
+        const isFixedChecked = (srv && !srv.is_per_person) ? 'selected' : '';
+        const isAvailableChecked = (srv && srv.is_available) ? 'checked' : '';
+        const isSrvLiving = srvKey === 'srv_living';
         
-        const descVal = srv.description || '';
-        const tagVal = srv.tag || '';
-        const categoryVal = srv.category || 'adicional';
+        const isKeyReadOnly = (srvKey.startsWith('srv_') || srvKey.startsWith('rec_') || srvKey.startsWith('ent_') || srvKey.startsWith('pri_') || srvKey.startsWith('pos_') || srvKey.startsWith('beb_') || srvKey.startsWith('fin_')) ? 'readonly' : '';
+        
+        const descVal = (srv && srv.description) ? srv.description : '';
+        const tagVal = (srv && srv.tag) ? srv.tag : '';
+        const categoryVal = (srv && srv.category) ? srv.category : 'adicional';
         
         const categories = [
           { value: 'adicional', label: 'Servicio Adicional / Alquiler' },
@@ -1452,11 +1462,11 @@
         div.innerHTML = `
           <div class="admin-form-group" style="margin-bottom: 0;">
             <label style="font-size: 0.75rem;">Identificador (Clave única)</label>
-            <input type="text" class="srv-input-key" value="${srv.key}" ${isKeyReadOnly} required placeholder="ej. srv_luces">
+            <input type="text" class="srv-input-key" value="${srvKey}" ${isKeyReadOnly} required placeholder="ej. srv_luces">
           </div>
           <div class="admin-form-group" style="margin-bottom: 0;">
             <label style="font-size: 0.75rem;">Nombre del Servicio/Plato</label>
-            <input type="text" class="srv-input-name" value="${srv.name}" required placeholder="Nombre del servicio">
+            <input type="text" class="srv-input-name" value="${srvName}" required placeholder="Nombre del servicio">
           </div>
           <div class="admin-form-group" style="margin-bottom: 0;">
             <label style="font-size: 0.75rem;">Descripción</label>
@@ -1465,7 +1475,7 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <div class="admin-form-group" style="margin-bottom: 0;">
               <label style="font-size: 0.75rem;">Precio ($)</label>
-              <input type="number" class="srv-input-price" value="${srv.price}" required min="0">
+              <input type="number" class="srv-input-price" value="${srvPrice}" required min="0">
             </div>
             <div class="admin-form-group" style="margin-bottom: 0;">
               <label style="font-size: 0.75rem;">Categoría</label>
@@ -1528,31 +1538,41 @@
         if (!container) return;
         container.innerHTML = '';
         
-        carousel.forEach(slide => {
-          container.appendChild(createSlideCard(slide));
+        const list = (carousel && Array.isArray(carousel) && carousel.length > 0) ? carousel : DEFAULT_CAROUSEL;
+        
+        list.forEach(slide => {
+          try {
+            container.appendChild(createSlideCard(slide));
+          } catch(e) {
+            console.error("Error al renderizar diapositiva de carrusel:", e);
+          }
         });
       }
 
       function createSlideCard(slide) {
         const div = document.createElement('div');
         div.className = 'slide-edit-card';
-        div.dataset.id = slide.id || '';
+        div.dataset.id = (slide && slide.id) ? slide.id : '';
         
+        const imgUrl = (slide && slide.image_url) ? slide.image_url : 'assets/wedding_event.png';
+        const titleVal = (slide && slide.title) ? slide.title : '';
+        const descVal = (slide && slide.description) ? slide.description : '';
+
         div.innerHTML = `
-          <img src="${slide.image_url}" class="slide-preview-img" alt="Vista previa">
+          <img src="${imgUrl}" class="slide-preview-img" alt="Vista previa">
           <div class="slide-edit-inputs">
             <div class="admin-form-group" style="margin-bottom: 5px;">
               <label>Título de la Diapositiva</label>
-              <input type="text" class="slide-input-title" value="${slide.title || ''}" placeholder="Ej. Cumpleaños & Fiestas">
+              <input type="text" class="slide-input-title" value="${titleVal}" placeholder="Ej. Cumpleaños & Fiestas">
             </div>
             <div class="admin-form-group" style="margin-bottom: 5px;">
               <label>Descripción corta</label>
-              <input type="text" class="slide-input-desc" value="${slide.description || ''}" placeholder="Ej. Pata flambeada y cazuelas criollas...">
+              <input type="text" class="slide-input-desc" value="${descVal}" placeholder="Ej. Pata flambeada y cazuelas criollas...">
             </div>
             <div class="admin-form-group" style="margin-bottom: 5px;">
               <label>Subir Nueva Foto (PC)</label>
               <input type="file" class="slide-input-file" accept="image/*">
-              <input type="hidden" class="slide-input-url" value="${slide.image_url}">
+              <input type="hidden" class="slide-input-url" value="${imgUrl}">
             </div>
           </div>
           <button type="button" class="btn-delete-row" style="position: absolute; top: 15px; right: 15px;" onclick="this.closest('.slide-edit-card').remove()">
@@ -1602,25 +1622,35 @@
         if (!container) return;
         container.innerHTML = '';
         
-        gallery.forEach(item => {
-          container.appendChild(createGalleryCard(item));
+        const list = (gallery && Array.isArray(gallery) && gallery.length > 0) ? gallery : DEFAULT_GALLERY;
+        
+        list.forEach(item => {
+          try {
+            container.appendChild(createGalleryCard(item));
+          } catch(e) {
+            console.error("Error al renderizar tarjeta de galería:", e);
+          }
         });
       }
 
       function createGalleryCard(item) {
         const div = document.createElement('div');
         div.className = 'gallery-edit-card';
-        div.dataset.id = item.id || '';
+        div.dataset.id = (item && item.id) ? item.id : '';
         
-        const catCasamiento = item.category === 'casamiento' ? 'selected' : '';
-        const catCumple = item.category === 'cumpleaños' ? 'selected' : '';
-        const catCorp = item.category === 'corporativo' ? 'selected' : '';
+        const imgUrl = (item && item.image_url) ? item.image_url : 'assets/wedding_event.png';
+        const titleVal = (item && item.title) ? item.title : '';
+        const catVal = (item && item.category) ? item.category : 'casamiento';
+
+        const catCasamiento = catVal === 'casamiento' ? 'selected' : '';
+        const catCumple = catVal === 'cumpleaños' ? 'selected' : '';
+        const catCorp = catVal === 'corporativo' ? 'selected' : '';
         
         div.innerHTML = `
-          <img src="${item.image_url}" class="gallery-preview-img" alt="Vista previa">
+          <img src="${imgUrl}" class="gallery-preview-img" alt="Vista previa">
           <div class="admin-form-group" style="margin-bottom: 5px;">
             <label>Título de la Foto</label>
-            <input type="text" class="gallery-input-title" value="${item.title}" required placeholder="Ej. Entrada de Quesos">
+            <input type="text" class="gallery-input-title" value="${titleVal}" required placeholder="Ej. Entrada de Quesos">
           </div>
           <div class="admin-form-group" style="margin-bottom: 5px;">
             <label>Categoría</label>
@@ -1633,7 +1663,7 @@
           <div class="admin-form-group" style="margin-bottom: 5px;">
             <label>Subir Foto (PC)</label>
             <input type="file" class="gallery-input-file" accept="image/*">
-            <input type="hidden" class="gallery-input-url" value="${item.image_url}">
+            <input type="hidden" class="gallery-input-url" value="${imgUrl}">
           </div>
           <button type="button" class="btn-delete-row" style="position: absolute; top: 10px; right: 10px; padding: 4px 8px;" onclick="this.closest('.gallery-edit-card').remove()">
             <i class="fa-solid fa-trash"></i>
