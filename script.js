@@ -217,6 +217,15 @@ document.addEventListener('DOMContentLoaded', () => {
           activeServices.push(defItem);
         }
       });
+
+      // Garantizar precios actualizados en platos principales
+      activeServices.forEach(s => {
+        if (s.category === 'principales' && (!s.price || s.price <= 0)) {
+          if (s.key === 'pri_parrillada') s.price = 35000;
+          else if (s.key === 'pri_pollo') s.price = 28000;
+          else s.price = 25000;
+        }
+      });
       
       renderServicesDOM();
       renderOptionalRentalsDOM();
@@ -262,6 +271,15 @@ document.addEventListener('DOMContentLoaded', () => {
     DEFAULT_SERVICES.forEach(defItem => {
       if (!activeServices.some(s => s.key === defItem.key)) {
         activeServices.push(defItem);
+      }
+    });
+
+    // Garantizar precios actualizados en platos principales
+    activeServices.forEach(s => {
+      if (s.category === 'principales' && (!s.price || s.price <= 0)) {
+        if (s.key === 'pri_parrillada') s.price = 35000;
+        else if (s.key === 'pri_pollo') s.price = 28000;
+        else s.price = 25000;
       }
     });
 
@@ -391,9 +409,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const isAvailable = srv.is_available;
         const disabledClass = isAvailable ? '' : 'disabled';
         const tagHtml = srv.tag ? `<span class="menu-tag orange">${srv.tag}</span>` : '';
+        let priceVal = srv.price;
+        if (srv.category === 'principales' && (!priceVal || priceVal <= 0)) {
+          if (srv.key === 'pri_parrillada') priceVal = 35000;
+          else if (srv.key === 'pri_pollo') priceVal = 28000;
+          else priceVal = 25000;
+        }
+
         let priceInfo = '';
-        if (srv.price > 0) {
-          priceInfo = srv.category === 'principales' ? `${formatCurrency(srv.price)} x pers.` : `+${formatCurrency(srv.price)} x pers.`;
+        if (priceVal > 0) {
+          priceInfo = srv.category === 'principales' ? `${formatCurrency(priceVal)} x pers.` : `+${formatCurrency(priceVal)} x pers.`;
         } else {
           priceInfo = 'Incluido en Menú Base';
         }
