@@ -332,14 +332,8 @@
           <div class="calc-grid">
             <!-- Col Left: Configuration -->
             <div class="calc-settings">
-              <div class="form-group">
-                <label for="event-type"><i class="fa-solid fa-star text-orange"></i> Tipo de Menú Base</label>
-                <select id="event-type" class="form-control" required>
-                  <option value="diente-libre" data-base="25000" selected>Menú Diente Libre (Pata, Cazuela, Burgers, Pizza, Sándwich Campo) ($25.000 x pers.)</option>
-                  <option value="pollo-noisette" data-base="28000">Menú Pollo Deshuesado con Papas Noisette ($28.000 x pers.)</option>
-                  <option value="parrillada" data-base="35000">Menú Parrillada Completa a las Brasas ($35.000 x pers.)</option>
-                </select>
-              </div>
+              <!-- Menú Base seleccionado en carta (Input oculto de respaldo) -->
+              <input type="hidden" id="event-type" data-base="25000" value="diente-libre">
 
               <div class="form-group">
                 <div class="label-with-value">

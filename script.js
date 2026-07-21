@@ -57,14 +57,20 @@ document.addEventListener('DOMContentLoaded', () => {
     { key: 'pos_torta', name: 'Torta de Evento o Simbólica', description: 'Torta de bodas/cumpleaños calculada a 100gr por invitado o torta simbólica.', price: 3000, is_per_person: true, is_available: true, category: 'postres', tag: 'Torta' },
 
     // Mesa Dulce
-    { key: 'pos_tartas', name: 'Tartas Dulces (12 Porciones)', description: 'Lemon Pie, Frutilla, Durazno, Multi-frutal, Mousse, Coco o Ricota.', price: 2500, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'Artesanal' },
+    { key: 'pos_tartas', name: 'Tartas Dulces Artesanales (12 Porciones)', description: 'Lemon Pie, Frutilla, Durazno, Multi-frutal, Mousse, Coco o Ricota.', price: 2500, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'Artesanal' },
     { key: 'pos_panaderia', name: 'Especialidades de Panadería por Kg', description: 'Mini alfajores de chocolate/maicena, cañoncitos, conitos y palmeritas.', price: 1800, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'Panadería' },
-    { key: 'pos_candy', name: 'Candy Bar & Cafetería', description: 'Candy bar surtido (Rocklets, Titas, etc.) con servicio final de Cafetería caliente.', price: 2000, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'Candy Bar' },
+    { key: 'pos_candy', name: 'Candy Bar & Cafetería Caliente', description: 'Candy bar surtido (Rocklets, Titas, etc.) con servicio final de Cafetería caliente.', price: 2000, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'Candy Bar' },
+    { key: 'pos_cascada', name: 'Cascada de Chocolate & Frutas', description: 'Cascada de chocolate cobertura tibio con brochettes de frutas frescas de estación.', price: 3200, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'Show Dulce' },
+    { key: 'pos_shots', name: 'Shots Dulces de Autor', description: 'Copitas individuales de Chocotorta, Tiramisú, Cheesecake, Oreo y Lemon Pie.', price: 2800, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'De Autor' },
+    { key: 'pos_churros', name: 'Mini Churros & Donuts Glaseadas', description: 'Churros calentitos fritos en el momento con abundante dulce de leche y donuts.', price: 2200, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'Cálido' },
 
     // Fin del Evento (Trasnoche)
-    { key: 'fin_pizzas', name: 'Pizza Party Trasnoche', description: 'Show de mini pizzetas a las brasas de madrugada para recargar energías.', price: 2500, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
+    { key: 'fin_pizzas', name: 'Pizza Party Trasnoche', description: 'Show de mini pizzetas variadas a las brasas de madrugada para recargar energías.', price: 2500, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
     { key: 'fin_pernil', name: 'Pata de Cerdo Trasnoche', description: 'Pata de cerdo caliente desmechada en vivo con figacitas de manteca y salsas.', price: 3200, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
     { key: 'fin_tostados', name: 'Tostados & Medialunas Calientes', description: 'Sándwiches de miga tostados de jamón y queso, medialunas calientes y servicio de café.', price: 2200, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
+    { key: 'fin_panchos', name: 'Panchos Gourmet & Papas Pay', description: 'Salchichas gigantes en pan suave de viena con aderezos y lluvias de papas pay.', price: 2000, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
+    { key: 'fin_caldos', name: 'Caldos Criollos & Mini Empanadas', description: 'Consomé caliente reparador y mini empanadas criollas jugosas de ternera.', price: 2400, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
+    { key: 'fin_lomitos', name: 'Mini Lomitos & Hamburguesitas', description: 'Sándwiches mini de lomo tierno con queso y hamburguesitas caseras de madrugada.', price: 3500, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
 
     // Bebidas
     { key: 'beb_sin_alcohol', name: 'Bebidas Sin Alcohol (Libre)', description: 'Línea Pepsi, agua saborizada y agua mineral con y sin gas.', price: 2500, is_per_person: true, is_available: true, category: 'bebidas', tag: 'Sin Alcohol' },
@@ -205,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activeServices = data.services;
       }
       
+      renderServicesDOM();
       renderOptionalRentalsDOM();
       renderMenuDOM();
       renderCarouselDOM(data.carousel || DEFAULT_CAROUSEL);
@@ -244,10 +251,44 @@ document.addEventListener('DOMContentLoaded', () => {
       activeServices = [...DEFAULT_SERVICES];
     }
 
+    renderServicesDOM();
     renderOptionalRentalsDOM();
     renderMenuDOM();
     renderCarouselDOM(DEFAULT_CAROUSEL);
     renderGalleryDOM(DEFAULT_GALLERY);
+  }
+
+  // Renderizar checkboxes de adicionales en el cotizador
+  function renderServicesDOM() {
+    const addonsContainer = document.getElementById('calc-addons-container');
+    if (!addonsContainer) return;
+    
+    addonsContainer.innerHTML = '';
+    activeServices.filter(srv => srv.category === 'adicional' || !srv.category).forEach(srv => {
+      if (srv.key === 'srv_living') {
+        updateLivingSelector(srv);
+        return;
+      }
+
+      const disabledAttr = srv.is_available ? '' : 'disabled';
+      const disabledClass = srv.is_available ? '' : 'disabled';
+      const badgeHtml = srv.is_available ? '' : ' <span class="unavailable-badge">No Disponible</span>';
+      const priceSuffix = srv.is_per_person ? 'x pers.' : 'fijo';
+      const labelText = `${srv.name} (+${formatCurrency(srv.price)} ${priceSuffix})`;
+
+      addonsContainer.innerHTML += `
+        <label class="custom-checkbox-container ${disabledClass}">
+          <input type="checkbox" id="${srv.key}" data-cost="${srv.price}" data-name="${srv.name}" data-per-person="${srv.is_per_person}" ${disabledAttr}>
+          <span class="checkmark"></span>
+          <span class="chk-label">${labelText}${badgeHtml}</span>
+        </label>
+      `;
+    });
+
+    const checkboxes = addonsContainer.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(chk => {
+      chk.addEventListener('change', calculateBudget);
+    });
   }
 
   // Set para almacenar alquileres opcionales seleccionados (sin costo fijo)
@@ -758,13 +799,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCalcWhatsApp = document.getElementById('btn-calc-whatsapp');
 
   function calculateBudget() {
-    if (!eventTypeSelect || !guestCountInput) return;
+    if (!guestCountInput) return;
 
-    const selectedOption = eventTypeSelect.options[eventTypeSelect.selectedIndex];
-    if (!selectedOption) return;
-    
-    // Obtener precio base
-    let basePricePerPerson = parseFloat(selectedOption.getAttribute('data-base')) || 0;
+    let basePricePerPerson = 25000;
+    let selectedMenuName = 'Catering Base La Juntada';
+
+    if (eventTypeSelect) {
+      if (eventTypeSelect.tagName === 'SELECT') {
+        const selOpt = eventTypeSelect.options[eventTypeSelect.selectedIndex];
+        if (selOpt) {
+          basePricePerPerson = parseFloat(selOpt.getAttribute('data-base')) || 25000;
+          selectedMenuName = selOpt.text.split(' (')[0];
+        }
+      } else {
+        basePricePerPerson = parseFloat(eventTypeSelect.getAttribute('data-base')) || 25000;
+        selectedMenuName = 'Catering Base La Juntada';
+      }
+    }
 
     const guestCount = parseInt(guestCountInput.value);
     
@@ -781,7 +832,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const baseCateringTotal = basePricePerPerson * guestCount;
-    const selectedMenuName = selectedOption.text.split(' (')[0];
     if (sumBase) sumBase.textContent = `${formatCurrency(baseCateringTotal)} (${guestCount} invitados)`;
     
     let additionalTotal = 0;
@@ -1016,8 +1066,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Buscar precio unitario base del menu elegido
-    const selectedOption = eventTypeSelect.options[eventTypeSelect.selectedIndex];
-    const basePricePerPerson = parseFloat(selectedOption.getAttribute('data-base')) || 0;
+    let basePricePerPerson = 25000;
+    if (eventTypeSelect) {
+      if (eventTypeSelect.tagName === 'SELECT') {
+        const selOpt = eventTypeSelect.options[eventTypeSelect.selectedIndex];
+        if (selOpt) basePricePerPerson = parseFloat(selOpt.getAttribute('data-base')) || 25000;
+      } else {
+        basePricePerPerson = parseFloat(eventTypeSelect.getAttribute('data-base')) || 25000;
+      }
+    }
 
     // Crear contenedor temporal con estilos refinados de impresión
     const optHtml = `
