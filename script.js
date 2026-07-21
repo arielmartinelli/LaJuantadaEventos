@@ -334,7 +334,6 @@ document.addEventListener('DOMContentLoaded', () => {
           <p style="flex-grow: 1;">${srv.description || 'Infraestructura y equipamiento adicional opcional para tu evento.'}</p>
           ${isAvailable ? `
             <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--border-light); padding-top: 15px;">
-              <span style="font-size: 0.85rem; font-weight: 700; color: var(--charcoal-muted);">A Consultar (Sin costo fijo adicionado)</span>
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                 <button type="button" class="${buttonClass} btn-rental-toggle-quote" data-key="${srv.key}" style="flex: 1; padding: 8px 12px; font-size: 0.75rem; border-radius: 50px; cursor: pointer; border: none; font-weight: 700;">
                   ${buttonText}
