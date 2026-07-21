@@ -210,6 +210,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data.services && data.services.length > 0) {
         activeServices = data.services;
       }
+
+      // Fusionar nuevos ítems predeterminados automáticamente
+      DEFAULT_SERVICES.forEach(defItem => {
+        if (!activeServices.some(s => s.key === defItem.key)) {
+          activeServices.push(defItem);
+        }
+      });
       
       renderServicesDOM();
       renderOptionalRentalsDOM();
@@ -250,6 +257,13 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       activeServices = [...DEFAULT_SERVICES];
     }
+
+    // Fusionar nuevos ítems predeterminados automáticamente
+    DEFAULT_SERVICES.forEach(defItem => {
+      if (!activeServices.some(s => s.key === defItem.key)) {
+        activeServices.push(defItem);
+      }
+    });
 
     renderServicesDOM();
     renderOptionalRentalsDOM();
