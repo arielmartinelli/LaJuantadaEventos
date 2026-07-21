@@ -41,15 +41,15 @@ document.addEventListener('DOMContentLoaded', () => {
     { key: 'ent_tartas', name: 'Mini Tartas de Pollo y Ajíes', description: 'Hojaldre salteado con pollo desmenuzado, pimientos rojos y verdes, tomate y verdeo.', price: 3000, is_per_person: true, is_available: true, category: 'entradas', tag: 'Caliente' },
 
     // Platos Principales
-    { key: 'pri_pata', name: 'Pata Flambeada', description: 'Ternera y Cerdo caliente trinchada en vivo con panes saborizados y 10 salsas caseras.', price: 0, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
-    { key: 'pri_cazuelas', name: 'Variedad de Cazuelas', description: 'Pollo con puerros/champiñones, Ternera al verdeo, Locro, Humita, Pollo al disco o Bondiola.', price: 0, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
-    { key: 'pri_burgers', name: 'Hamburguesas y Choripán', description: 'Medallón de ternera y chorizo a las brasas en pan de papa con cheddar y salsas.', price: 0, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
-    { key: 'pri_pizza', name: 'Pizza a la Parrilla', description: 'Show de pizzas a las brasas con 10 variedades diferentes (Fugazza, 4 Quesos, etc.).', price: 0, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
-    { key: 'pri_fajitas', name: 'Fajitas y Sándwich Criollos', description: 'Tiras de ternera, cerdo, pollo y vegetales con tortillas calientes y panes.', price: 0, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
-    { key: 'pri_desmechado', name: 'Sándwich de Campo Desmechado', description: 'Cortes ultra tiernos desmechados de Bondiola de cerdo y Vacío de ternera.', price: 0, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
-    { key: 'pri_parrillada', name: 'Parrillada Completa a las Brasas', description: 'Asado libre: Costilla, vacío, matambre, chorizo, morcilla y ensaladas.', price: 8000, is_per_person: true, is_available: true, category: 'principales', tag: 'Premium' },
-    { key: 'pri_pollo', name: 'Pollo Deshuesado Noisette', description: 'Roulete de pollo deshuesado relleno con papas noisette doradas.', price: 3000, is_per_person: true, is_available: true, category: 'principales', tag: 'Plato Servido' },
-    { key: 'pri_dietas', name: 'Menú Dietas Especiales', description: 'Viandas calientes adaptadas para invitados vegetarianos, veganos y celíacos.', price: 0, is_per_person: true, is_available: true, category: 'principales', tag: 'Especial' },
+    { key: 'pri_pata', name: 'Pata Flambeada', description: 'Ternera y Cerdo caliente trinchada en vivo con panes saborizados y 10 salsas caseras.', price: 25000, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+    { key: 'pri_cazuelas', name: 'Variedad de Cazuelas', description: 'Pollo con puerros/champiñones, Ternera al verdeo, Locro, Humita, Pollo al disco o Bondiola.', price: 25000, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+    { key: 'pri_burgers', name: 'Hamburguesas y Choripán', description: 'Medallón de ternera y chorizo a las brasas en pan de papa con cheddar y salsas.', price: 25000, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+    { key: 'pri_pizza', name: 'Pizza a la Parrilla', description: 'Show de pizzas a las brasas con 10 variedades diferentes (Fugazza, 4 Quesos, etc.).', price: 25000, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+    { key: 'pri_fajitas', name: 'Fajitas y Sándwich Criollos', description: 'Tiras de ternera, cerdo, pollo y vegetales con tortillas calientes y panes.', price: 25000, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+    { key: 'pri_desmechado', name: 'Sándwich de Campo Desmechado', description: 'Cortes ultra tiernos desmechados de Bondiola de cerdo y Vacío de ternera.', price: 25000, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+    { key: 'pri_parrillada', name: 'Parrillada Completa a las Brasas', description: 'Asado libre: Costilla, vacío, matambre, chorizo, morcilla y ensaladas.', price: 35000, is_per_person: true, is_available: true, category: 'principales', tag: 'Premium' },
+    { key: 'pri_pollo', name: 'Pollo Deshuesado Noisette', description: 'Roulete de pollo deshuesado relleno con papas noisette doradas.', price: 28000, is_per_person: true, is_available: true, category: 'principales', tag: 'Plato Servido' },
+    { key: 'pri_dietas', name: 'Menú Dietas Especiales', description: 'Viandas calientes adaptadas para invitados vegetarianos, veganos y celíacos.', price: 25000, is_per_person: true, is_available: true, category: 'principales', tag: 'Especial' },
 
     // Postres
     { key: 'pos_individuales', name: 'Postres Clásicos individuales', description: 'Budín de pan o Flan casero con dulce de leche; Macedonia con helado; o Brownie.', price: 2200, is_per_person: true, is_available: true, category: 'postres', tag: 'Clásico' },
@@ -287,8 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const disabledAttr = srv.is_available ? '' : 'disabled';
       const disabledClass = srv.is_available ? '' : 'disabled';
       const badgeHtml = srv.is_available ? '' : ' <span class="unavailable-badge">No Disponible</span>';
-      const priceSuffix = srv.is_per_person ? 'x pers.' : 'fijo';
-      const labelText = `${srv.name} (+${formatCurrency(srv.price)} ${priceSuffix})`;
+      const labelText = srv.name;
 
       addonsContainer.innerHTML += `
         <label class="custom-checkbox-container ${disabledClass}">
@@ -392,7 +391,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const isAvailable = srv.is_available;
         const disabledClass = isAvailable ? '' : 'disabled';
         const tagHtml = srv.tag ? `<span class="menu-tag orange">${srv.tag}</span>` : '';
-        const priceInfo = srv.price > 0 ? `+${formatCurrency(srv.price)} x pers.` : 'Incluido en Menú Base';
+        let priceInfo = '';
+        if (srv.price > 0) {
+          priceInfo = srv.category === 'principales' ? `${formatCurrency(srv.price)} x pers.` : `+${formatCurrency(srv.price)} x pers.`;
+        } else {
+          priceInfo = 'Incluido en Menú Base';
+        }
         
         // Determinar si está seleccionado
         const isSelected = selectedMenuItems.has(srv.key);
