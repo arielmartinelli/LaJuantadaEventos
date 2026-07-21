@@ -44,65 +44,132 @@
 
     .salones-container {
       max-width: 1200px;
-      margin: 60px auto 80px;
+      margin: 50px auto 80px;
       padding: 0 20px;
       position: relative;
       z-index: 10;
-      display: flex;
-      flex-direction: column;
-      gap: 60px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      align-items: start;
     }
 
-    .salon-card {
+    @media (max-width: 992px) {
+      .salones-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .salon-preview-card {
       background: var(--bg-white);
       border-radius: var(--radius-lg);
       overflow: hidden;
       box-shadow: var(--shadow-lg);
       border: 1px solid var(--border-light);
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 0;
-      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
       position: relative;
-      isolation: isolate;
     }
 
-    .salon-card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(350px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(224, 83, 38, 0.05), transparent 70%);
-      z-index: 1;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-
-    .salon-card:hover::before {
-      opacity: 1;
-    }
-
-    .salon-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 30px 60px rgba(29, 23, 21, 0.15);
+    .salon-preview-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(29, 23, 21, 0.12);
       border-color: var(--primary-orange);
     }
 
-    @media (max-width: 992px) {
-      .salon-card {
-        grid-template-columns: 1fr;
+    .salon-preview-thumb {
+      position: relative;
+      height: 240px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .salon-preview-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .salon-preview-card:hover .salon-preview-thumb img {
+      transform: scale(1.05);
+    }
+
+    .salon-preview-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .salon-preview-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--charcoal);
+      margin: 0;
+    }
+
+    .salon-preview-location {
+      font-size: 0.9rem;
+      color: var(--charcoal-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+    }
+
+    .salon-preview-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 5px;
+    }
+
+    .preview-badge {
+      background: var(--bg-light);
+      color: var(--charcoal);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 50px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border-light);
+    }
+
+    .salon-details-drawer {
+      display: none;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px dashed var(--border-light);
+      animation: fadeInDrawer 0.4s ease forwards;
+    }
+
+    .salon-details-drawer.open {
+      display: block;
+    }
+
+    @keyframes fadeInDrawer {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
 
-    /* Carousel styles for salon cards */
+    /* Carousel styles inside drawer */
     .salon-carousel {
       position: relative;
-      height: 100%;
-      min-height: 480px;
+      height: 280px;
+      min-height: 280px;
+      border-radius: var(--radius-md);
       overflow: hidden;
+      margin-bottom: 20px;
     }
 
     .salon-carousel-slides {
@@ -412,163 +479,157 @@
   <!-- Salones Listing -->
   <main class="salones-container">
 
-    <!-- Salón Norte Card -->
-    <div class="salon-card reveal-left">
-      <!-- Image Carousel -->
-      <div class="salon-carousel" id="carousel-norte">
-        <div class="salon-carousel-slides">
-          <img src="assets/wedding_event.png" alt="Salón Norte - Fachada" class="salon-carousel-slide">
-          <img src="assets/hero_bg.png" alt="Salón Norte - Catering e Infraestructura" class="salon-carousel-slide">
-          <img src="assets/catering_premium.png" alt="Salón Norte - Platos premium" class="salon-carousel-slide">
-        </div>
-        <button class="salon-carousel-btn prev" aria-label="Anterior foto"><i class="fa-solid fa-chevron-left"></i></button>
-        <button class="salon-carousel-btn next" aria-label="Siguiente foto"><i class="fa-solid fa-chevron-right"></i></button>
-        <div class="salon-carousel-dots">
-          <span class="salon-carousel-dot active"></span>
-          <span class="salon-carousel-dot"></span>
-          <span class="salon-carousel-dot"></span>
-        </div>
+    <!-- Salón Norte Preview Card -->
+    <div class="salon-preview-card reveal-left" id="card-norte">
+      <div class="salon-preview-thumb">
+        <img src="assets/wedding_event.png" alt="Salón La Juntada Norte">
         <span class="salon-overlay-tag">Zona Norte</span>
       </div>
       
-      <div class="salon-details-panel">
-        <div class="salon-info">
-          <h3>Salón La Juntada Norte</h3>
-          <div class="salon-location">
-            <i class="fa-solid fa-location-dot"></i>
-            <span>Av. Tissera 3400, Villa Allende, Córdoba</span>
-          </div>
-          
-          <div class="salon-amenities">
-            <div class="amenity-item">
-              <i class="fa-solid fa-users"></i>
-              <span>Capacidad: 200 personas</span>
+      <div class="salon-preview-body">
+        <h3 class="salon-preview-title">Salón La Juntada Norte</h3>
+        <p class="salon-preview-location">
+          <i class="fa-solid fa-location-dot text-orange"></i> Av. Tissera 3400, Villa Allende
+        </p>
+        
+        <div class="salon-preview-badges">
+          <span class="preview-badge"><i class="fa-solid fa-users text-orange"></i> 200 pers.</span>
+          <span class="preview-badge"><i class="fa-solid fa-tree text-orange"></i> Parque & Piscina</span>
+          <span class="preview-badge"><i class="fa-solid fa-fire-burner text-orange"></i> Asadores</span>
+        </div>
+
+        <button type="button" class="btn-toggle-details btn-primary" data-target="drawer-norte" style="width: 100%; border-radius: 50px; padding: 12px 18px; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; border: none; cursor: pointer;">
+          <span>Ver Información & Disponibilidad</span>
+          <i class="fa-solid fa-chevron-down toggle-icon" style="transition: transform 0.3s ease;"></i>
+        </button>
+
+        <!-- Drawer desplegable independiente -->
+        <div class="salon-details-drawer" id="drawer-norte">
+          <!-- Image Carousel -->
+          <div class="salon-carousel" id="carousel-norte">
+            <div class="salon-carousel-slides">
+              <img src="assets/wedding_event.png" alt="Salón Norte - Fachada" class="salon-carousel-slide">
+              <img src="assets/hero_bg.png" alt="Salón Norte - Catering e Infraestructura" class="salon-carousel-slide">
+              <img src="assets/catering_premium.png" alt="Salón Norte - Platos premium" class="salon-carousel-slide">
             </div>
-            <div class="amenity-item">
-              <i class="fa-solid fa-tree"></i>
-              <span>Parque verde y piscina</span>
-            </div>
-            <div class="amenity-item">
-              <i class="fa-solid fa-snowflake"></i>
-              <span>Climatización central</span>
-            </div>
-            <div class="amenity-item">
-              <i class="fa-solid fa-fire-burner"></i>
-              <span>Asadores de gran capacidad</span>
-            </div>
-            <div class="amenity-item">
-              <i class="fa-solid fa-square-parking"></i>
-              <span>Estacionamiento privado</span>
-            </div>
-            <div class="amenity-item">
-              <i class="fa-solid fa-wifi"></i>
-              <span>Conectividad de alta velocidad</span>
+            <button class="salon-carousel-btn prev" aria-label="Anterior foto"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="salon-carousel-btn next" aria-label="Siguiente foto"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="salon-carousel-dots">
+              <span class="salon-carousel-dot active"></span>
+              <span class="salon-carousel-dot"></span>
+              <span class="salon-carousel-dot"></span>
             </div>
           </div>
 
+          <div class="salon-amenities" style="margin-bottom: 20px;">
+            <div class="amenity-item"><i class="fa-solid fa-users"></i><span>Capacidad: 200 personas</span></div>
+            <div class="amenity-item"><i class="fa-solid fa-tree"></i><span>Parque verde y piscina</span></div>
+            <div class="amenity-item"><i class="fa-solid fa-snowflake"></i><span>Climatización central</span></div>
+            <div class="amenity-item"><i class="fa-solid fa-fire-burner"></i><span>Asadores de gran capacidad</span></div>
+            <div class="amenity-item"><i class="fa-solid fa-square-parking"></i><span>Estacionamiento privado</span></div>
+            <div class="amenity-item"><i class="fa-solid fa-wifi"></i><span>Conectividad de alta velocidad</span></div>
+          </div>
+
           <!-- Maps Embed -->
-          <div class="salon-map-container">
+          <div class="salon-map-container" style="margin-bottom: 20px;">
             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13636.858022878477!2d-64.30138245!3d-31.29778235!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94329ddb53c7c251%3A0xc3c5f2122b512c0!2sVilla%20Allende%2C%20C%C3%B3rdoba!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
 
           <!-- Calendar Widget -->
-          <div class="salon-calendar-section" style="margin-top: 15px; background-color: #faf6f0; border-radius: 12px; padding: 14px; border: 1px solid var(--border-light);">
+          <div class="salon-calendar-section" style="margin-bottom: 20px; background-color: #faf6f0; border-radius: 12px; padding: 14px; border: 1px solid var(--border-light);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
               <h4 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--charcoal);">
-                <i class="fa-solid fa-calendar-days text-orange"></i> Disponibilidad de Fechas
+                <i class="fa-solid fa-calendar-days text-orange"></i> Fechas Disponibles
               </h4>
               <div style="display: flex; gap: 10px; font-size: 0.72rem; font-weight: 700;">
-                <span style="color: #2e7d32; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Disponible</span>
+                <span style="color: #2e7d32; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Libre</span>
                 <span style="color: #d32f2f; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Reservado</span>
               </div>
             </div>
             <div class="salon-calendar-widget" id="calendar-norte"></div>
           </div>
-        </div>
 
-        <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20consultar%20disponibilidad%20y%20precios%20para%20el%20%2aSal%C3%B3n%20La%20Juntada%20Norte%2a%20en%20Villa%20Allende." target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align: center; justify-content: center; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-          <i class="fa-brands fa-whatsapp"></i> Consultar Disponibilidad Salón Norte
-        </a>
+          <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20consultar%20disponibilidad%20y%20precios%20para%20el%20%2aSal%C3%B3n%20La%20Juntada%20Norte%2a%20en%20Villa%20Allende." target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align: center; justify-content: center; text-decoration: none; display: flex; align-items: center; gap: 8px; border-radius: 50px; padding: 12px;">
+            <i class="fa-brands fa-whatsapp"></i> Consultar Salón Norte en WhatsApp
+          </a>
+        </div>
       </div>
     </div>
 
-    <!-- Salón Centro Card -->
-    <div class="salon-card reveal-right">
-      <!-- Image Carousel -->
-      <div class="salon-carousel" id="carousel-centro">
-        <div class="salon-carousel-slides">
-          <img src="assets/social_event.png" alt="Salón Centro - Interior" class="salon-carousel-slide">
-          <img src="assets/birthday_sweet.png" alt="Salón Centro - Mesas de postres" class="salon-carousel-slide">
-          <img src="assets/birthday_event.png" alt="Salón Centro - Iluminación y pista" class="salon-carousel-slide">
-        </div>
-        <button class="salon-carousel-btn prev" aria-label="Anterior foto"><i class="fa-solid fa-chevron-left"></i></button>
-        <button class="salon-carousel-btn next" aria-label="Siguiente foto"><i class="fa-solid fa-chevron-right"></i></button>
-        <div class="salon-carousel-dots">
-          <span class="salon-carousel-dot active"></span>
-          <span class="salon-carousel-dot"></span>
-          <span class="salon-carousel-dot"></span>
-        </div>
+    <!-- Salón Centro Preview Card -->
+    <div class="salon-preview-card reveal-right" id="card-centro">
+      <div class="salon-preview-thumb">
+        <img src="assets/social_event.png" alt="Salón La Juntada Centro">
         <span class="salon-overlay-tag">Zona Centro</span>
       </div>
       
-      <div class="salon-details-panel">
-        <div class="salon-info">
-          <h3>Salón La Juntada Centro</h3>
-          <div class="salon-location">
-            <i class="fa-solid fa-location-dot"></i>
-            <span>Mendoza 3147, Alta Córdoba, Córdoba</span>
-          </div>
-          
-          <div class="salon-amenities">
-            <div class="amenity-item">
-              <i class="fa-solid fa-users"></i>
-              <span>Capacidad: 120 personas</span>
+      <div class="salon-preview-body">
+        <h3 class="salon-preview-title">Salón La Juntada Centro</h3>
+        <p class="salon-preview-location">
+          <i class="fa-solid fa-location-dot text-orange"></i> Mendoza 3147, Alta Córdoba
+        </p>
+        
+        <div class="salon-preview-badges">
+          <span class="preview-badge"><i class="fa-solid fa-users text-orange"></i> 120 pers.</span>
+          <span class="preview-badge"><i class="fa-solid fa-snowflake text-orange"></i> Climatizado</span>
+          <span class="preview-badge"><i class="fa-solid fa-compact-disc text-orange"></i> Pista & DJ</span>
+        </div>
+
+        <button type="button" class="btn-toggle-details btn-primary" data-target="drawer-centro" style="width: 100%; border-radius: 50px; padding: 12px 18px; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; border: none; cursor: pointer;">
+          <span>Ver Información & Disponibilidad</span>
+          <i class="fa-solid fa-chevron-down toggle-icon" style="transition: transform 0.3s ease;"></i>
+        </button>
+
+        <!-- Drawer desplegable independiente -->
+        <div class="salon-details-drawer" id="drawer-centro">
+          <!-- Image Carousel -->
+          <div class="salon-carousel" id="carousel-centro">
+            <div class="salon-carousel-slides">
+              <img src="assets/social_event.png" alt="Salón Centro - Interior" class="salon-carousel-slide">
+              <img src="assets/birthday_sweet.png" alt="Salón Centro - Mesas de postres" class="salon-carousel-slide">
+              <img src="assets/birthday_event.png" alt="Salón Centro - Iluminación y pista" class="salon-carousel-slide">
             </div>
-            <div class="amenity-item">
-              <i class="fa-solid fa-building-user"></i>
-              <span>Ubicación céntrica accesible</span>
-            </div>
-            <div class="amenity-item">
-              <i class="fa-solid fa-snowflake"></i>
-              <span>Ambiente completamente climatizado</span>
-            </div>
-            <div class="amenity-item">
-              <i class="fa-solid fa-compact-disc"></i>
-              <span>Equipamiento de DJ e audio integrado</span>
-            </div>
-            <div class="amenity-item">
-              <i class="fa-solid fa-lightbulb"></i>
-              <span>Iluminación perimetral led</span>
-            </div>
-            <div class="amenity-item">
-              <i class="fa-solid fa-shield-halved"></i>
-              <span>Seguridad médica integrada</span>
+            <button class="salon-carousel-btn prev" aria-label="Anterior foto"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="salon-carousel-btn next" aria-label="Siguiente foto"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="salon-carousel-dots">
+              <span class="salon-carousel-dot active"></span>
+              <span class="salon-carousel-dot"></span>
+              <span class="salon-carousel-dot"></span>
             </div>
           </div>
 
+          <div class="salon-amenities" style="margin-bottom: 20px;">
+            <div class="amenity-item"><i class="fa-solid fa-users"></i><span>Capacidad: 120 personas</span></div>
+            <div class="amenity-item"><i class="fa-solid fa-building-user"></i><span>Ubicación céntrica accesible</span></div>
+            <div class="amenity-item"><i class="fa-solid fa-snowflake"></i><span>Ambiente climatizado</span></div>
+            <div class="amenity-item"><i class="fa-solid fa-compact-disc"></i><span>Equipamiento de DJ e audio</span></div>
+            <div class="amenity-item"><i class="fa-solid fa-lightbulb"></i><span>Iluminación perimetral led</span></div>
+            <div class="amenity-item"><i class="fa-solid fa-shield-halved"></i><span>Seguridad médica integrada</span></div>
+          </div>
+
           <!-- Maps Embed -->
-          <div class="salon-map-container">
+          <div class="salon-map-container" style="margin-bottom: 20px;">
             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3405.513233816666!2d-64.1856711!3d-31.4005615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94329864227f4e91%3A0xe54d3dfbb7ba3a32!2sMendoza%203147%2C%20X5000%20C%C3%B3rdoba!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
 
           <!-- Calendar Widget -->
-          <div class="salon-calendar-section" style="margin-top: 15px; background-color: #faf6f0; border-radius: 12px; padding: 14px; border: 1px solid var(--border-light);">
+          <div class="salon-calendar-section" style="margin-bottom: 20px; background-color: #faf6f0; border-radius: 12px; padding: 14px; border: 1px solid var(--border-light);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
               <h4 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--charcoal);">
-                <i class="fa-solid fa-calendar-days text-orange"></i> Disponibilidad de Fechas
+                <i class="fa-solid fa-calendar-days text-orange"></i> Fechas Disponibles
               </h4>
               <div style="display: flex; gap: 10px; font-size: 0.72rem; font-weight: 700;">
-                <span style="color: #2e7d32; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Disponible</span>
+                <span style="color: #2e7d32; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Libre</span>
                 <span style="color: #d32f2f; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Reservado</span>
               </div>
             </div>
             <div class="salon-calendar-widget" id="calendar-centro"></div>
           </div>
-        </div>
 
-        <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20consultar%20disponibilidad%20y%20precios%20para%20el%20%2aSal%C3%B3n%20La%20Juntada%20Centro%2a%20en%20Alta%20C%C3%B3rdoba." target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align: center; justify-content: center; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-          <i class="fa-brands fa-whatsapp"></i> Consultar Disponibilidad Salón Centro
-        </a>
+          <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20consultar%20disponibilidad%20y%20precios%20para%20el%20%2aSal%C3%B3n%20La%20Juntada%20Centro%2a%20en%20Alta%20C%C3%B3rdoba." target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align: center; justify-content: center; text-decoration: none; display: flex; align-items: center; gap: 8px; border-radius: 50px; padding: 12px;">
+            <i class="fa-brands fa-whatsapp"></i> Consultar Salón Centro en WhatsApp
+          </a>
+        </div>
       </div>
     </div>
 
@@ -696,7 +757,7 @@
       initSalonCarousel('carousel-centro');
 
       // Spotlight effect on salon cards
-      const cards = document.querySelectorAll('.salon-card');
+      const cards = document.querySelectorAll('.salon-preview-card');
       cards.forEach(card => {
         card.addEventListener('mousemove', (e) => {
           const rect = card.getBoundingClientRect();
@@ -704,6 +765,30 @@
           const y = e.clientY - rect.top;
           card.style.setProperty('--mouse-x', `${x}px`);
           card.style.setProperty('--mouse-y', `${y}px`);
+        });
+      });
+
+      // Despliegue independiente de detalles de salones
+      document.querySelectorAll('.btn-toggle-details').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = btn.getAttribute('data-target');
+          const drawer = document.getElementById(targetId);
+          const icon = btn.querySelector('.toggle-icon');
+          const textSpan = btn.querySelector('span');
+
+          if (drawer) {
+            const isOpen = drawer.classList.contains('open');
+            if (isOpen) {
+              drawer.classList.remove('open');
+              if (icon) icon.style.transform = 'rotate(0deg)';
+              if (textSpan) textSpan.textContent = 'Ver Información & Disponibilidad';
+            } else {
+              drawer.classList.add('open');
+              if (icon) icon.style.transform = 'rotate(180deg)';
+              if (textSpan) textSpan.textContent = 'Ocultar Detalles del Salón';
+            }
+          }
         });
       });
 
