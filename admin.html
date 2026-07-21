@@ -833,6 +833,7 @@
                   </button>
                 </div>
               </div>
+
             <!-- PANEL 5: DISPONIBILIDAD DE SALONES -->
             <div class="tab-panel" id="tab-salones">
               <div class="admin-box">
@@ -1006,9 +1007,13 @@
 
           supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
           dbConfigs = configs || {};
-          dbServices = services || [];
-          dbCarousel = carousel || [];
-          dbGallery = gallery || [];
+          dbServices = (services && services.length > 0) ? services : JSON.parse(JSON.stringify(DEFAULT_SERVICES));
+          DEFAULT_SERVICES.forEach(def => {
+            if (!dbServices.some(s => s.key === def.key)) dbServices.push(def);
+          });
+
+          dbCarousel = (carousel && carousel.length > 0) ? carousel : [];
+          dbGallery = (gallery && gallery.length > 0) ? gallery : [];
 
           fillFormInputs();
           renderServicesTable(dbServices);
@@ -1032,7 +1037,10 @@
         dbConfigs = localData ? JSON.parse(localData) : {};
 
         const localServices = localStorage.getItem('lajuntada_services_list');
-        dbServices = localServices ? JSON.parse(localServices) : [];
+        dbServices = localServices ? JSON.parse(localServices) : JSON.parse(JSON.stringify(DEFAULT_SERVICES));
+        DEFAULT_SERVICES.forEach(def => {
+          if (!dbServices.some(s => s.key === def.key)) dbServices.push(def);
+        });
 
         const localCarousel = localStorage.getItem('lajuntada_carousel_list');
         dbCarousel = localCarousel ? JSON.parse(localCarousel) : [];
