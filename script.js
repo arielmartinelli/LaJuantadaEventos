@@ -917,8 +917,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedOptionalList.push(srv.name);
         dynamicHtml += `
           <div class="summary-item">
-            <span>+ ${srv.name} (Opcional):</span>
-            <strong style="color: var(--charcoal-muted); font-size: 0.85rem;">A Consultar</strong>
+            <span>+ ${srv.name} (Alquiler Opcional)</span>
           </div>`;
       }
     });
