@@ -964,6 +964,18 @@
         { key: 'srv_photo', name: 'Fotografia Digital Profesional', description: 'Cobertura completa del evento con entrega digital de fotografias.', price: 80000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Servicio' }
       ];
 
+      const DEFAULT_CAROUSEL = [
+        { title: 'Bodas de Ensueño', description: 'Servicio integral de catering, barras móviles y vajilla para casamientos inolvidables.', image_url: 'assets/wedding_event.png' },
+        { title: 'Cumpleaños & Fiestas', description: 'Pata flambeada, cazuelas criollas y barras de tragos para que tu fiesta sea única.', image_url: 'assets/birthday_event.png' },
+        { title: 'Eventos Corporativos', description: 'Coordinación y producción gastronómica premium para lanzamientos y empresariales.', image_url: 'assets/social_event.png' }
+      ];
+
+      const DEFAULT_GALLERY = [
+        { title: 'Boda al Aire Libre', category: 'casamiento', image_url: 'assets/wedding_event.png' },
+        { title: 'Fiesta de 40 Años', category: 'cumpleaños', image_url: 'assets/birthday_event.png' },
+        { title: 'Lanzamiento Corporativo', category: 'corporativo', image_url: 'assets/social_event.png' }
+      ];
+
       let supabaseClient = null;
       let isLocalMode = false;
 
@@ -981,7 +993,8 @@
           panels.forEach(p => p.classList.remove('active'));
           
           tab.classList.add('active');
-          document.getElementById(target).classList.add('active');
+          const targetEl = document.getElementById(target);
+          if (targetEl) targetEl.classList.add('active');
           
           // Scroll to top of content on change
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1012,8 +1025,8 @@
             if (!dbServices.some(s => s.key === def.key)) dbServices.push(def);
           });
 
-          dbCarousel = (carousel && carousel.length > 0) ? carousel : [];
-          dbGallery = (gallery && gallery.length > 0) ? gallery : [];
+          dbCarousel = (carousel && carousel.length > 0) ? carousel : JSON.parse(JSON.stringify(DEFAULT_CAROUSEL));
+          dbGallery = (gallery && gallery.length > 0) ? gallery : JSON.parse(JSON.stringify(DEFAULT_GALLERY));
 
           fillFormInputs();
           renderServicesTable(dbServices);
@@ -1037,16 +1050,16 @@
         dbConfigs = localData ? JSON.parse(localData) : {};
 
         const localServices = localStorage.getItem('lajuntada_services_list');
-        dbServices = localServices ? JSON.parse(localServices) : JSON.parse(JSON.stringify(DEFAULT_SERVICES));
+        dbServices = (localServices && JSON.parse(localServices).length > 0) ? JSON.parse(localServices) : JSON.parse(JSON.stringify(DEFAULT_SERVICES));
         DEFAULT_SERVICES.forEach(def => {
           if (!dbServices.some(s => s.key === def.key)) dbServices.push(def);
         });
 
         const localCarousel = localStorage.getItem('lajuntada_carousel_list');
-        dbCarousel = localCarousel ? JSON.parse(localCarousel) : [];
+        dbCarousel = (localCarousel && JSON.parse(localCarousel).length > 0) ? JSON.parse(localCarousel) : JSON.parse(JSON.stringify(DEFAULT_CAROUSEL));
 
         const localGallery = localStorage.getItem('lajuntada_gallery_list');
-        dbGallery = localGallery ? JSON.parse(localGallery) : [];
+        dbGallery = (localGallery && JSON.parse(localGallery).length > 0) ? JSON.parse(localGallery) : JSON.parse(JSON.stringify(DEFAULT_GALLERY));
 
         fillFormInputs();
         renderServicesTable(dbServices);
@@ -1087,6 +1100,11 @@
       function showDashboard() {
         loginSection.style.display = 'none';
         dashboardSection.style.display = 'block';
+
+        fillFormInputs();
+        renderServicesTable(dbServices);
+        renderCarouselList(dbCarousel);
+        renderGalleryList(dbGallery);
       }
 
       function showError(msg) {
