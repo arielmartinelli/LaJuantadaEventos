@@ -723,26 +723,73 @@
                       <input type="text" id="db-contact_address" required>
                     </div>
                   </div>
+                <!-- Parámetros del Cotizador -->
+                <div class="admin-box">
+                  <h3><i class="fa-solid fa-sliders"></i> Parámetros del Cotizador & Descuentos</h3>
+                  
+                  <div class="admin-form-group">
+                    <label for="db-min_guests_qty">Mínimo de Invitados Requerido</label>
+                    <div class="admin-input-group">
+                      <span class="admin-input-prefix"><i class="fa-solid fa-users"></i></span>
+                      <input type="number" id="db-min_guests_qty" value="50" required min="1">
+                    </div>
+                  </div>
+
+                  <div class="admin-form-group">
+                    <label for="db-cash_discount_percent">Porcentaje de Descuento Efectivo (%)</label>
+                    <div class="admin-input-group">
+                      <span class="admin-input-prefix">%</span>
+                      <input type="number" id="db-cash_discount_percent" value="10" required min="0" max="100">
+                    </div>
+                  </div>
+
+                  <div class="admin-form-group">
+                    <label for="db-living_set_price">Tarifa Alquiler Juego de Living (10 pers.)</label>
+                    <div class="admin-input-group">
+                      <span class="admin-input-prefix">$</span>
+                      <input type="number" id="db-living_set_price" value="18000" required min="0">
+                    </div>
+                  </div>
                 </div>
 
               </div>
             </div>
 
-            <!-- PANEL 2: SERVICIOS ADICIONALES -->
+            <!-- PANEL 2: SERVICIOS & CARTA GASTRONÓMICA -->
             <div class="tab-panel" id="tab-servicios">
               <div class="admin-box">
-                <h3><i class="fa-solid fa-list-check"></i> Gestión de Servicios Adicionales</h3>
-                <p style="font-size: 0.85rem; color: var(--charcoal-muted); margin-bottom: 20px;">
-                  Crea, edita o elimina los servicios adicionales de la calculadora y la sección de alquileres.
-                </p>
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+                  <div>
+                    <h3 style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;"><i class="fa-solid fa-list-check"></i> Gestión de Servicios & Carta Gastronómica</h3>
+                    <p style="font-size: 0.85rem; color: var(--charcoal-muted); margin-top: 4px;">
+                      Administra precios, nombres, descripciones y disponibilidad de todas las categorías del sitio.
+                    </p>
+                  </div>
+                  <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <select id="admin-category-filter" style="padding: 8px 12px; border-radius: 50px; border: 1px solid var(--border-light); font-size: 0.85rem; font-weight: 600; outline: none; background: white;">
+                      <option value="all">Ver Todas las Categorías</option>
+                      <option value="principales">Platos Principales</option>
+                      <option value="entradas">Entradas</option>
+                      <option value="recepcion">Recepción</option>
+                      <option value="postres">Postres</option>
+                      <option value="mesadulce">Mesa Dulce</option>
+                      <option value="findeevento">Fin del Evento (Trasnoche)</option>
+                      <option value="bebidas">Bebidas & Barras</option>
+                      <option value="adicional">Alquileres & Adicionales</option>
+                    </select>
+                    <button type="button" class="btn-delete-row" id="btn-reset-default-services" style="padding: 8px 14px; border-radius: 50px; font-weight: 700; background: #6c757d;">
+                      <i class="fa-solid fa-rotate-left"></i> Restablecer Predeterminados
+                    </button>
+                  </div>
+                </div>
                 
                 <div id="services-grid" class="admin-cards-grid">
                   <!-- Carga dinámica -->
                 </div>
                 
-                <div style="margin-top: 10px;">
-                  <button type="button" class="admin-btn-export" id="btn-add-service" style="background-color: var(--primary-orange); padding: 8px 16px; font-size: 0.85rem;">
-                    <i class="fa-solid fa-plus"></i> Agregar Nuevo Servicio
+                <div style="margin-top: 15px;">
+                  <button type="button" class="admin-btn-export" id="btn-add-service" style="background-color: var(--primary-orange); padding: 10px 20px; font-size: 0.85rem; border-radius: 50px;">
+                    <i class="fa-solid fa-plus"></i> Agregar Nuevo Plato o Servicio
                   </button>
                 </div>
               </div>
@@ -873,6 +920,48 @@
       let dbServices = [];
       let dbCarousel = [];
       let dbGallery = [];
+
+      const DEFAULT_SERVICES = [
+        { key: 'rec_fiambres', name: 'Tabla de Fiambres Premium', description: 'Jamón crudo, lomito horneado, salames de colonia, quesos sardo/brie y aceitunas.', price: 3500, is_per_person: true, is_available: true, category: 'recepcion', tag: 'Entrada' },
+        { key: 'rec_empanadas', name: 'Empanaditas Criollas de Ternera', description: 'Carne cortada a cuchillo con masa casera al horno de barro (2 por persona).', price: 2800, is_per_person: true, is_available: true, category: 'recepcion', tag: 'Caliente' },
+        { key: 'ent_tostadas', name: 'Tostadas de Pan Casero o Árabes Relleno', description: 'Opción jamón crudo con rúcula y oliva, o jamón cocido con huevo y tomate.', price: 3200, is_per_person: true, is_available: true, category: 'entradas', tag: 'Especial' },
+        { key: 'ent_tartas', name: 'Mini Tartas de Pollo y Ajíes', description: 'Hojaldre salteado con pollo desmenuzado, pimientos rojos y verdes, tomate y verdeo.', price: 3000, is_per_person: true, is_available: true, category: 'entradas', tag: 'Caliente' },
+        { key: 'pri_pata', name: 'Pata Flambeada', description: 'Ternera y Cerdo caliente trinchada en vivo con panes saborizados y 10 salsas caseras.', price: 25000, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+        { key: 'pri_cazuelas', name: 'Variedad de Cazuelas', description: 'Pollo con puerros/champiñones, Ternera al verdeo, Locro, Humita, Pollo al disco o Bondiola.', price: 25000, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+        { key: 'pri_burgers', name: 'Hamburguesas y Choripán', description: 'Medallón de ternera y chorizo a las brasas en pan de papa con cheddar y salsas.', price: 25000, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+        { key: 'pri_pizza', name: 'Pizza a la Parrilla', description: 'Show de pizzas a las brasas con 10 variedades diferentes (Fugazza, 4 Quesos, etc.).', price: 25000, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+        { key: 'pri_fajitas', name: 'Fajitas y Sándwich Criollos', description: 'Tiras de ternera, cerdo, pollo y vegetales con tortillas calientes y panes.', price: 25000, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+        { key: 'pri_desmechado', name: 'Sándwich de Campo Desmechado', description: 'Cortes ultra tiernos desmechados de Bondiola de cerdo y Vacío de ternera.', price: 25000, is_per_person: true, is_available: true, category: 'principales', tag: 'Diente Libre' },
+        { key: 'pri_parrillada', name: 'Parrillada Completa a las Brasas', description: 'Asado libre: Costilla, vacío, matambre, chorizo, morcilla y ensaladas.', price: 35000, is_per_person: true, is_available: true, category: 'principales', tag: 'Premium' },
+        { key: 'pri_pollo', name: 'Pollo Deshuesado Noisette', description: 'Roulete de pollo deshuesado relleno con papas noisette doradas.', price: 28000, is_per_person: true, is_available: true, category: 'principales', tag: 'Plato Servido' },
+        { key: 'pri_dietas', name: 'Menú Dietas Especiales', description: 'Viandas calientes adaptadas para invitados vegetarianos, veganos y celíacos.', price: 25000, is_per_person: true, is_available: true, category: 'principales', tag: 'Especial' },
+        { key: 'pos_individuales', name: 'Postres Clásicos individuales', description: 'Budín de pan o Flan casero con dulce de leche; Macedonia con helado; o Brownie.', price: 2200, is_per_person: true, is_available: true, category: 'postres', tag: 'Clásico' },
+        { key: 'pos_autor', name: 'Copas y Postres de Autor', description: 'Formatos individuales: Chocotorta clásica, Tiramisú italiano o Cheesecake.', price: 2800, is_per_person: true, is_available: true, category: 'postres', tag: 'De Autor' },
+        { key: 'pos_torta', name: 'Torta de Evento o Simbólica', description: 'Torta de bodas/cumpleaños calculada a 100gr por invitado o torta simbólica.', price: 3000, is_per_person: true, is_available: true, category: 'postres', tag: 'Torta' },
+        { key: 'pos_tartas', name: 'Tartas Dulces Artesanales (12 Porciones)', description: 'Lemon Pie, Frutilla, Durazno, Multi-frutal, Mousse, Coco o Ricota.', price: 2500, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'Artesanal' },
+        { key: 'pos_panaderia', name: 'Especialidades de Panadería por Kg', description: 'Mini alfajores de chocolate/maicena, cañoncitos, conitos y palmeritas.', price: 1800, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'Panadería' },
+        { key: 'pos_candy', name: 'Candy Bar & Cafetería Caliente', description: 'Candy bar surtido (Rocklets, Titas, etc.) con servicio final de Cafetería caliente.', price: 2000, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'Candy Bar' },
+        { key: 'pos_cascada', name: 'Cascada de Chocolate & Frutas', description: 'Cascada de chocolate cobertura tibio con brochettes de frutas frescas de estación.', price: 3200, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'Show Dulce' },
+        { key: 'pos_shots', name: 'Shots Dulces de Autor', description: 'Copitas individuales de Chocotorta, Tiramisú, Cheesecake, Oreo y Lemon Pie.', price: 2800, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'De Autor' },
+        { key: 'pos_churros', name: 'Mini Churros & Donuts Glaseadas', description: 'Churros calentitos fritos en el momento con abundante dulce de leche y donuts.', price: 2200, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'Cálido' },
+        { key: 'fin_pizzas', name: 'Pizza Party Trasnoche', description: 'Show de mini pizzetas variadas a las brasas de madrugada para recargar energías.', price: 2500, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
+        { key: 'fin_pernil', name: 'Pata de Cerdo Trasnoche', description: 'Pata de cerdo caliente desmechada en vivo con figacitas de manteca y salsas.', price: 3200, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
+        { key: 'fin_tostados', name: 'Tostados & Medialunas Calientes', description: 'Sándwiches de miga tostados de jamón y queso, medialunas calientes y servicio de café.', price: 2200, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
+        { key: 'fin_panchos', name: 'Panchos Gourmet & Papas Pay', description: 'Salchichas gigantes en pan suave de viena con aderezos y lluvias de papas pay.', price: 2000, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
+        { key: 'fin_caldos', name: 'Caldos Criollos & Mini Empanadas', description: 'Consomé caliente reparador y mini empanadas criollas jugosas de ternera.', price: 2400, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
+        { key: 'fin_lomitos', name: 'Mini Lomitos & Hamburguesitas', description: 'Sándwiches mini de lomo tierno with queso y hamburguesitas caseras de madrugada.', price: 3500, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
+        { key: 'beb_sin_alcohol', name: 'Bebidas Sin Alcohol (Libre)', description: 'Línea Pepsi, agua saborizada y agua mineral con y sin gas.', price: 2500, is_per_person: true, is_available: true, category: 'bebidas', tag: 'Sin Alcohol' },
+        { key: 'beb_cervezas', name: 'Cervezas (Libre)', description: 'Canilla libre de cervezas Quilmes o Brahma frías durante el servicio.', price: 3500, is_per_person: true, is_available: true, category: 'bebidas', tag: 'Con Alcohol' },
+        { key: 'beb_vinos', name: 'Vinos & Espumante', description: 'Vinos Otro Loco Más y Copa de brindis con Espumante DU Renaissance.', price: 3800, is_per_person: true, is_available: true, category: 'bebidas', tag: 'Vinos' },
+        { key: 'srv_drinks', name: 'Gaseosas libres, Vinos y Cervezas', description: 'Gaseosas Pepsi/7up, cerveza Quilmes/Brahma libre y vinos Otro Loco Mas.', price: 4500, is_per_person: true, is_available: true, category: 'adicional', tag: 'Adicional' },
+        { key: 'srv_bar', name: 'Barra Movil Libre (Tragos)', description: 'Fernet, Campari, Gancia, Gin y Vodka libre por 4 horas con barmans.', price: 6500, is_per_person: true, is_available: true, category: 'adicional', tag: 'Adicional' },
+        { key: 'srv_tableware', name: 'Alquiler de Vajilla y Manteleria', description: 'Vajilla de loza, cubiertos, cristalería y mantelería a tono.', price: 2500, is_per_person: true, is_available: true, category: 'adicional', tag: 'Adicional' },
+        { key: 'srv_living', name: 'Alquiler de Juego de Living (10 pers.)', description: 'Juegos de living de ecocuero blanco con mesa ratona (precio por juego).', price: 18000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Living' },
+        { key: 'srv_sound', name: 'DJ, Sonido Basico y Luces', description: 'Cabina de DJ, parlantes activos, luces roboticas e iluminacion de pista.', price: 90000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
+        { key: 'srv_gazebo', name: 'Gazebo Estructural (6x3m)', description: 'Gazebo estructural cerrado con guirnaldas de luces led decorativas.', price: 45000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
+        { key: 'srv_screen', name: 'Pantalla 120" y Proyector HD', description: 'Pantalla gigante y proyector de alta luminosidad para videos.', price: 35000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
+        { key: 'srv_photo', name: 'Fotografia Digital Profesional', description: 'Cobertura completa del evento con entrega digital de fotografias.', price: 80000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Servicio' }
+      ];
 
       let supabaseClient = null;
       let isLocalMode = false;
@@ -1260,15 +1349,45 @@
       }
 
       // ==========================================================================
-      // RENDER SERVICIOS ADICIONALES
+      // RENDER SERVICIOS ADICIONALES & CARTA
       // ==========================================================================
       function renderServicesTable(services) {
         const grid = document.getElementById('services-grid');
         if (!grid) return;
         grid.innerHTML = '';
         
-        services.forEach(srv => {
+        const filterSelect = document.getElementById('admin-category-filter');
+        const filterVal = filterSelect ? filterSelect.value : 'all';
+
+        const filteredServices = filterVal === 'all' 
+          ? services 
+          : services.filter(srv => (srv.category || 'adicional') === filterVal);
+
+        if (filteredServices.length === 0) {
+          grid.innerHTML = `<div style="grid-column: 1/-1; padding: 20px; text-align: center; color: var(--charcoal-muted); font-style: italic;">No hay elementos cargados en esta categoría.</div>`;
+          return;
+        }
+
+        filteredServices.forEach(srv => {
           grid.appendChild(createServiceCard(srv));
+        });
+      }
+
+      const adminCategoryFilter = document.getElementById('admin-category-filter');
+      if (adminCategoryFilter) {
+        adminCategoryFilter.addEventListener('change', () => {
+          renderServicesTable(dbServices);
+        });
+      }
+
+      const btnResetDefaultServices = document.getElementById('btn-reset-default-services');
+      if (btnResetDefaultServices) {
+        btnResetDefaultServices.addEventListener('click', () => {
+          if (confirm("¿Deseas restablecer todos los servicios y carta gastronómica a los valores predeterminados de fábrica?")) {
+            dbServices = JSON.parse(JSON.stringify(DEFAULT_SERVICES));
+            renderServicesTable(dbServices);
+            showSaveAlert("¡Carta y servicios restablecidos a predeterminados! Haz clic en 'Guardar Todos los Cambios' al pie para confirmar.", "success");
+          }
         });
       }
 
