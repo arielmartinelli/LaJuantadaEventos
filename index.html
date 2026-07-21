@@ -183,8 +183,10 @@
         <button class="menu-tab-btn active" data-menu="recepcion">1. Recepción</button>
         <button class="menu-tab-btn" data-menu="entradas">2. Entradas</button>
         <button class="menu-tab-btn" data-menu="principales">3. Platos Principales</button>
-        <button class="menu-tab-btn" data-menu="postres">4. Postres & Mesa Dulce</button>
-        <button class="menu-tab-btn" data-menu="bebidas">5. Bebidas & Barras</button>
+        <button class="menu-tab-btn" data-menu="postres">4. Postres</button>
+        <button class="menu-tab-btn" data-menu="mesadulce">5. Mesa Dulce</button>
+        <button class="menu-tab-btn" data-menu="bebidas">6. Bebidas & Barras</button>
+        <button class="menu-tab-btn" data-menu="findeevento">7. Fin del Evento</button>
       </div>
 
       <!-- Tab Contents -->
@@ -212,9 +214,16 @@
           </div>
         </div>
 
-        <!-- Postres y Mesa Dulce Content -->
+        <!-- Postres Content -->
         <div class="menu-tab-content" id="menu-postres">
           <div class="menu-category-grid" id="grid-postres">
+            <!-- Carga dinámica -->
+          </div>
+        </div>
+
+        <!-- Mesa Dulce Content -->
+        <div class="menu-tab-content" id="menu-mesadulce">
+          <div class="menu-category-grid" id="grid-mesadulce">
             <!-- Carga dinámica -->
           </div>
         </div>
@@ -226,62 +235,14 @@
           </div>
         </div>
 
-      </div>
-    </div>
-  </section>
+        <!-- Fin del Evento Content -->
+        <div class="menu-tab-content" id="menu-findeevento">
+          <p class="menu-tab-info-text">* Opciones especiales para el cierre del evento de madrugada (Trasnoche).</p>
+          <div class="menu-category-grid" id="grid-findeevento">
+            <!-- Carga dinámica -->
+          </div>
+        </div>
 
-  <!-- Rental Section -->
-  <section class="rental-section" id="alquiler">
-    <div class="container">
-      <div class="rental-container">
-        <div class="rental-text-content reveal-left">
-          <span class="sub-header">Alquiler de Equipamiento</span>
-          <h2>Alquilá todo lo necesario para tu evento</h2>
-          <p class="rental-desc">
-            Nos encargamos de toda la infraestructura. Además del menú de catering, te ofrecemos el alquiler de vajilla de loza, cristalería fina, mantelería a tono, juegos de livings elegantes y gazebos estructurales.
-          </p>
-          <div class="rental-grid-items">
-            <div class="rental-item-mini">
-              <span class="rental-item-icon"><i class="fa-solid fa-glass-water"></i></span>
-              <div>
-                <h4>Vajilla y Cristalería</h4>
-                <p>Copas de agua/vino/brindis, vajilla de loza y cubiertos.</p>
-              </div>
-            </div>
-            <div class="rental-item-mini">
-              <span class="rental-item-icon"><i class="fa-solid fa-chair"></i></span>
-              <div>
-                <h4>Livings y Sillas</h4>
-                <p>Juegos de living para 10 pers, sillas vestidas con lazos.</p>
-              </div>
-            </div>
-            <div class="rental-item-mini">
-              <span class="rental-item-icon"><i class="fa-solid fa-tent"></i></span>
-              <div>
-                <h4>Gazebo Estructural</h4>
-                <p>Módulos de 6x3m ambientados para exteriores.</p>
-              </div>
-            </div>
-            <div class="rental-item-mini">
-              <span class="rental-item-icon"><i class="fa-solid fa-lightbulb"></i></span>
-              <div>
-                <h4>Sonido, DJ & Luces</h4>
-                <p>Soporte de sonido, cabezales móviles y luces robóticas.</p>
-              </div>
-            </div>
-          </div>
-          <a href="#calculadora" class="btn-primary" id="rental-cta-calc">Cotizar Alquileres</a>
-        </div>
-        
-        <div class="rental-visual">
-          <div class="rental-card-pricing reveal-right delay-2">
-            <h3>Lista de Precios (Alquileres)</h3>
-            <ul class="price-list" id="rental-price-list">
-              <!-- Carga dinámica -->
-            </ul>
-            <div class="price-list-note">* Los roturas de vajilla quedan a cargo del cliente. Precios en pesos.</div>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -458,6 +419,24 @@
             </div>
           </div>
         </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Opciones de Alquiler Opcionales Section (Debajo del Cotizador) -->
+  <section class="rental-section" id="alquiler" style="padding: 80px 0; background-color: var(--bg-light); border-top: 1px solid var(--border-light);">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="sub-header">Servicios Complementarios</span>
+        <h2 class="section-title">Opciones de Alquiler Opcionales</h2>
+        <p style="text-align: center; color: var(--charcoal-light); max-width: 750px; margin: 12px auto 0; font-size: 1.05rem; line-height: 1.6;">
+          Podés sumar estas opciones de equipamiento a tu cotización (se agregarán a tu presupuesto a consultar, sin sumar costo fijo en la estimación inicial) o realizar una consulta directa por WhatsApp.
+        </p>
+        <div class="divider"></div>
+      </div>
+
+      <div class="optional-rentals-grid" id="optional-rentals-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px;">
+        <!-- Carga dinámica por JS -->
       </div>
     </div>
   </section>

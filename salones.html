@@ -287,6 +287,75 @@
       border: 0;
     }
 
+    /* Calendar Widget Styles */
+    .cal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .cal-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--charcoal);
+    }
+    .cal-btn {
+      background: white;
+      border: 1px solid var(--border-light);
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.75rem;
+      color: var(--charcoal);
+    }
+    .cal-btn:hover {
+      background: var(--primary-orange);
+      color: white;
+      border-color: var(--primary-orange);
+    }
+    .cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--charcoal-muted);
+      margin-bottom: 6px;
+    }
+    .cal-days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    .cal-day-cell {
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      position: relative;
+    }
+    .cal-day-cell.empty {
+      background: transparent;
+    }
+    .cal-day-cell.available {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #c8e6c9;
+    }
+    .cal-day-cell.reserved {
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1px solid #ffcdd2;
+      text-decoration: line-through;
+    }
+
     .back-to-top {
       bottom: 25px;
       right: 25px;
@@ -401,6 +470,20 @@
           <div class="salon-map-container">
             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13636.858022878477!2d-64.30138245!3d-31.29778235!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94329ddb53c7c251%3A0xc3c5f2122b512c0!2sVilla%20Allende%2C%20C%C3%B3rdoba!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div>
+
+          <!-- Calendar Widget -->
+          <div class="salon-calendar-section" style="margin-top: 15px; background-color: #faf6f0; border-radius: 12px; padding: 14px; border: 1px solid var(--border-light);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
+              <h4 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--charcoal);">
+                <i class="fa-solid fa-calendar-days text-orange"></i> Disponibilidad de Fechas
+              </h4>
+              <div style="display: flex; gap: 10px; font-size: 0.72rem; font-weight: 700;">
+                <span style="color: #2e7d32; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Disponible</span>
+                <span style="color: #d32f2f; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Reservado</span>
+              </div>
+            </div>
+            <div class="salon-calendar-widget" id="calendar-norte"></div>
+          </div>
         </div>
 
         <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20consultar%20disponibilidad%20y%20precios%20para%20el%20%2aSal%C3%B3n%20La%20Juntada%20Norte%2a%20en%20Villa%20Allende." target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align: center; justify-content: center; text-decoration: none; display: flex; align-items: center; gap: 8px;">
@@ -466,6 +549,20 @@
           <!-- Maps Embed -->
           <div class="salon-map-container">
             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3405.513233816666!2d-64.1856711!3d-31.4005615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94329864227f4e91%3A0xe54d3dfbb7ba3a32!2sMendoza%203147%2C%20X5000%20C%C3%B3rdoba!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+
+          <!-- Calendar Widget -->
+          <div class="salon-calendar-section" style="margin-top: 15px; background-color: #faf6f0; border-radius: 12px; padding: 14px; border: 1px solid var(--border-light);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
+              <h4 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--charcoal);">
+                <i class="fa-solid fa-calendar-days text-orange"></i> Disponibilidad de Fechas
+              </h4>
+              <div style="display: flex; gap: 10px; font-size: 0.72rem; font-weight: 700;">
+                <span style="color: #2e7d32; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Disponible</span>
+                <span style="color: #d32f2f; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Reservado</span>
+              </div>
+            </div>
+            <div class="salon-calendar-widget" id="calendar-centro"></div>
           </div>
         </div>
 
@@ -643,6 +740,97 @@
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       }
+
+      /* ==========================================================================
+         Calendario de Disponibilidad de Salones
+         ========================================================================== */
+      let norteReservedDates = [];
+      let centroReservedDates = [];
+      let currentCalDate = new Date();
+
+      async function loadSalonDates() {
+        try {
+          const res = await fetch('/api/config');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.configs) {
+              if (data.configs.salon_norte_reserved_dates) {
+                try { norteReservedDates = JSON.parse(data.configs.salon_norte_reserved_dates); } catch(e){}
+              }
+              if (data.configs.salon_centro_reserved_dates) {
+                try { centroReservedDates = JSON.parse(data.configs.salon_centro_reserved_dates); } catch(e){}
+              }
+            }
+          }
+        } catch (e) {
+          const localNorte = localStorage.getItem('lajuntada_salon_norte_reserved_dates');
+          const localCentro = localStorage.getItem('lajuntada_salon_centro_reserved_dates');
+          if (localNorte) try { norteReservedDates = JSON.parse(localNorte); } catch(e){}
+          if (localCentro) try { centroReservedDates = JSON.parse(localCentro); } catch(e){}
+        }
+        renderSalonCalendar('calendar-norte', norteReservedDates);
+        renderSalonCalendar('calendar-centro', centroReservedDates);
+      }
+
+      function renderSalonCalendar(containerId, reservedDates) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const year = currentCalDate.getFullYear();
+        const month = currentCalDate.getMonth();
+
+        const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        
+        const firstDayIndex = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        let daysHtml = '';
+        for (let i = 0; i < firstDayIndex; i++) {
+          daysHtml += `<div class="cal-day-cell empty"></div>`;
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          const formattedMonth = String(month + 1).padStart(2, '0');
+          const formattedDay = String(day).padStart(2, '0');
+          const dateStr = `${year}-${formattedMonth}-${formattedDay}`;
+
+          const isReserved = reservedDates.includes(dateStr);
+          const cellClass = isReserved ? 'reserved' : 'available';
+          const titleText = isReserved ? 'Reservado' : 'Disponible';
+
+          daysHtml += `<div class="cal-day-cell ${cellClass}" title="${dateStr}: ${titleText}">${day}</div>`;
+        }
+
+        container.innerHTML = `
+          <div class="cal-header">
+            <button type="button" class="cal-btn btn-cal-prev" aria-label="Mes anterior"><i class="fa-solid fa-chevron-left"></i></button>
+            <span class="cal-title">${monthNames[month]} ${year}</span>
+            <button type="button" class="cal-btn btn-cal-next" aria-label="Siguiente mes"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+          <div class="cal-weekdays">
+            <span>D</span><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span>
+          </div>
+          <div class="cal-days-grid">
+            ${daysHtml}
+          </div>
+        `;
+
+        container.querySelector('.btn-cal-prev').addEventListener('click', (e) => {
+          e.preventDefault();
+          currentCalDate.setMonth(currentCalDate.getMonth() - 1);
+          renderSalonCalendar('calendar-norte', norteReservedDates);
+          renderSalonCalendar('calendar-centro', centroReservedDates);
+        });
+
+        container.querySelector('.btn-cal-next').addEventListener('click', (e) => {
+          e.preventDefault();
+          currentCalDate.setMonth(currentCalDate.getMonth() + 1);
+          renderSalonCalendar('calendar-norte', norteReservedDates);
+          renderSalonCalendar('calendar-centro', centroReservedDates);
+        });
+      }
+
+      loadSalonDates();
     });
   </script>
 </body>

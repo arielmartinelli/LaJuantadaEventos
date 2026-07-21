@@ -628,6 +628,9 @@
               <button type="button" class="sidebar-tab" data-target="tab-galeria">
                 <i class="fa-solid fa-photo-film"></i> Galería Portafolio
               </button>
+              <button type="button" class="sidebar-tab" data-target="tab-salones">
+                <i class="fa-solid fa-calendar-days"></i> Disponibilidad Salones
+              </button>
             </nav>
           </div>
           
@@ -781,6 +784,48 @@
                   <button type="button" class="admin-btn-export" id="btn-add-gallery" style="background-color: var(--primary-orange); padding: 8px 16px; font-size: 0.85rem;">
                     <i class="fa-solid fa-plus"></i> Agregar Imagen a la Galería
                   </button>
+                </div>
+              </div>
+            <!-- PANEL 5: DISPONIBILIDAD DE SALONES -->
+            <div class="tab-panel" id="tab-salones">
+              <div class="admin-box">
+                <h3><i class="fa-solid fa-calendar-days"></i> Gestión de Disponibilidad de Salones</h3>
+                <p style="font-size: 0.85rem; color: var(--charcoal-muted); margin-bottom: 20px;">
+                  Selecciona el salón, elegí el mes y haz clic sobre cualquier día para alternar entre <strong>Disponible (Verde)</strong> y <strong>Reservado (Rojo)</strong>. Los días marcados como reservados se verán deshabilitados para tus clientes en la web de Salones.
+                </p>
+
+                <!-- Inputs ocultos para sincronizar fechas reservadas en Supabase / Local -->
+                <input type="hidden" id="db-salon_norte_reserved_dates" value="[]">
+                <input type="hidden" id="db-salon_centro_reserved_dates" value="[]">
+
+                <div style="display: flex; gap: 15px; margin-bottom: 25px; align-items: center; flex-wrap: wrap; background: #faf6f0; padding: 15px; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+                  <div style="flex: 1; min-width: 240px;">
+                    <label style="font-size: 0.8rem; font-weight: 700; margin-bottom: 5px; display: block;">Salón a Gestionar:</label>
+                    <select id="admin-cal-salon-select" class="form-control" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-light); font-size: 0.9rem; font-weight: 700; color: var(--charcoal);">
+                      <option value="norte" selected>Salón La Juntada Norte (Villa Allende)</option>
+                      <option value="centro">Salón La Juntada Centro (Alta Córdoba)</option>
+                    </select>
+                  </div>
+                  
+                  <div style="display: flex; align-items: center; gap: 10px; margin-top: 18px;">
+                    <button type="button" class="admin-btn-export" id="admin-cal-prev-month" style="padding: 8px 14px;"><i class="fa-solid fa-chevron-left"></i> Anterior</button>
+                    <span id="admin-cal-month-title" style="font-weight: 800; font-size: 1rem; min-width: 150px; text-align: center; color: var(--primary-orange);">-</span>
+                    <button type="button" class="admin-btn-export" id="admin-cal-next-month" style="padding: 8px 14px;">Siguiente <i class="fa-solid fa-chevron-right"></i></button>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 20px; font-size: 0.85rem; font-weight: 700; margin-bottom: 15px; background: white; padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border-light);">
+                  <span style="color: #2e7d32; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-circle" style="font-size: 0.7rem;"></i> Verde = Fecha Disponible</span>
+                  <span style="color: #c62828; display: flex; align-items: center; gap: 6px;"><i class="fa-solid fa-circle" style="font-size: 0.7rem;"></i> Rojo (Tachado) = Fecha Reservada</span>
+                </div>
+
+                <div id="admin-calendar-grid-wrapper" style="background-color: #ffffff; border-radius: 12px; padding: 20px; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm);">
+                  <div class="admin-cal-weekdays" style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: 800; font-size: 0.85rem; color: var(--charcoal-muted); margin-bottom: 12px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">
+                    <span>Dom</span><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span>
+                  </div>
+                  <div id="admin-cal-days-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;">
+                    <!-- Días interactivos -->
+                  </div>
                 </div>
               </div>
             </div>
@@ -1043,6 +1088,130 @@
             }
           }
         });
+        initAdminCalendar();
+      }
+
+      // ==========================================================================
+      // GESTOR DE CALENDARIO DE SALONES (ADMIN)
+      // ==========================================================================
+      let adminCalDate = new Date();
+      let adminCurrentSalon = 'norte';
+
+      function initAdminCalendar() {
+        const salonSelect = document.getElementById('admin-cal-salon-select');
+        const prevBtn = document.getElementById('admin-cal-prev-month');
+        const nextBtn = document.getElementById('admin-cal-next-month');
+
+        if (!salonSelect) return;
+
+        salonSelect.removeEventListener('change', handleAdminSalonChange);
+        salonSelect.addEventListener('change', handleAdminSalonChange);
+
+        if (prevBtn) {
+          prevBtn.onclick = (e) => {
+            e.preventDefault();
+            adminCalDate.setMonth(adminCalDate.getMonth() - 1);
+            renderAdminCalendarGrid();
+          };
+        }
+
+        if (nextBtn) {
+          nextBtn.onclick = (e) => {
+            e.preventDefault();
+            adminCalDate.setMonth(adminCalDate.getMonth() + 1);
+            renderAdminCalendarGrid();
+          };
+        }
+
+        renderAdminCalendarGrid();
+      }
+
+      function handleAdminSalonChange(e) {
+        adminCurrentSalon = e.target.value;
+        renderAdminCalendarGrid();
+      }
+
+      function renderAdminCalendarGrid() {
+        const titleEl = document.getElementById('admin-cal-month-title');
+        const gridEl = document.getElementById('admin-cal-days-grid');
+        if (!gridEl || !titleEl) return;
+
+        const year = adminCalDate.getFullYear();
+        const month = adminCalDate.getMonth();
+        const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        
+        titleEl.textContent = `${monthNames[month]} ${year}`;
+
+        const inputId = adminCurrentSalon === 'norte' ? 'db-salon_norte_reserved_dates' : 'db-salon_centro_reserved_dates';
+        const inputEl = document.getElementById(inputId);
+        let reservedList = [];
+        try {
+          reservedList = JSON.parse(inputEl ? inputEl.value || '[]' : '[]');
+        } catch (e) {
+          reservedList = [];
+        }
+
+        const firstDayIndex = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        let daysHtml = '';
+        for (let i = 0; i < firstDayIndex; i++) {
+          daysHtml += `<div style="padding: 12px; background: transparent;"></div>`;
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          const formattedMonth = String(month + 1).padStart(2, '0');
+          const formattedDay = String(day).padStart(2, '0');
+          const dateStr = `${year}-${formattedMonth}-${formattedDay}`;
+
+          const isReserved = reservedList.includes(dateStr);
+          const bg = isReserved ? '#ffebee' : '#e8f5e9';
+          const color = isReserved ? '#c62828' : '#2e7d32';
+          const border = isReserved ? '1px solid #ef9a9a' : '1px solid #a5d6a7';
+          const decoration = isReserved ? 'line-through' : 'none';
+          const badgeText = isReserved ? 'RESERVADO' : 'DISPONIBLE';
+
+          daysHtml += `
+            <button type="button" class="admin-cal-day-btn" data-date="${dateStr}" style="background-color: ${bg}; color: ${color}; border: ${border}; text-decoration: ${decoration}; padding: 10px 4px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s ease;">
+              <span style="font-size: 1.05rem;">${day}</span>
+              <span style="font-size: 0.62rem; font-weight: 800; letter-spacing: 0.5px;">${badgeText}</span>
+            </button>
+          `;
+        }
+
+        gridEl.innerHTML = daysHtml;
+
+        gridEl.querySelectorAll('.admin-cal-day-btn').forEach(btn => {
+          btn.onclick = () => {
+            const dateStr = btn.getAttribute('data-date');
+            toggleReservedDate(adminCurrentSalon, dateStr);
+          };
+        });
+      }
+
+      function toggleReservedDate(salonKey, dateStr) {
+        const inputId = salonKey === 'norte' ? 'db-salon_norte_reserved_dates' : 'db-salon_centro_reserved_dates';
+        const inputEl = document.getElementById(inputId);
+        let reservedList = [];
+        try {
+          reservedList = JSON.parse(inputEl ? inputEl.value || '[]' : '[]');
+        } catch (e) {
+          reservedList = [];
+        }
+
+        if (reservedList.includes(dateStr)) {
+          reservedList = reservedList.filter(d => d !== dateStr);
+        } else {
+          reservedList.push(dateStr);
+        }
+
+        const jsonStr = JSON.stringify(reservedList);
+        if (inputEl) inputEl.value = jsonStr;
+        dbConfigs[salonKey === 'norte' ? 'salon_norte_reserved_dates' : 'salon_centro_reserved_dates'] = jsonStr;
+
+        localStorage.setItem(`lajuntada_salon_${salonKey}_reserved_dates`, jsonStr);
+
+        renderAdminCalendarGrid();
       }
 
       // ==========================================================================
@@ -1112,7 +1281,7 @@
         const isAvailableChecked = srv.is_available ? 'checked' : '';
         const isSrvLiving = srv.key === 'srv_living';
         
-        const isKeyReadOnly = srv.key.startsWith('srv_') || srv.key.startsWith('rec_') || srv.key.startsWith('ent_') || srv.key.startsWith('pri_') || srv.key.startsWith('pos_') || srv.key.startsWith('beb_') ? 'readonly' : '';
+        const isKeyReadOnly = srv.key.startsWith('srv_') || srv.key.startsWith('rec_') || srv.key.startsWith('ent_') || srv.key.startsWith('pri_') || srv.key.startsWith('pos_') || srv.key.startsWith('beb_') || srv.key.startsWith('fin_') ? 'readonly' : '';
         
         const descVal = srv.description || '';
         const tagVal = srv.tag || '';
@@ -1123,8 +1292,10 @@
           { value: 'recepcion', label: 'Recepción' },
           { value: 'entradas', label: 'Entradas' },
           { value: 'principales', label: 'Platos Principales' },
-          { value: 'postres', label: 'Postres & Mesa Dulce' },
-          { value: 'bebidas', label: 'Bebidas & Barras' }
+          { value: 'postres', label: 'Postres' },
+          { value: 'mesadulce', label: 'Mesa Dulce' },
+          { value: 'bebidas', label: 'Bebidas & Barras' },
+          { value: 'findeevento', label: 'Fin del Evento (Trasnoche)' }
         ];
         
         let categoryOptions = '';

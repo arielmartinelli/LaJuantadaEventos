@@ -54,10 +54,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Postres
     { key: 'pos_individuales', name: 'Postres Clásicos individuales', description: 'Budín de pan o Flan casero con dulce de leche; Macedonia con helado; o Brownie.', price: 2200, is_per_person: true, is_available: true, category: 'postres', tag: 'Clásico' },
     { key: 'pos_autor', name: 'Copas y Postres de Autor', description: 'Formatos individuales: Chocotorta clásica, Tiramisú italiano o Cheesecake.', price: 2800, is_per_person: true, is_available: true, category: 'postres', tag: 'De Autor' },
-    { key: 'pos_tartas', name: 'Tartas Dulces (12 Porciones)', description: 'Lemon Pie, Frutilla, Durazno, Multi-frutal, Mousse, Coco o Ricota.', price: 2500, is_per_person: true, is_available: true, category: 'postres', tag: 'Artesanal' },
-    { key: 'pos_panaderia', name: 'Especialidades de Panadería por Kg', description: 'Mini alfajores de chocolate/maicena, cañoncitos, conitos y palmeritas.', price: 1800, is_per_person: true, is_available: true, category: 'postres', tag: 'Panadería' },
     { key: 'pos_torta', name: 'Torta de Evento o Simbólica', description: 'Torta de bodas/cumpleaños calculada a 100gr por invitado o torta simbólica.', price: 3000, is_per_person: true, is_available: true, category: 'postres', tag: 'Torta' },
-    { key: 'pos_candy', name: 'Candy Bar & Cafetería', description: 'Candy bar surtido (Rocklets, Titas, etc.) con servicio final de Cafetería caliente.', price: 2000, is_per_person: true, is_available: true, category: 'postres', tag: 'Candy Bar' },
+
+    // Mesa Dulce
+    { key: 'pos_tartas', name: 'Tartas Dulces (12 Porciones)', description: 'Lemon Pie, Frutilla, Durazno, Multi-frutal, Mousse, Coco o Ricota.', price: 2500, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'Artesanal' },
+    { key: 'pos_panaderia', name: 'Especialidades de Panadería por Kg', description: 'Mini alfajores de chocolate/maicena, cañoncitos, conitos y palmeritas.', price: 1800, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'Panadería' },
+    { key: 'pos_candy', name: 'Candy Bar & Cafetería', description: 'Candy bar surtido (Rocklets, Titas, etc.) con servicio final de Cafetería caliente.', price: 2000, is_per_person: true, is_available: true, category: 'mesadulce', tag: 'Candy Bar' },
+
+    // Fin del Evento (Trasnoche)
+    { key: 'fin_pizzas', name: 'Pizza Party Trasnoche', description: 'Show de mini pizzetas a las brasas de madrugada para recargar energías.', price: 2500, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
+    { key: 'fin_pernil', name: 'Pata de Cerdo Trasnoche', description: 'Pata de cerdo caliente desmechada en vivo con figacitas de manteca y salsas.', price: 3200, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
+    { key: 'fin_tostados', name: 'Tostados & Medialunas Calientes', description: 'Sándwiches de miga tostados de jamón y queso, medialunas calientes y servicio de café.', price: 2200, is_per_person: true, is_available: true, category: 'findeevento', tag: 'Trasnoche' },
 
     // Bebidas
     { key: 'beb_sin_alcohol', name: 'Bebidas Sin Alcohol (Libre)', description: 'Línea Pepsi, agua saborizada y agua mineral con y sin gas.', price: 2500, is_per_person: true, is_available: true, category: 'bebidas', tag: 'Sin Alcohol' },
@@ -198,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activeServices = data.services;
       }
       
-      renderServicesDOM();
+      renderOptionalRentalsDOM();
       renderMenuDOM();
       renderCarouselDOM(data.carousel || DEFAULT_CAROUSEL);
       renderGalleryDOM(data.gallery || DEFAULT_GALLERY);
@@ -214,11 +221,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function loadLocalFallback() {
-    const localData = localStorage.getItem('lajuntada_config');
-    if (localData) {
+    const localConfigs = localStorage.getItem('lajuntada_configs');
+    if (localConfigs) {
       try {
-        const parsed = JSON.parse(localData);
-        activeConfigs = { ...DEFAULT_CONFIGS, ...parsed };
+        activeConfigs = { ...DEFAULT_CONFIGS, ...JSON.parse(localConfigs) };
       } catch (e) {
         activeConfigs = { ...DEFAULT_CONFIGS };
       }
@@ -238,67 +244,89 @@ document.addEventListener('DOMContentLoaded', () => {
       activeServices = [...DEFAULT_SERVICES];
     }
 
-    renderServicesDOM();
+    renderOptionalRentalsDOM();
     renderMenuDOM();
     renderCarouselDOM(DEFAULT_CAROUSEL);
     renderGalleryDOM(DEFAULT_GALLERY);
   }
 
-  // Renderizar checkboxes y lista de precios
-  function renderServicesDOM() {
-    const addonsContainer = document.getElementById('calc-addons-container');
-    const rentalPriceList = document.getElementById('rental-price-list');
+  // Set para almacenar alquileres opcionales seleccionados (sin costo fijo)
+  let selectedOptionalRentals = new Set();
+
+  // Renderizar tarjetas de opciones de alquiler opcionales
+  function renderOptionalRentalsDOM() {
+    const grid = document.getElementById('optional-rentals-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
     
-    // 1. Checkboxes calculadora
-    if (addonsContainer) {
-      addonsContainer.innerHTML = '';
-      activeServices.filter(srv => srv.category === 'adicional' || !srv.category).forEach(srv => {
-        // living_qty se maneja por selector numérico separado en el html
-        if (srv.key === 'srv_living') {
-          updateLivingSelector(srv);
-          return;
-        }
+    const items = activeServices.filter(srv => srv.category === 'adicional' || !srv.category);
+    items.forEach(srv => {
+      const isAvailable = srv.is_available;
+      const disabledClass = isAvailable ? '' : 'disabled';
+      const tagHtml = srv.tag ? `<span class="menu-tag orange">${srv.tag}</span>` : `<span class="menu-tag orange">Opcional</span>`;
+      
+      const isSelected = selectedOptionalRentals.has(srv.key);
+      const activeClass = isSelected ? 'active' : '';
+      const buttonText = isSelected ? 'Quitar de Cotización' : 'Sumar a Cotización';
+      const buttonClass = isSelected ? 'btn-secondary' : 'btn-primary';
+      const whatsappText = encodeURIComponent(`Hola! Quisiera consultar la cotización para el alquiler de: ${srv.name}`);
+      const whatsappUrl = `https://wa.me/5493516069743?text=${whatsappText}`;
 
-        const disabledAttr = srv.is_available ? '' : 'disabled';
-        const disabledClass = srv.is_available ? '' : 'disabled';
-        const badgeHtml = srv.is_available ? '' : ' <span class="unavailable-badge">No Disponible</span>';
-        const priceSuffix = srv.is_per_person ? 'x pers.' : 'fijo';
-        const labelText = `${srv.name} (+${formatCurrency(srv.price)} ${priceSuffix})`;
+      grid.innerHTML += `
+        <div class="menu-item-card ${activeClass} ${disabledClass}" id="rental-card-${srv.key}" style="transition: all 0.3s ease; position: relative; height: 100%; display: flex; flex-direction: column;">
+          ${tagHtml}
+          <h4 style="margin-top: 10px;">${srv.name}</h4>
+          <p style="flex-grow: 1;">${srv.description || 'Infraestructura y equipamiento adicional opcional para tu evento.'}</p>
+          ${isAvailable ? `
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--border-light); padding-top: 15px;">
+              <span style="font-size: 0.85rem; font-weight: 700; color: var(--charcoal-muted);">A Consultar (Sin costo fijo adicionado)</span>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="${buttonClass} btn-rental-toggle-quote" data-key="${srv.key}" style="flex: 1; padding: 8px 12px; font-size: 0.75rem; border-radius: 50px; cursor: pointer; border: none; font-weight: 700;">
+                  ${buttonText}
+                </button>
+                <a href="${whatsappUrl}" target="_blank" rel="noopener noreferrer" class="btn-primary" style="padding: 8px 12px; font-size: 0.75rem; border-radius: 50px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 4px; background-color: #25D366; border: none; font-weight: 700; color: white;">
+                  <i class="fa-brands fa-whatsapp"></i> Consultar
+                </a>
+              </div>
+            </div>
+          ` : `<span class="unavailable-badge" style="font-size: 0.75rem; margin-top: auto; display: inline-block; padding-top: 10px;">No Disponible</span>`}
+        </div>
+      `;
+    });
 
-        addonsContainer.innerHTML += `
-          <label class="custom-checkbox-container ${disabledClass}">
-            <input type="checkbox" id="${srv.key}" data-cost="${srv.price}" data-name="${srv.name}" data-per-person="${srv.is_per_person}" ${disabledAttr}>
-            <span class="checkmark"></span>
-            <span class="chk-label">${labelText}${badgeHtml}</span>
-          </label>
-        `;
+    // Registrar clics de botón "Sumar a Cotización" / "Quitar"
+    grid.querySelectorAll('.btn-rental-toggle-quote').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.getAttribute('data-key');
+        toggleOptionalRentalInQuote(key);
       });
+    });
 
-      // Agregar listeners a los nuevos checkboxes
-      const checkboxes = addonsContainer.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach(chk => {
-        chk.addEventListener('change', calculateBudget);
+    // Registrar spotlight de cursor
+    grid.querySelectorAll('.menu-item-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
       });
+    });
+  }
+
+  function toggleOptionalRentalInQuote(key) {
+    if (selectedOptionalRentals.has(key)) {
+      selectedOptionalRentals.delete(key);
+    } else {
+      selectedOptionalRentals.add(key);
     }
-
-    // 2. Lista de Precios de Alquiler
-    if (rentalPriceList) {
-      rentalPriceList.innerHTML = '';
-      activeServices.filter(srv => srv.category === 'adicional' || !srv.category).forEach(srv => {
-        const priceSuffix = srv.is_per_person ? '<small>(por persona)</small>' : '<small>(fijo)</small>';
-        rentalPriceList.innerHTML += `
-          <li>
-            <span>${srv.name} ${priceSuffix}</span>
-            <strong>${formatCurrency(srv.price)}</strong>
-          </li>
-        `;
-      });
-    }
+    renderOptionalRentalsDOM();
+    calculateBudget();
   }
 
   // Renderizar Platos y Opciones de Menú
   function renderMenuDOM() {
-    const categories = ['recepcion', 'entradas', 'principales', 'postres', 'bebidas'];
+    const categories = ['recepcion', 'entradas', 'principales', 'postres', 'mesadulce', 'bebidas', 'findeevento'];
     
     categories.forEach(cat => {
       const grid = document.getElementById(`grid-${cat}`);
@@ -818,6 +846,20 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // 4. Recorrer los alquileres opcionales seleccionados (sin costo fijo adicionado)
+    let selectedOptionalList = [];
+    selectedOptionalRentals.forEach(key => {
+      const srv = activeServices.find(s => s.key === key);
+      if (srv) {
+        selectedOptionalList.push(srv.name);
+        dynamicHtml += `
+          <div class="summary-item">
+            <span>+ ${srv.name} (Opcional):</span>
+            <strong style="color: var(--charcoal-muted); font-size: 0.85rem;">A Consultar</strong>
+          </div>`;
+      }
+    });
+
     if (dynamicSummaryItems) dynamicSummaryItems.innerHTML = dynamicHtml;
     
     const grandTotal = baseCateringTotal + menuItemsTotal + additionalTotal;
@@ -834,7 +876,8 @@ document.addEventListener('DOMContentLoaded', () => {
       grandTotal,
       perPerson: pricePerPerson,
       addons: selectedAddonsList,
-      menuItems: selectedMenuOptionsList
+      menuItems: selectedMenuOptionsList,
+      optionalRentals: selectedOptionalList
     };
   }
 
@@ -958,6 +1001,20 @@ document.addEventListener('DOMContentLoaded', () => {
       addonsHtml = `<tr><td colspan="3" style="padding: 15px; color: #80706b; font-style: italic; text-align: center;">Ningún servicio adicional seleccionado.</td></tr>`;
     }
 
+    // Construir lista de alquileres opcionales
+    let optionalRentalsHtml = '';
+    if (results.optionalRentals && results.optionalRentals.length > 0) {
+      results.optionalRentals.forEach(name => {
+        optionalRentalsHtml += `
+          <tr style="border-bottom: 1px solid #ebdcd5;">
+            <td style="padding: 10px; text-align: left; font-weight: 500;">${name}</td>
+            <td style="padding: 10px; text-align: right; color: #80706b;">A Consultar</td>
+            <td style="padding: 10px; text-align: right; font-weight: 700; color: #80706b;">A Consultar</td>
+          </tr>
+        `;
+      });
+    }
+
     // Buscar precio unitario base del menu elegido
     const selectedOption = eventTypeSelect.options[eventTypeSelect.selectedIndex];
     const basePricePerPerson = parseFloat(selectedOption.getAttribute('data-base')) || 0;
@@ -1016,6 +1073,25 @@ document.addEventListener('DOMContentLoaded', () => {
             </tbody>
           </table>
         </div>
+
+        <!-- Opciones de Alquiler Opcionales -->
+        ${optionalRentalsHtml ? `
+          <div style="margin-bottom: 35px;">
+            <h3 style="color: #e05326; font-size: 14px; font-weight: 700; border-bottom: 2px solid #ebdcd5; padding-bottom: 6px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px;">Alquileres Opcionales a Consultar</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+              <thead>
+                <tr style="background-color: #faf6f0; color: #1d1715; font-weight: 700; border-bottom: 1px solid #ebdcd5;">
+                  <th style="padding: 10px; text-align: left;">Descripción del Equipamiento</th>
+                  <th style="padding: 10px; text-align: right; width: 140px;">Condición</th>
+                  <th style="padding: 10px; text-align: right; width: 120px;">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${optionalRentalsHtml}
+              </tbody>
+            </table>
+          </div>
+        ` : ''}
 
         <!-- Servicios Adicionales -->
         <div style="margin-bottom: 45px;">
