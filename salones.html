@@ -433,6 +433,34 @@
       width: 45px;
       height: 45px;
     }
+
+    /* Header styling */
+    .salones-header {
+      background: linear-gradient(135deg, rgba(29, 23, 21, 0.88) 0%, rgba(45, 36, 33, 0.94) 100%), url('assets/hero_bg.png') center/cover no-repeat;
+      padding: 175px 20px 90px;
+      text-align: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 -30px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .salones-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 20px;
+      background-color: var(--bg-light);
+      clip-path: polygon(0 100%, 100% 100%, 100% 0);
+    }
+
+    .salones-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
   </style>
 </head>
 <body>
@@ -459,7 +487,6 @@
           <li class="nav-item"><a href="index.html#servicios" class="nav-link">Servicio</a></li>
           <li class="nav-item"><a href="salones.html" class="nav-link active">Salones</a></li>
           <li class="nav-item"><a href="index.html#calculadora" class="nav-link">Cotizador</a></li>
-          <li class="nav-item"><a href="guia-eventos.html" class="nav-link">Guía & Consejos</a></li>
           <li class="nav-item"><a href="index.html#condiciones" class="nav-link">Condiciones</a></li>
           <li class="nav-item"><a href="admin.html" class="nav-link admin-nav-link" title="Acceso Admin"><i class="fa-solid fa-shield-halved"></i><span class="admin-text-mobile"> Panel Admin</span></a></li>
           <li class="nav-item"><a href="index.html#contacto" class="nav-link-btn">Contactar</a></li>
@@ -470,11 +497,13 @@
 
   <!-- Banner Header -->
   <section class="salones-header">
-    <div class="reveal">
-      <span class="sub-header text-orange" style="letter-spacing: 2px;">INFRAESTRUCTURA & CATERING</span>
-      <h1 style="font-size: 2.8rem; font-weight: 800; margin: 10px 0 15px;">Nuestros Salones Exclusivos</h1>
-      <p style="font-size: 1.1rem; max-width: 700px; margin: 0 auto; color: var(--charcoal-muted);">
-        Elegí la locación ideal para tu fiesta o evento corporativo en Córdoba. Villa Allende y Alta Córdoba a tu disposición.
+    <div class="reveal" style="max-width: 850px; margin: 0 auto;">
+      <span style="background: rgba(224, 83, 38, 0.25); border: 1px solid var(--primary-orange); color: #ff8c00; font-size: 0.8rem; font-weight: 800; padding: 6px 20px; border-radius: 50px; text-transform: uppercase; letter-spacing: 2px; display: inline-block; margin-bottom: 14px; backdrop-filter: blur(4px);">
+        <i class="fa-solid fa-building text-orange"></i> INFRAESTRUCTURA & CATERING EXCLUSIVO
+      </span>
+      <h1 style="font-size: 2.8rem; font-weight: 800; margin: 10px 0 15px; text-shadow: 0 4px 14px rgba(0,0,0,0.6);">Nuestros Salones Exclusivos</h1>
+      <p style="font-size: 1.1rem; max-width: 720px; margin: 0 auto; color: rgba(255, 255, 255, 0.92); line-height: 1.6;">
+        Elegí la locación ideal para tu fiesta o evento corporativo en Córdoba. Villa Allende y Alta Córdoba a tu disposición con gastronomía y ambientación premium.
       </p>
     </div>
   </section>

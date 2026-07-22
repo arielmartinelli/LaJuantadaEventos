@@ -26,10 +26,13 @@
 
   <style>
     .guia-header {
-      background: linear-gradient(135deg, #1d1715 0%, #3a312e 100%);
-      padding: 150px 20px 60px;
+      background: linear-gradient(135deg, rgba(29, 23, 21, 0.88) 0%, rgba(45, 36, 33, 0.94) 100%), url('assets/hero_bg.png') center/cover no-repeat;
+      padding: 175px 20px 80px;
       text-align: center;
       color: white;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 -30px 40px rgba(0, 0, 0, 0.4);
     }
 
     .guia-nav-tabs {
@@ -294,10 +297,12 @@
 
   <!-- Banner Header -->
   <section class="guia-header">
-    <div class="container reveal">
-      <span class="sub-header text-orange" style="letter-spacing: 2px; color: var(--primary-orange);">ASESORÍA INTEGRAL & ASISTENTE PROFESIONAL</span>
-      <h1 id="guia-main-title" style="font-size: 2.6rem; font-weight: 800; margin: 10px 0 15px;">Guía y consejos para Fiestas de 15s</h1>
-      <p style="font-size: 1.05rem; max-width: 750px; margin: 0 auto; opacity: 0.9; line-height: 1.6;">
+    <div class="container reveal" style="max-width: 850px; margin: 0 auto;">
+      <span style="background: rgba(224, 83, 38, 0.25); border: 1px solid var(--primary-orange); color: #ff8c00; font-size: 0.8rem; font-weight: 800; padding: 6px 20px; border-radius: 50px; text-transform: uppercase; letter-spacing: 2px; display: inline-block; margin-bottom: 14px; backdrop-filter: blur(4px);">
+        <i class="fa-solid fa-book-open text-orange"></i> ASESORÍA INTEGRAL & ASISTENTE PROFESIONAL
+      </span>
+      <h1 id="guia-main-title" style="font-size: 2.8rem; font-weight: 800; margin: 10px 0 15px; text-shadow: 0 4px 14px rgba(0,0,0,0.6);">Guía y consejos para Fiestas de 15s</h1>
+      <p style="font-size: 1.05rem; max-width: 750px; margin: 0 auto; opacity: 0.92; line-height: 1.6;">
         Encontrá toda la información clave recopilada por nuestros organizadores y chefs: agendas mes a mes, timings por bloques, trámites de Registro Civil en Córdoba y secretos de barras y catering.
       </p>
 
@@ -319,26 +324,6 @@
          SECCIÓN 1: 👑 FIESTAS DE 15 & CUMPLEAÑOS
          ========================================================================== -->
     <div class="guia-section-content active" id="sec-15">
-
-      <!-- Barra de Acciones Rápidas Superior -->
-      <div class="guia-action-bar">
-        <div>
-          <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--charcoal);">
-            <i class="fa-solid fa-crown text-orange"></i> Guía Completa de Fiestas de 15
-          </h3>
-          <p style="margin: 4px 0 0; font-size: 0.88rem; color: var(--charcoal-light);">
-            Planificación perfecta, concepto Teen Planner y timings por bloques.
-          </p>
-        </div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <button type="button" class="btn-secondary" onclick="window.print()" style="padding: 10px 20px; border-radius: 50px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-            <i class="fa-solid fa-file-pdf text-orange"></i> <span>Descargar Guía en PDF</span>
-          </button>
-          <a href="index.html#calculadora" class="btn-primary" style="padding: 10px 22px; border-radius: 50px; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-            <i class="fa-solid fa-calculator"></i> <span>Ir a Cotización Online</span>
-          </a>
-        </div>
-      </div>
 
       <!-- Tarjeta 1: Concepto Teen Planner -->
       <div class="guia-card">
