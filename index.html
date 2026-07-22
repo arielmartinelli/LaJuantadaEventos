@@ -47,6 +47,7 @@
           <li class="nav-item"><a href="#servicios" class="nav-link">Servicio</a></li>
           <li class="nav-item"><a href="salones.html" class="nav-link">Salones</a></li>
           <li class="nav-item"><a href="#calculadora" class="nav-link">Cotizador</a></li>
+          <li class="nav-item"><a href="guia-eventos.html" class="nav-link">Guía & Consejos</a></li>
           <li class="nav-item"><a href="#condiciones" class="nav-link">Condiciones</a></li>
           <li class="nav-item"><a href="admin.html" class="nav-link admin-nav-link" title="Acceso Admin"><i class="fa-solid fa-shield-halved"></i><span class="admin-text-mobile"> Panel Admin</span></a></li>
           <li class="nav-item"><a href="#contacto" class="nav-link-btn">Contactar</a></li>
@@ -58,44 +59,36 @@
   <!-- Hero Section -->
   <section class="hero-section" id="hero">
     <div class="hero-overlay"></div>
-    <div class="hero-content-container">
-      <div class="hero-badge">Eventos Multi-Formato & Catering</div>
-      <h1 class="hero-title">Le agrega sabor <br><span class="highlight">a tus encuentros!</span></h1>
+    <div class="container hero-container reveal">
+      <span class="hero-badge">Catering & Organización Integral</span>
+      <h1 class="hero-title">Le agrega sabor a tus encuentros</h1>
       <p class="hero-description">
-        Organización integral y producción de eventos sociales y empresariales de la mano de profesionales. Foodtrucks, barras móviles, catering y equipamiento en Córdoba.
+        Creamos experiencias gastronómicas únicas para bodas, cumpleaños y eventos corporativos en Córdoba. Catering exclusivo, salones propios y organización integral.
       </p>
       <div class="hero-buttons">
-        <a href="#calculadora" class="btn-primary" id="hero-cta-calc"><i class="fa-solid fa-calculator"></i> Presupuestar Online</a>
-        <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20recibir%20informaci%C3%B3n%20para%20un%20evento." target="_blank" rel="noopener noreferrer" class="btn-secondary"><i class="fa-brands fa-whatsapp"></i> Hablar con Asesor</a>
+        <a href="#calculadora" class="btn-primary">Cotizar Evento Online <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="salones.html" class="btn-secondary">Ver Salones Exclusivos</a>
       </div>
     </div>
-    <a href="#servicios" class="scroll-down-indicator" aria-label="Desplazarse hacia abajo">
-      <i class="fa-solid fa-chevron-down animate-bounce"></i>
-    </a>
   </section>
 
-  <!-- Info Badges Section -->
-  <section class="info-badges-section">
-    <div class="container grid-badges">
+  <!-- Badges Grid / Destacados -->
+  <section class="features-badges-section">
+    <div class="container badges-grid">
       <div class="badge-card">
         <div class="badge-icon"><i class="fa-solid fa-utensils"></i></div>
-        <h3>Gastronomía Real</h3>
-        <p>Catering liderado por el Chef Sánchez Leonardo.</p>
+        <h3>Catering Premium</h3>
+        <p>Menús a elección, cazuelas, parrillada y mesa dulce.</p>
       </div>
       <div class="badge-card">
-        <div class="badge-icon"><i class="fa-solid fa-wine-glass"></i></div>
-        <h3>Barras y Tragos</h3>
-        <p>Barras móviles libres con barman profesional.</p>
+        <div class="badge-icon"><i class="fa-solid fa-martini-glass-citrus"></i></div>
+        <h3>Barras Móviles</h3>
+        <p>Tragos artesanales, barmans profesionales e insumos.</p>
       </div>
       <div class="badge-card">
         <div class="badge-icon"><i class="fa-solid fa-couch"></i></div>
         <h3>Mobiliario & Living</h3>
         <p>Alquiler de livings, vajilla fina y gazebos.</p>
-      </div>
-      <div class="badge-card">
-        <div class="badge-icon"><i class="fa-solid fa-music"></i></div>
-        <h3>Sonido & Pantallas</h3>
-        <p>DJ, equipamiento de audio y proyección 120".</p>
       </div>
     </div>
   </section>
@@ -124,7 +117,14 @@
             <p class="service-desc">
               Hacemos que el día más importante sea impecable. Ofrecemos buffet caliente, islas criollas o gourmet, platos principales a elección, mesa dulce completa y barras móviles de tragos.
             </p>
-            <a href="#calculadora" class="service-btn" data-event="casamiento">Cotizar Boda</a>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
+              <a href="guia-eventos.html#bodas" class="service-btn" style="background: linear-gradient(135deg, var(--primary-orange), #ff8c00); display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;">
+                <i class="fa-solid fa-book-open"></i> Ver más info
+              </a>
+              <a href="#calculadora" class="btn-secondary" style="border-radius: 50px; padding: 10px 18px; font-weight: 700; font-size: 0.85rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <i class="fa-solid fa-calculator"></i> Ir a Cotización
+              </a>
+            </div>
           </div>
         </div>
 
@@ -135,11 +135,18 @@
             <div class="service-price-tag">Diente Libre</div>
           </div>
           <div class="service-info">
-            <h3 class="service-title-card">Cumpleaños y Fiestas</h3>
+            <h3 class="service-title-card">Cumpleaños y Fiestas de 15</h3>
             <p class="service-desc">
               Celebraciones llenas de sabor. Pata flambeada de ternera y cerdo libre con 10 salsas, pizza party a la parrilla, hamburguesas en pan de papa, choripanes y mesa dulce con torta personalizada.
             </p>
-            <a href="#calculadora" class="service-btn" data-event="cumpleaños">Cotizar Fiesta</a>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
+              <a href="guia-eventos.html#15" class="service-btn" style="background: linear-gradient(135deg, var(--primary-orange), #ff8c00); display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;">
+                <i class="fa-solid fa-book-open"></i> Ver más info
+              </a>
+              <a href="#calculadora" class="btn-secondary" style="border-radius: 50px; padding: 10px 18px; font-weight: 700; font-size: 0.85rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <i class="fa-solid fa-calculator"></i> Ir a Cotización
+              </a>
+            </div>
           </div>
         </div>
 
@@ -154,13 +161,6 @@
             <p class="service-desc">
               Lanzamientos, aniversarios corporativos o reuniones familiares en general. Nos adaptamos con opciones de cazuelas libres, parrillada a las brasas, viandas especiales (TACC/veggie) y foodtrucks.
             </p>
-            <a href="#calculadora" class="service-btn" data-event="general">Cotizar Evento</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- Salones Section Intro -->
   <section class="salones-section-intro" id="salones" style="padding: 80px 0; background-color: var(--bg-white); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);">
     <div class="container">

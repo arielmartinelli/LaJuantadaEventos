@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guía & Consejos para Eventos | La Juntada Eventos</title>
+  <meta name="description" content="Guía completa de organización para Fiestas de 15 y Casamientos en Córdoba. Agenda cronológica, consejos de organizadores, trámites de Registro Civil, cálculo de bebidas y timings.">
+  
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Outfit:wght@300;400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css?v=2.0">
+
+  <style>
+    .guia-header {
+      background: linear-gradient(135deg, #1d1715 0%, #3a312e 100%);
+      padding: 150px 20px 60px;
+      text-align: center;
+      color: white;
+    }
+
+    .guia-nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .guia-tab-btn {
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 1rem;
+      border: 2px solid var(--primary-orange);
+      background: transparent;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .guia-tab-btn.active, .guia-tab-btn:hover {
+      background: var(--primary-orange);
+      color: white;
+      box-shadow: 0 8px 20px rgba(224, 83, 38, 0.4);
+    }
+
+    .guia-section-content {
+      display: none;
+      padding: 60px 0;
+    }
+
+    .guia-section-content.active {
+      display: block;
+    }
+
+    .guia-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .guia-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .guia-card-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--charcoal);
+      margin-top: 0;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid var(--border-light);
+      padding-bottom: 10px;
+    }
+
+    .timeline-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+      margin-top: 25px;
+    }
+
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(to bottom, var(--primary-orange), #ff8c00);
+      border-radius: 4px;
+    }
+
+    .timeline-step {
+      position: relative;
+      padding-left: 60px;
+    }
+
+    .timeline-icon {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--primary-orange);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1rem;
+      box-shadow: 0 4px 10px rgba(224, 83, 38, 0.3);
+      z-index: 2;
+    }
+
+    .timeline-body {
+      background: #faf6f0;
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--border-light);
+    }
+
+    .timeline-time {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--primary-orange);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .timeline-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--charcoal);
+      margin: 0 0 8px;
+    }
+
+    .block-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .block-card {
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-left: 5px solid var(--primary-orange);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cpc-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+
+    .cpc-table th, .cpc-table td {
+      padding: 12px 15px;
+      border: 1px solid var(--border-light);
+      text-align: left;
+    }
+
+    .cpc-table th {
+      background: #faf6f0;
+      font-weight: 800;
+      color: var(--charcoal);
+    }
+
+    .cpc-table tr:nth-child(even) {
+      background: #fdfbf7;
+    }
+
+    .guia-action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      background: linear-gradient(135deg, rgba(224, 83, 38, 0.08), rgba(224, 83, 38, 0.02));
+      border: 2px dashed var(--primary-orange);
+      padding: 20px 25px;
+      border-radius: 20px;
+      margin-bottom: 40px;
+    }
+
+    @media print {
+      header, footer, .guia-header, .guia-action-bar, .back-to-top {
+        display: none !important;
+      }
+      .guia-section-content {
+        display: block !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header / Navigation -->
+  <header class="main-header">
+    <div class="container header-container">
+      <a href="index.html" class="logo">
+        <svg class="nav-logo-svg" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg">
+          <text x="10" y="65" class="logo-title">La Juntada</text>
+          <text x="140" y="105" class="logo-sub1">Le agrega sabor</text>
+          <text x="175" y="135" class="logo-sub2">a tus encuentros!</text>
+        </svg>
+      </a>
+      
+      <button class="mobile-menu-toggle" id="menu-toggle" aria-expanded="false" aria-label="Abrir menú">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+
+      <nav class="nav-menu" id="nav-menu">
+        <ul class="nav-list">
+          <li class="nav-item"><a href="index.html#hero" class="nav-link">Inicio</a></li>
+          <li class="nav-item"><a href="index.html#servicios" class="nav-link">Servicio</a></li>
+          <li class="nav-item"><a href="salones.html" class="nav-link">Salones</a></li>
+          <li class="nav-item"><a href="index.html#calculadora" class="nav-link">Cotizador</a></li>
+          <li class="nav-item"><a href="guia-eventos.html" class="nav-link active">Guía & Consejos</a></li>
+          <li class="nav-item"><a href="index.html#condiciones" class="nav-link">Condiciones</a></li>
+          <li class="nav-item"><a href="admin.html" class="nav-link admin-nav-link" title="Acceso Admin"><i class="fa-solid fa-shield-halved"></i><span class="admin-text-mobile"> Panel Admin</span></a></li>
+          <li class="nav-item"><a href="index.html#contacto" class="nav-link-btn">Contactar</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Banner Header -->
+  <section class="guia-header">
+    <div class="container reveal">
+      <span class="sub-header text-orange" style="letter-spacing: 2px; color: var(--primary-orange);">ASESORÍA INTEGRAL & ASISTENTE PROFESIONAL</span>
+      <h1 style="font-size: 2.6rem; font-weight: 800; margin: 10px 0 15px;">Guía & Consejos para tu Evento</h1>
+      <p style="font-size: 1.05rem; max-width: 750px; margin: 0 auto; opacity: 0.9; line-height: 1.6;">
+        Encontrá toda la información clave recopilada por nuestros organizadores y chefs: agendas mes a mes, timings por bloques, trámites de Registro Civil en Córdoba y secretos de barras y catering.
+      </p>
+
+      <div class="guia-nav-tabs">
+        <button type="button" class="guia-tab-btn active" id="btn-tab-15" data-section="sec-15">
+          <i class="fa-solid fa-crown"></i> Fiestas de 15 & Cumpleaños
+        </button>
+        <button type="button" class="guia-tab-btn" id="btn-tab-bodas" data-section="sec-bodas">
+          <i class="fa-solid fa-gem"></i> Casamientos & Bodas
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Container Content -->
+  <main class="container">
+
+    <!-- ==========================================================================
+         SECCIÓN 1: 👑 FIESTAS DE 15 & CUMPLEAÑOS
+         ========================================================================== -->
+    <div class="guia-section-content active" id="sec-15">
+
+      <!-- Barra de Acciones Rápidas Superior -->
+      <div class="guia-action-bar">
+        <div>
+          <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--charcoal);">
+            <i class="fa-solid fa-crown text-orange"></i> Guía Completa de Fiestas de 15
+          </h3>
+          <p style="margin: 4px 0 0; font-size: 0.88rem; color: var(--charcoal-light);">
+            Planificación perfecta, concepto Teen Planner y timings por bloques.
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button type="button" class="btn-secondary" onclick="window.print()" style="padding: 10px 20px; border-radius: 50px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-file-pdf text-orange"></i> <span>Descargar Guía en PDF</span>
+          </button>
+          <a href="index.html#calculadora" class="btn-primary" style="padding: 10px 22px; border-radius: 50px; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-calculator"></i> <span>Ir a Cotización Online</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Tarjeta 1: Concepto Teen Planner -->
+      <div class="guia-card">
+        <h2 class="guia-card-title">
+          <i class="fa-solid fa-heart text-orange"></i> ¿Qué es una Teen Planner y cómo nace?
+        </h2>
+        <p style="color: var(--charcoal-light); line-height: 1.7; font-size: 1rem;">
+          Hoy en día existe una gran demanda de fiestas de 15 cada vez más producidas e innovadoras. Las chicas comparten grupo de amigas y asisten a varias fiestas en el mismo año, por lo que requieren elementos <strong>diferenciales</strong>. Nace así la figura de la <strong>Teen Planner</strong>: una organizadora profesional que actúa como <strong>nexo estratégico entre la familia y la quinceañera</strong>.
+        </p>
+        <div style="background: rgba(250, 246, 240, 0.8); border-left: 4px solid var(--primary-orange); padding: 18px; border-radius: 12px; margin-top: 15px;">
+          <h4 style="margin: 0 0 8px; font-weight: 800; color: var(--charcoal);">¿Cómo armamos la fiesta ideal?</h4>
+          <p style="margin: 0; font-size: 0.93rem; color: var(--charcoal-light); line-height: 1.6;">
+            Todo empieza con una charla informal a modo de café (sin pensar al principio en el presupuesto). Escuchamos a los papás y a la agasajada para entender sus gustos, personalidad y estilo. Así eliminamos el estrés inicial y aseguramos que el presupuesto familiar se aproveche al máximo.
+          </p>
+        </div>
+      </div>
+
+      <!-- Tarjeta 2: Cronograma en Bloques (Timing de la Fiesta) -->
+      <div class="guia-card">
+        <h2 class="guia-card-title">
+          <i class="fa-solid fa-clock text-orange"></i> Timing de la Fiesta: Diagramación en 6 Bloques
+        </h2>
+        <p style="color: var(--charcoal-light); line-height: 1.6;">
+          Para evitar que los chicos se dispersen o se aburran, las mejores fiestas de 15 organizan la noche en bloques dinámicos:
+        </p>
+        
+        <div class="block-grid">
+          <div class="block-card">
+            <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary-orange); text-transform: uppercase;">Bloque 1</span>
+            <h4 style="margin: 6px 0; color: var(--charcoal); font-weight: 800;">Recepción & Bienvenida</h4>
+            <p style="font-size: 0.85rem; color: var(--charcoal-light); margin: 0; line-height: 1.5;">
+              Bocaditos y bebidas para los invitados mientras se aguarda a la quinceañera (quien suele llegar aproximadamente 1 hora después).
+            </p>
+          </div>
+          
+          <div class="block-card">
+            <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary-orange); text-transform: uppercase;">Bloque 2</span>
+            <h4 style="margin: 6px 0; color: var(--charcoal); font-weight: 800;">Ingreso al Salón & Primer Plato</h4>
+            <p style="font-size: 0.85rem; color: var(--charcoal-light); margin: 0; line-height: 1.5;">
+              Entrada espectacular de la agasajada con complemento audiovisual diferencial y servicio del primer plato gastronómico.
+            </p>
+          </div>
+
+          <div class="block-card">
+            <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary-orange); text-transform: uppercase;">Bloque 3</span>
+            <h4 style="margin: 6px 0; color: var(--charcoal); font-weight: 800;">Plato Principal & Videos</h4>
+            <p style="font-size: 0.85rem; color: var(--charcoal-light); margin: 0; line-height: 1.5;">
+              Servicio de plato principal. Momento ideal para proyección de video biográfico o entretenimientos entre mesas antes del baile.
+            </p>
+          </div>
+
+          <div class="block-card">
+            <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary-orange); text-transform: uppercase;">Bloque 4</span>
+            <h4 style="margin: 6px 0; color: var(--charcoal); font-weight: 800;">Vals & Apertura de Pista</h4>
+            <p style="font-size: 0.85rem; color: var(--charcoal-light); margin: 0; line-height: 1.5;">
+              Baile de vals con la familia e inicio de la fiesta con DJ a pleno para encender la pista.
+            </p>
+          </div>
+
+          <div class="block-card">
+            <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary-orange); text-transform: uppercase;">Bloque 5</span>
+            <h4 style="margin: 6px 0; color: var(--charcoal); font-weight: 800;">Mesa Dulce & Ceremonias</h4>
+            <p style="font-size: 0.85rem; color: var(--charcoal-light); margin: 0; line-height: 1.5;">
+              Cintitas, árbol de la vida, corte de torta y despliegue de tartas, postres y golosinas para todos los invitados.
+            </p>
+          </div>
+
+          <div class="block-card">
+            <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary-orange); text-transform: uppercase;">Bloque 6</span>
+            <h4 style="margin: 6px 0; color: var(--charcoal); font-weight: 800;">Fiesta, Cotillón & Trasnoche</h4>
+            <p style="font-size: 0.85rem; color: var(--charcoal-light); margin: 0; line-height: 1.5;">
+              Shows interactivos, tanda de cotillón temático, música carioca y menú de cierre trasnoche (pizzetas, hamburguesitas o pata).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta 3: Agenda Cronológica 12 Meses -->
+      <div class="guia-card">
+        <h2 class="guia-card-title">
+          <i class="fa-solid fa-calendar-check text-orange"></i> La Agenda de los 15 (Paso a Paso Cronológico)
+        </h2>
+
+        <div class="timeline-container">
+          <div class="timeline-step">
+            <div class="timeline-icon">12M</div>
+            <div class="timeline-body">
+              <div class="timeline-time">12 Meses Antes</div>
+              <h4 class="timeline-title">Fijar Fecha y Reservar Salón</h4>
+              <p style="font-size: 0.9rem; color: var(--charcoal-light); margin: 0;">
+                Definir el presupuesto estimado. Reservar el salón con anticipación (especialmente si es en temporada alta). Preguntas clave: ¿Capacidad adecuada? ¿Tienen cocina propia? ¿Proveen grupo electrógeno?
+              </p>
+            </div>
+          </div>
+
+          <div class="timeline-step">
+            <div class="timeline-icon">8M</div>
+            <div class="timeline-body">
+              <div class="timeline-time">8 Meses Antes</div>
+              <h4 class="timeline-title">Selección de Catering & Menú</h4>
+              <p style="font-size: 0.9rem; color: var(--charcoal-light); margin: 0;">
+                Evaluar opciones de catering. Consultar degustaciones, cantidad de camareros por mesa y opciones de menú especial (celíacos/veggies).
+              </p>
+            </div>
+          </div>
+
+          <div class="timeline-step">
+            <div class="timeline-icon">4-6M</div>
+            <div class="timeline-body">
+              <div class="timeline-time">4 a 6 Meses Antes</div>
+              <h4 class="timeline-title">Vestido, DJ, Foto & Video</h4>
+              <p style="font-size: 0.9rem; color: var(--charcoal-light); margin: 0;">
+                Elegir diseñador/vestido. Contratar estudio de fotografía y filmación (ediciones en vivo, clips croma). Definir DJ con lista de canciones infaltables e iluminación de pista.
+              </p>
+            </div>
+          </div>
+
+          <div class="timeline-step">
+            <div class="timeline-icon">2-4M</div>
+            <div class="timeline-body">
+              <div class="timeline-time">2 a 4 Meses Antes</div>
+              <h4 class="timeline-title">Ambientación, Shows & Souvenirs</h4>
+              <p style="font-size: 0.9rem; color: var(--charcoal-light); margin: 0;">
+                Elegir colores de ambientación que contrasten con el vestido. Contratar shows (ilusionistas, bandas de covers, saxfonistas) y encargar souvenirs/participaciones.
+              </p>
+            </div>
+          </div>
+
+          <div class="timeline-step">
+            <div class="timeline-icon">2M</div>
+            <div class="timeline-body">
+              <div class="timeline-time">2 Meses Antes</div>
+              <h4 class="timeline-title">Peinado, Makeup, Zapatos & Cotillón</h4>
+              <p style="font-size: 0.9rem; color: var(--charcoal-light); margin: 0;">
+                Pruebas de peinado y maquillaje. Elegir calzado cómodo (dorado o plateado si el vestido es de color) y encargar cotillón temático/luminoso.
+              </p>
+            </div>
+          </div>
+
+          <div class="timeline-step">
+            <div class="timeline-icon">1M</div>
+            <div class="timeline-body">
+              <div class="timeline-time">1 Mes a 15 Días Antes</div>
+              <h4 class="timeline-title">Invitaciones & Ultimar Detalles</h4>
+              <p style="font-size: 0.9rem; color: var(--charcoal-light); margin: 0;">
+                Entregar invitaciones. Escribir las palabras para las velas. Hacer un ablandamiento previo de los zapatos en casa y verificar listas con todos los proveedores.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta 4: Consejitos del Experto -->
+      <div class="guia-card">
+        <h2 class="guia-card-title">
+          <i class="fa-solid fa-lightbulb text-orange"></i> Consejos Clave de Organización
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+          <div style="background: #faf6f0; padding: 20px; border-radius: 14px; border: 1px solid var(--border-light);">
+            <h4 style="margin: 0 0 8px; color: var(--charcoal); font-weight: 800;"><i class="fa-solid fa-cocktail text-orange"></i> Barra de Tragos Responsable</h4>
+            <p style="font-size: 0.88rem; color: var(--charcoal-light); margin: 0; line-height: 1.6;">
+              Recomendamos barras "tipo boliche" atendidas por barmans jóvenes capacitados en flair (show de botellas). Permite dosificar el alcohol con tandas congeladas/frutales o tragos sin alcohol que mantienen la onda sin excesos.
+            </p>
+          </div>
+
+          <div style="background: #faf6f0; padding: 20px; border-radius: 14px; border: 1px solid var(--border-light);">
+            <h4 style="margin: 0 0 8px; color: var(--charcoal); font-weight: 800;"><i class="fa-solid fa-building text-orange"></i> Tamaño de Salón Adecuado</h4>
+            <p style="font-size: 0.88rem; color: var(--charcoal-light); margin: 0; line-height: 1.6;">
+              Evitá elegir un salón gigante para 300 personas si tenés 100 invitados. El espacio excesivo genera sensación de vacío, frialdad y timidez en la pista de baile.
+            </p>
+          </div>
+
+          <div style="background: #faf6f0; padding: 20px; border-radius: 14px; border: 1px solid var(--border-light);">
+            <h4 style="margin: 0 0 8px; color: var(--charcoal); font-weight: 800;"><i class="fa-solid fa-palette text-orange"></i> Decoración & Vestido</h4>
+            <p style="font-size: 0.88rem; color: var(--charcoal-light); margin: 0; line-height: 1.6;">
+              La ambientación no debe ser exactamente del mismo color que el vestido de la quinceañera para no mimetizarse en las fotos. El vestuario debe destacar intensamente de fondo.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ==========================================================================
+         SECCIÓN 2: 💍 CASAMIENTOS & BODAS
+         ========================================================================== -->
+    <div class="guia-section-content" id="sec-bodas">
+
+      <!-- Barra de Acciones Rápidas Superior -->
+      <div class="guia-action-bar">
+        <div>
+          <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--charcoal);">
+            <i class="fa-solid fa-gem text-orange"></i> Guía Completa de Casamientos & Bodas
+          </h3>
+          <p style="margin: 4px 0 0; font-size: 0.88rem; color: var(--charcoal-light);">
+            Trámites del Registro Civil en Córdoba, agenda de novios y fórmulas de catering/bebidas.
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button type="button" class="btn-secondary" onclick="window.print()" style="padding: 10px 20px; border-radius: 50px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-file-pdf text-orange"></i> <span>Descargar Guía en PDF</span>
+          </button>
+          <a href="index.html#calculadora" class="btn-primary" style="padding: 10px 22px; border-radius: 50px; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-calculator"></i> <span>Ir a Cotización Online</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Tarjeta 1: Registro Civil & Trámites en Córdoba -->
+      <div class="guia-card">
+        <h2 class="guia-card-title">
+          <i class="fa-solid fa-landmark text-orange"></i> Trámites de Registro Civil & Matrimonio Móvil en Córdoba
+        </h2>
+        <p style="color: var(--charcoal-light); line-height: 1.6;">
+          Para solicitar turno de matrimonio es conveniente dirigirse con al menos <strong>8 meses de anticipación</strong> al Registro Civil de la Provincia de Córdoba o a tu CPC más cercano.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 15px;">
+          <div style="background: #faf6f0; padding: 16px; border-radius: 12px;">
+            <strong style="color: var(--charcoal); display: block; margin-bottom: 6px;">📄 Requisitos Principales:</strong>
+            <ul style="margin: 0; padding-left: 20px; font-size: 0.86rem; color: var(--charcoal-light); line-height: 1.6;">
+              <li>DNI original y fotocopias de ambos contrayentes.</li>
+              <li>Partida de nacimiento actualizada (menos de 6 meses).</li>
+              <li>4 Testigos mayores de edad con DNI.</li>
+              <li>Análisis prenupciales (Medicina Preventiva, Santa Rosa 300). Validez: 7 días.</li>
+            </ul>
+          </div>
+
+          <div style="background: #faf6f0; padding: 16px; border-radius: 12px;">
+            <strong style="color: var(--charcoal); display: block; margin-bottom: 6px;">⚖️ Situaciones Especiales:</strong>
+            <ul style="margin: 0; padding-left: 20px; font-size: 0.86rem; color: var(--charcoal-light); line-height: 1.6;">
+              <li>Divorciados: Acta de matrimonio con nota marginal de divorcio vincular.</li>
+              <li>Viudos: Partida de defunción del contrayente fallecido y libreta previa.</li>
+              <li>Menores: Autorización paterna certificada en el Registro.</li>
+            </ul>
+          </div>
+        </div>
+
+        <h4 style="margin: 25px 0 10px; color: var(--charcoal); font-weight: 800;">Directorio de Registros Civiles y CPCs de Córdoba</h4>
+        <div style="overflow-x: auto;">
+          <table class="cpc-table">
+            <thead>
+              <tr>
+                <th>Centro / CPC</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>REGISTRO CIVIL PROVINCIA</td><td>Caseros 356</td><td>4342173 al 77</td></tr>
+              <tr><td>REGISTRO CIVIL CENTRAL</td><td>Av. Colón 1775</td><td>4337319 al 22</td></tr>
+              <tr><td>CPC CENTROAMÉRICA</td><td>Juan B. Justo y Parravicini</td><td>4335447 al 51</td></tr>
+              <tr><td>CPC MONSEÑOR PABLO CABRERA</td><td>M. Pablo Cabrera 4800</td><td>4335459 al 63</td></tr>
+              <tr><td>CPC ARGÜELLO</td><td>Rafael Núñez y Ricardo Rojas</td><td>(03543) 448331 al 34</td></tr>
+              <tr><td>CPC COLÓN</td><td>Av. Colón 5300</td><td>(0351) 4337102 al 05</td></tr>
+              <tr><td>CPC RUTA 20</td><td>Av. Fuerza Aérea y Richardson</td><td>(0351) 4343165 al 69</td></tr>
+              <tr><td>CPC VILLA DEL LIBERTADOR</td><td>Armada Argentina y Esquel</td><td>(0351) 4343160 al 63</td></tr>
+              <tr><td>CPC EMPALME</td><td>Sabattini y Carnerillo</td><td>(0351) 4348503 al 05</td></tr>
+              <tr><td>CPC PUEYRREDÓN</td><td>Rincón y Armenia</td><td>(0351) 4339138 al 39</td></tr>
+              <tr><td>CPC RANCAGUA</td><td>Rancagua 2900</td><td>(0351) 4335129 al 33</td></tr>
+              <tr><td>CPC MERCADO DE LA CIUDAD</td><td>Oncativo 50</td><td>(0351) 4341246 al 51</td></tr>
+              <tr><td>SUB CPC GUIÑAZÚ</td><td>Maestro Ibar y Gregorio Funes</td><td>4994500 / 02 / 03</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tarjeta 2: La Agenda de la Boda -->
+      <div class="guia-card">
+        <h2 class="guia-card-title">
+          <i class="fa-solid fa-calendar-heart text-orange"></i> La Agenda de los Novios (Cronograma)
+        </h2>
+
+        <div class="timeline-container">
+          <div class="timeline-step">
+            <div class="timeline-icon">9M</div>
+            <div class="timeline-body">
+              <div class="timeline-time">9 Meses Antes</div>
+              <h4 class="timeline-title">Presupuesto, Salón & Civil</h4>
+              <p style="font-size: 0.9rem; color: var(--charcoal-light); margin: 0;">
+                Determinar presupuesto total. Reservar salón, Iglesia y turno de ceremonia Civil. Encuentro informal entre ambas familias.
+              </p>
+            </div>
+          </div>
+
+          <div class="timeline-step">
+            <div class="timeline-icon">6M</div>
+            <div class="timeline-body">
+              <div class="timeline-time">6 Meses Antes</div>
+              <h4 class="timeline-title">Proveedores Clave & Luna de Miel</h4>
+              <p style="font-size: 0.9rem; color: var(--charcoal-light); margin: 0;">
+                Reserva de fecha con DJ, Shows, Modista, Fotógrafo y Filmación. Tramitar pasaportes y paquete de Luna de Miel.
+              </p>
+            </div>
+          </div>
+
+          <div class="timeline-step">
+            <div class="timeline-icon">5M</div>
+            <div class="timeline-body">
+              <div class="timeline-time">5 Meses Antes</div>
+              <h4 class="timeline-title">Alianzas, Invitaciones & Testigos</h4>
+              <p style="font-size: 0.9rem; color: var(--charcoal-light); margin: 0;">
+                Comprar alianzas. Elegir padrinos y testigos. Realizar el cursillo pre-matrimonial.
+              </p>
+            </div>
+          </div>
+
+          <div class="timeline-step">
+            <div class="timeline-icon">2M</div>
+            <div class="timeline-body">
+              <div class="timeline-time">2 Meses Antes</div>
+              <h4 class="timeline-title">Invitaciones, Trajes & Bebidas</h4>
+              <p style="font-size: 0.9rem; color: var(--charcoal-light); margin: 0;">
+                Enviar o entregar invitaciones. Elección del vestuario del novio y zapatos de la novia. Armar lista de regalos y definir sistema de bebidas.
+              </p>
+            </div>
+          </div>
+
+          <div class="timeline-step">
+            <div class="timeline-icon">1M</div>
+            <div class="timeline-body">
+              <div class="timeline-time">1 Mes a 1 Semana Antes</div>
+              <h4 class="timeline-title">Distribución de Mesas & Cábalas</h4>
+              <p style="font-size: 0.9rem; color: var(--charcoal-light); margin: 0;">
+                Pruebas de maquillaje/peluquería. Confeccionar plano de distribución de mesas. Tener presente las cábalas (algo prestado, algo usado, algo azul y algo nuevo).
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta 3: Cálculo de Bebidas & Servicio de Catering -->
+      <div class="guia-card">
+        <h2 class="guia-card-title">
+          <i class="fa-solid fa-wine-glass text-orange"></i> Fórmula de Cálculo de Bebidas & Catering
+        </h2>
+        <p style="color: var(--charcoal-light); line-height: 1.6;">
+          Para garantizar que el servicio de bar no tenga faltantes ni sobrecostos innecesarios, aplicamos las siguientes fórmulas de consumo promedio por persona:
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-top: 20px;">
+          <div style="background: #faf6f0; padding: 16px; border-radius: 12px; border-top: 4px solid var(--primary-orange);">
+            <strong style="color: var(--charcoal); font-size: 0.95rem; display: block; margin-bottom: 5px;">🍾 Champagne (Toda la Noche)</strong>
+            <span style="font-size: 0.88rem; color: var(--charcoal-light);">1 Botella por persona (Recepción a fin de fiesta).</span>
+          </div>
+
+          <div style="background: #faf6f0; padding: 16px; border-radius: 12px; border-top: 4px solid var(--primary-orange);">
+            <strong style="color: var(--charcoal); font-size: 0.95rem; display: block; margin-bottom: 5px;">🍷 Vinos de Mesa</strong>
+            <span style="font-size: 0.88rem; color: var(--charcoal-light);">30% del total de invitados (70% Tinto / 30% Blanco).</span>
+          </div>
+
+          <div style="background: #faf6f0; padding: 16px; border-radius: 12px; border-top: 4px solid var(--primary-orange);">
+            <strong style="color: var(--charcoal); font-size: 0.95rem; display: block; margin-bottom: 5px;">🥂 Brindis & Torta</strong>
+            <span style="font-size: 0.88rem; color: var(--charcoal-light);">1/2 Botella por persona (Champagne para el momento del brindis).</span>
+          </div>
+
+          <div style="background: #faf6f0; padding: 16px; border-radius: 12px; border-top: 4px solid var(--primary-orange);">
+            <strong style="color: var(--charcoal); font-size: 0.95rem; display: block; margin-bottom: 5px;">🍹 Fernet & Coctelería</strong>
+            <span style="font-size: 0.88rem; color: var(--charcoal-light);">1 Caja de Fernet por cada 100 personas.</span>
+          </div>
+
+          <div style="background: #faf6f0; padding: 16px; border-radius: 12px; border-top: 4px solid var(--primary-orange);">
+            <strong style="color: var(--charcoal); font-size: 0.95rem; display: block; margin-bottom: 5px;">🥃 Whisky</strong>
+            <span style="font-size: 0.88rem; color: var(--charcoal-light);">1 Botella por cada 50 personas.</span>
+          </div>
+
+          <div style="background: #faf6f0; padding: 16px; border-radius: 12px; border-top: 4px solid var(--primary-orange);">
+            <strong style="color: var(--charcoal); font-size: 0.95rem; display: block; margin-bottom: 5px;">🥤 Gaseosas & Cerveza</strong>
+            <span style="font-size: 0.88rem; color: var(--charcoal-light);">1 Litro de gaseosa por persona (70% Cola / 30% Lima Limón). 1 Lata de cerveza por pers.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta de Llamado a la Acción Inferior -->
+      <div style="background: linear-gradient(135deg, var(--charcoal) 0%, #3a312e 100%); color: white; padding: 35px; border-radius: 20px; text-align: center; margin-bottom: 50px;">
+        <h3 style="font-size: 1.6rem; font-weight: 800; margin: 0 0 10px;">¿Listos para cotizar tu evento soñado?</h3>
+        <p style="font-size: 1rem; opacity: 0.9; max-width: 600px; margin: 0 auto 25px;">
+          Ingresá a nuestro Cotizador Online Inteligente y obtené la estimación en vivo para tu fecha e invitados.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+          <a href="index.html#calculadora" class="btn-primary" style="padding: 14px 30px; border-radius: 50px; font-weight: 800; font-size: 1rem; text-decoration: none; display: inline-flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-calculator"></i> <span>Ir al Cotizador Online</span>
+          </a>
+          <button type="button" class="btn-secondary" onclick="window.print()" style="padding: 14px 28px; border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; color: white; border-color: white;">
+            <i class="fa-solid fa-file-pdf"></i> <span>Descargar Guía PDF</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <svg class="footer-logo-svg" viewBox="0 0 380 160" style="width: 180px; height: 75px; margin-bottom: 20px;">
+          <text x="10" y="65" style="font-family:'Pacifico', cursive; fill:#ffffff; font-size: 52px;">La Juntada</text>
+          <text x="140" y="105" style="font-family:'Caveat', cursive; fill:#e05326; font-size: 20px; font-weight:700;">Le agrega sabor</text>
+          <text x="175" y="135" style="font-family:'Caveat', cursive; fill:#e05326; font-size: 20px; font-weight:700;">a tus encuentros!</text>
+        </svg>
+        <p style="font-size: 0.9rem; opacity: 0.7;">Organización integral y logística de eventos en Córdoba. Catering premium, barras móviles, vajilla y salones propios.</p>
+      </div>
+
+      <div class="footer-links">
+        <h3>Enlaces Rápidos</h3>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; padding: 0;">
+          <li><a href="index.html#hero" style="color: white; text-decoration: none; opacity: 0.8;">Inicio</a></li>
+          <li><a href="index.html#servicios" style="color: white; text-decoration: none; opacity: 0.8;">Servicios</a></li>
+          <li><a href="salones.html" style="color: white; text-decoration: none; opacity: 0.8;">Salones</a></li>
+          <li><a href="index.html#calculadora" style="color: white; text-decoration: none; opacity: 0.8;">Cotizador Online</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-services-list">
+        <h3>Nuestros Salones</h3>
+        <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px;"><strong>La Juntada Norte:</strong> Villa Allende (hasta 40 pers. con parque).</p>
+        <p style="font-size: 0.9rem; opacity: 0.7;"><strong>La Juntada Centro:</strong> Alta Córdoba (hasta 40 pers. climatizado).</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom" style="background-color: #120e0d; padding: 25px 0; font-size: 0.85rem; opacity: 0.8;">
+      <div class="container footer-bottom-inner" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+        <p>&copy; 2026 La Juntada Eventos. Todos los derechos reservados.</p>
+        <p>Alta Córdoba, Mendoza 3147. Tel: 351 606 9743 | 351 216 0141</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Back-to-Top Button -->
+  <div class="back-to-top" id="btn-back-to-top" role="button" aria-label="Volver al inicio">
+    <i class="fa-solid fa-arrow-up"></i>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const menuToggle = document.getElementById('menu-toggle');
+      const navMenu = document.getElementById('nav-menu');
+      
+      if (menuToggle && navMenu) {
+        menuToggle.addEventListener('click', () => {
+          const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+          menuToggle.setAttribute('aria-expanded', !isExpanded);
+          menuToggle.classList.toggle('active');
+          navMenu.classList.toggle('active');
+        });
+      }
+
+      // Tab switcher
+      const btn15 = document.getElementById('btn-tab-15');
+      const btnBodas = document.getElementById('btn-tab-bodas');
+      const sec15 = document.getElementById('sec-15');
+      const secBodas = document.getElementById('sec-bodas');
+
+      function showSection(sectionKey) {
+        if (sectionKey === 'bodas') {
+          btnBodas.classList.add('active');
+          btn15.classList.remove('active');
+          secBodas.classList.add('active');
+          sec15.classList.remove('active');
+        } else {
+          btn15.classList.add('active');
+          btnBodas.classList.remove('active');
+          sec15.classList.add('active');
+          secBodas.classList.remove('active');
+        }
+      }
+
+      if (btn15 && btnBodas) {
+        btn15.addEventListener('click', () => showSection('15'));
+        btnBodas.addEventListener('click', () => showSection('bodas'));
+      }
+
+      // Leer Hash o QueryParam para auto-seleccionar pestaña
+      const hash = window.location.hash;
+      if (hash === '#bodas' || hash === '#casamiento') {
+        showSection('bodas');
+      } else if (hash === '#15' || hash === '#cumpleanos' || hash === '#cumpleaños') {
+        showSection('15');
+      }
+
+      // Back to top
+      const backToTopBtn = document.getElementById('btn-back-to-top');
+      if (backToTopBtn) {
+        window.addEventListener('scroll', () => {
+          if (window.scrollY > 400) {
+            backToTopBtn.classList.add('visible');
+          } else {
+            backToTopBtn.classList.remove('visible');
+          }
+        });
+        backToTopBtn.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+    });
+  </script>
+</body>
+</html>
