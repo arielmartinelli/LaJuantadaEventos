@@ -446,8 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <h4 style="margin-top: 10px;">${srv.name}</h4>
             <p style="flex-grow: 1;">${srv.description}</p>
             ${isAvailable ? `
-              <div style="margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--border-light); padding-top: 15px;">
-                <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-orange);">${priceInfo}</span>
+              <div style="margin-top: auto; display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--border-light); padding-top: 15px;">
                 <button type="button" class="${buttonClass} btn-menu-toggle-quote" data-key="${srv.key}" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 50px; cursor: pointer; border: none; font-weight: 700;">
                   ${buttonText}
                 </button>
@@ -527,8 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <strong style="font-size: 0.88rem; color: var(--charcoal); line-height: 1.3;">${srv.name}</strong>
               <span style="font-size: 0.75rem; font-weight: 800; color: white; background: ${isSelected ? 'var(--primary-orange)' : '#ccc'}; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">${isSelected ? '✓' : '+'}</span>
             </div>
-            <p style="font-size: 0.78rem; color: var(--charcoal-light); margin: 6px 0 8px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${srv.description || 'Deliciosa especialidad para tu evento.'}</p>
-            <div style="font-size: 0.82rem; font-weight: 800; color: var(--primary-orange);">${priceLabel}</div>
+            <p style="font-size: 0.78rem; color: var(--charcoal-light); margin: 6px 0 0; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${srv.description || 'Deliciosa especialidad para tu evento.'}</p>
           </div>
         `;
       });
@@ -1025,21 +1023,19 @@ document.addEventListener('DOMContentLoaded', () => {
           
           dynamicHtml += `
             <div class="summary-item">
-              <span>+ ${srv.name}:</span>
-              <strong>${formatCurrency(cost)}</strong>
+              <span><i class="fa-solid fa-check text-orange" style="font-size: 0.8rem; margin-right: 6px;"></i> ${srv.name}</span>
             </div>`;
         }
       });
     } else {
-      dynamicHtml = `<div style="font-size: 0.85rem; color: var(--charcoal-muted); font-style: italic; text-align: center; padding: 10px 0;">Sumá tus platos en "Nuestra Carta" arriba para ver la suma por persona.</div>`;
+      dynamicHtml = `<div style="font-size: 0.85rem; color: var(--charcoal-muted); font-style: italic; text-align: center; padding: 10px 0;">Sumá tus platos en "Nuestra Carta" arriba para ver la selección.</div>`;
     }
 
     // Mostrar Salón en el resumen si corresponde
     if (salonCost > 0) {
       dynamicHtml += `
         <div class="summary-item" style="border-top: 1px dashed var(--border-light); padding-top: 8px; margin-top: 8px;">
-          <span>+ ${salonName}:</span>
-          <strong style="color: var(--primary-orange);">${formatCurrency(salonCost)}</strong>
+          <span><i class="fa-solid fa-building text-orange" style="font-size: 0.8rem; margin-right: 6px;"></i> ${salonName}</span>
         </div>`;
     }
 
@@ -1054,8 +1050,7 @@ document.addEventListener('DOMContentLoaded', () => {
           
           dynamicHtml += `
             <div class="summary-item">
-              <span>+ ${srvName} (A cotizar):</span>
-              <strong style="color: var(--primary-orange); font-size: 0.85rem;">A cotizar</strong>
+              <span><i class="fa-solid fa-plus text-orange" style="font-size: 0.8rem; margin-right: 6px;"></i> ${srvName}</span>
             </div>`;
         }
       });
@@ -1067,8 +1062,7 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedAddonsList.push(`${qty} Juego(s) de Living (A cotizar por Admin)`);
       dynamicHtml += `
         <div class="summary-item">
-          <span>+ ${qty} Juegos de Living (A cotizar):</span>
-          <strong style="color: var(--primary-orange); font-size: 0.85rem;">A cotizar</strong>
+          <span><i class="fa-solid fa-couch text-orange" style="font-size: 0.8rem; margin-right: 6px;"></i> ${qty} Juegos de Living</span>
         </div>`;
     }
 
@@ -1080,8 +1074,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedOptionalList.push(`${srv.name} (A cotizar)`);
         dynamicHtml += `
           <div class="summary-item">
-            <span>+ ${srv.name} (A cotizar):</span>
-            <strong style="color: var(--primary-orange); font-size: 0.85rem;">A cotizar</strong>
+            <span><i class="fa-solid fa-plus text-orange" style="font-size: 0.8rem; margin-right: 6px;"></i> ${srv.name}</span>
           </div>`;
       }
     });
@@ -1227,6 +1220,38 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.add('active');
       const targetPane = document.getElementById(btn.getAttribute('data-tab'));
       if (targetPane) targetPane.classList.add('active');
+    });
+  });
+
+  // Manejador de Botones Siguiente / Anterior / Finalizar en pestañas del cotizador
+  function switchCalcTab(targetTabId) {
+    document.querySelectorAll('.calc-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.calc-tab-pane').forEach(p => p.classList.remove('active'));
+    const targetPane = document.getElementById(targetTabId);
+    if (targetPane) targetPane.classList.add('active');
+    // Activar el botón de pestaña correspondiente
+    document.querySelectorAll('.calc-tab-btn').forEach(b => {
+      if (b.getAttribute('data-tab') === targetTabId) b.classList.add('active');
+    });
+    // Scroll hacia la sección del cotizador
+    const calcSection = document.getElementById('calculadora');
+    if (calcSection) calcSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  document.querySelectorAll('.btn-tab-next, .btn-tab-prev').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetTab = btn.getAttribute('data-target-tab');
+      if (targetTab) switchCalcTab(targetTab);
+    });
+  });
+
+  // Botón "Finalizar: Solicitar Presupuesto" — abre WhatsApp o Modal
+  document.querySelectorAll('.btn-tab-finish').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const whatsappBtn = document.getElementById('btn-calc-whatsapp');
+      if (whatsappBtn) whatsappBtn.click();
     });
   });
 
