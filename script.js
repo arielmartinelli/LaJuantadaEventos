@@ -1575,16 +1575,16 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
 
       const clientCleanName = (results.clientName || 'cliente').toLowerCase().replace(/[^a-z0-9]/g, '_');
       const opt = {
-        margin:       10,
+        margin:       [10, 10, 10, 10],
         filename:     `la_juntada_presupuesto_${clientCleanName}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, logging: false }, // Se limpió "letterRendering"
+        html2canvas:  { scale: 2, useCORS: true, windowWidth: 750, logging: false },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
 
-      // 6. Ejecutar y asegurar la limpieza del DOM pase lo que pase
+      // 6. Ejecutar html2pdf en el orden correcto (.set(opt).from(element))
       setTimeout(() => {
-        html2pdf().from(element).set(opt).save()
+        html2pdf().set(opt).from(element).save()
           .then(() => {
             if (document.body.contains(element)) document.body.removeChild(element);
           })
@@ -1593,7 +1593,7 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
             alert("Ocurrió un error al generar el PDF.");
             if (document.body.contains(element)) document.body.removeChild(element);
           });
-      }, 400); // Aumentado ligeramente para darle más margen a que carguen las fuentes
+      }, 400);
 
     } catch (e) {
       console.error("Error en executePDFDownload:", e); // Se corrigió el nombre aquí
