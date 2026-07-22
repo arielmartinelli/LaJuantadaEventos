@@ -1560,15 +1560,15 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
         return;
       }
 
-      // 5. Inserción Segura en el DOM (Usando visibility hidden para no romper html2canvas)
+      // 5. Inserción en el DOM fuera de la vista para renderizado correcto en html2canvas
       const element = document.createElement('div');
-      element.style.position = 'absolute';
+      element.style.position = 'fixed';
+      element.style.left = '-9999px';
       element.style.top = '0';
-      element.style.left = '0';
       element.style.width = '750px';
-      element.style.visibility = 'hidden'; // Mejor que -9999px
-      element.style.zIndex = '-9999';
       element.style.background = '#ffffff';
+      element.style.opacity = '1';
+      element.style.visibility = 'visible';
       element.innerHTML = optHtml;
       document.body.appendChild(element);
 
