@@ -215,6 +215,39 @@
       margin-bottom: 40px;
     }
 
+    @media (max-width: 768px) {
+      .guia-header {
+        padding: 130px 15px 40px;
+      }
+      .guia-card {
+        padding: 18px;
+        border-radius: 16px;
+      }
+      .timeline-container::before {
+        left: 14px;
+      }
+      .timeline-step {
+        padding-left: 42px;
+      }
+      .timeline-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 0.75rem;
+      }
+      .guia-action-bar {
+        padding: 15px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .guia-action-bar > div {
+        width: 100%;
+      }
+      .guia-action-bar button, .guia-action-bar a {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
     @media print {
       header, footer, .guia-header, .guia-action-bar, .back-to-top {
         display: none !important;
