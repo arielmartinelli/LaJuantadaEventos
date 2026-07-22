@@ -301,7 +301,9 @@
       <span style="background: rgba(224, 83, 38, 0.25); border: 1px solid var(--primary-orange); color: #ff8c00; font-size: 0.8rem; font-weight: 800; padding: 6px 20px; border-radius: 50px; text-transform: uppercase; letter-spacing: 2px; display: inline-block; margin-bottom: 14px; backdrop-filter: blur(4px);">
         <i class="fa-solid fa-book-open text-orange"></i> ASESORÍA INTEGRAL & ASISTENTE PROFESIONAL
       </span>
-      <h1 id="guia-main-title" style="font-size: 2.8rem; font-weight: 800; margin: 10px 0 15px; text-shadow: 0 4px 14px rgba(0,0,0,0.6);">Guía y consejos para Fiestas de 15s</h1>
+      <h1 id="guia-main-title" style="font-size: 2.8rem; font-weight: 800; margin: 10px 0 15px; text-shadow: 0 4px 14px rgba(0,0,0,0.6); line-height: 1.2;">
+        Tips y Consejos <br><span class="highlight" style="font-family: 'Caveat', 'Pacifico', cursive; color: var(--primary-orange); font-size: 1.15em; font-weight: 700;">para Cumpleaños y Fiesta de 15s</span>
+      </h1>
       <p style="font-size: 1.05rem; max-width: 750px; margin: 0 auto; opacity: 0.92; line-height: 1.6;">
         Encontrá toda la información clave recopilada por nuestros organizadores y chefs: agendas mes a mes, timings por bloques, trámites de Registro Civil en Córdoba y secretos de barras y catering.
       </p>
@@ -502,6 +504,22 @@
               La ambientación no debe ser exactamente del mismo color que el vestido de la quinceañera para no mimetizarse en las fotos. El vestuario debe destacar intensamente de fondo.
             </p>
           </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta de Llamado a la Acción Inferior (15 Años) -->
+      <div style="background: linear-gradient(135deg, var(--charcoal) 0%, #3a312e 100%); color: white; padding: 35px; border-radius: 20px; text-align: center; margin-bottom: 50px;">
+        <h3 style="font-size: 1.6rem; font-weight: 800; margin: 0 0 10px;">¿Listos para cotizar tu evento soñado?</h3>
+        <p style="font-size: 1rem; opacity: 0.9; max-width: 600px; margin: 0 auto 25px;">
+          Ingresá a nuestro Cotizador Online Inteligente y obtené la estimación en vivo para tu fecha e invitados.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+          <a href="index.html#calculadora" class="btn-primary" style="padding: 14px 30px; border-radius: 50px; font-weight: 800; font-size: 1rem; text-decoration: none; display: inline-flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-calculator"></i> <span>Ir al Cotizador Online</span>
+          </a>
+          <button type="button" class="btn-secondary" onclick="window.print()" style="padding: 14px 28px; border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; color: white; border-color: white;">
+            <i class="fa-solid fa-file-pdf"></i> <span>Descargar Guía PDF</span>
+          </button>
         </div>
       </div>
 
@@ -768,13 +786,17 @@
           btn15.classList.remove('active');
           secBodas.classList.add('active');
           sec15.classList.remove('active');
-          if (titleEl) titleEl.textContent = 'Guía y consejos para Casamientos y Bodas';
+          if (titleEl) {
+            titleEl.innerHTML = 'Tips y Consejos <br><span class="highlight" style="font-family: \'Caveat\', \'Pacifico\', cursive; color: var(--primary-orange); font-size: 1.15em; font-weight: 700;">para Casamientos y Bodas</span>';
+          }
         } else {
           btn15.classList.add('active');
           btnBodas.classList.remove('active');
           sec15.classList.add('active');
           secBodas.classList.remove('active');
-          if (titleEl) titleEl.textContent = 'Guía y consejos para Fiestas de 15s';
+          if (titleEl) {
+            titleEl.innerHTML = 'Tips y Consejos <br><span class="highlight" style="font-family: \'Caveat\', \'Pacifico\', cursive; color: var(--primary-orange); font-size: 1.15em; font-weight: 700;">para Cumpleaños y Fiesta de 15s</span>';
+          }
         }
       }
 
