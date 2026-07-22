@@ -1226,7 +1226,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Ejecución de envío a WhatsApp con los datos confirmados
+  // Ejecución de envío a WhatsApp con los datos confirmados y emojis mejorados
   function executeWhatsAppSend(clientName, rawDate) {
     if (!clientName || !clientName.trim()) {
       alert('⚠️ Por favor ingresá tu Nombre y Apellido para enviar la cotización.');
@@ -1240,39 +1240,40 @@ document.addEventListener('DOMContentLoaded', () => {
     let menuItemsText = '';
     if (results.menuItems.length > 0) {
       results.menuItems.forEach(item => {
-        menuItemsText += `\n  • ${item}`;
+        menuItemsText += `\n  🔸 ${item}`;
       });
     } else {
-      menuItemsText = '\n  • Ninguno (Menú a definir)';
+      menuItemsText = '\n  🔸 Ninguno (Menú a definir)';
     }
 
     let addonsText = '';
     if (results.addons.length > 0) {
       results.addons.forEach(item => {
-        addonsText += `\n  • ${item}`;
+        addonsText += `\n  🔹 ${item}`;
       });
     } else {
-      addonsText = '\n  • Ninguno';
+      addonsText = '\n  🔹 Ninguno';
     }
 
-    const warningText = results.guestCount < 50 ? '\n⚠️ *Nota:* La cantidad de invitados es menor al mínimo de 50 requerido para contratos generales.' : '';
+    const warningText = results.guestCount < 50 ? '\n\n⚠️ *Nota:* La cantidad de invitados es menor al mínimo de 50 requerido para contratos generales.' : '';
 
-    const waMessage = `¡Hola La Juntada! Mi nombre es *${results.clientName}* y me interesa solicitar una cotización para el día *${results.eventDate}*.
+    const waMessage = `👋 *¡Hola equipo de La Juntada Eventos!*
+Mi nombre es *${results.clientName}* y estuve armando mi propuesta en el Cotizador Online.
 
-📌 *Datos de la Solicitud:*
-- *Cliente:* ${results.clientName}
-- *Fecha del Evento:* ${results.eventDate}
-- *Salón Elegido:* ${results.salonName}
-- *Invitados:* ${results.guestCount} personas ${warningText}
+📋 *INFORMACIÓN DEL EVENTO:*
+👤 *Cliente:* ${results.clientName}
+📅 *Fecha:* ${results.eventDate}
+🏛️ *Salón / Locación:* ${results.salonName}
+👥 *Invitados:* ${results.guestCount} personas${warningText}
 
-🍽️ *Menú Gastronómico Seleccionado (Suma por persona):*${menuItemsText}
+🍽️ *MENÚ GASTRONÓMICO ELEGIDO:*${menuItemsText}
 
-✨ *Servicios Opcionales:*${addonsText}
+✨ *SERVICIOS Y EQUIPAMIENTO OPCIONAL:*${addonsText}
 
-💰 *Estimado Por Persona (Gastronomía):* ${formatCurrency(results.perPerson)} x pers.
-${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(results.salonCost)}\n` : ''}💵 *Total Estimado del Evento:* ${formatCurrency(results.grandTotal)}
-
-¿Podrían confirmarme disponibilidad para esta fecha y coordinar los detalles? ¡Muchas gracias!`;
+🏷️ *PRESUPUESTO ESTIMADO:*
+💰 *Estimado Por Persona:* ${formatCurrency(results.perPerson)} / pers.
+${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(results.salonCost)}\n` : ''}
+💬 *¿Podrían confirmarme disponibilidad para esta fecha y coordinar los detalles? ¡Muchas gracias!*`;
 
     // Enviar a WhatsApp
     const cleanPhone = activeConfigs.contact_phone1.replace(/\s+/g, '');
