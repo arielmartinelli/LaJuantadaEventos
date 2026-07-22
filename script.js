@@ -1405,29 +1405,40 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
 
     const today = new Date().toLocaleDateString('es-AR');
 
-    // 2. Construir filas HTML (Evitando error de .length en arrays nulos)
+    // 2. Construir filas HTML de los platos de menú
     let menuItemsHtml = '';
     if (results.menuItems?.length > 0) {
       results.menuItems.forEach(item => {
-        const srv = activeServices?.find(s => s.name === item);
-        const price = srv ? parseFloat(srv.price) : 0;
+        const cleanedName = item.split(' (')[0].trim();
+        const srv = activeServices?.find(s => s.name === cleanedName || s.name === item);
+        let price = 0;
+        if (srv) {
+          price = parseFloat(srv.price) || 0;
+          if (srv.category === 'principales' && price <= 0) {
+            if (srv.key === 'pri_parrillada') price = 35000;
+            else if (srv.key === 'pri_pollo') price = 28000;
+            else price = 25000;
+          }
+        }
+        const displayName = srv ? srv.name : cleanedName;
+        const subtotal = price * results.guestCount;
         menuItemsHtml += `
           <tr style="border-bottom: 1px solid #ebdcd5;">
-            <td style="padding: 10px; text-align: left; font-weight: 500;">${srv ? srv.name : item}</td>
-            <td style="padding: 10px; text-align: right;">${formatCurrency(price)} x pers.</td>
-            <td style="padding: 10px; text-align: right; font-weight: 700; color: #e05326;">${formatCurrency(price * results.guestCount)}</td>
+            <td style="padding: 10px; text-align: left; font-weight: 500;">${displayName}</td>
+            <td style="padding: 10px; text-align: right;">${price > 0 ? formatCurrency(price) + ' x pers.' : 'Incluido'}</td>
+            <td style="padding: 10px; text-align: right; font-weight: 700; color: #e05326;">${subtotal > 0 ? formatCurrency(subtotal) : 'Incluido'}</td>
           </tr>
         `;
       });
     } else {
-      menuItemsHtml = `<tr><td colspan="3" style="padding: 15px; color: #80706b; font-style: italic; text-align: center;">Ningún plato adicional seleccionado.</td></tr>`;
+      menuItemsHtml = `<tr><td colspan="3" style="padding: 15px; color: #80706b; font-style: italic; text-align: center;">Menú base según contratación (Consultar selección de platos).</td></tr>`;
     }
 
     // 3. Construir filas de servicios opcionales
     let addonsHtml = '';
     if (results.addons?.length > 0) {
       results.addons.forEach(item => {
-        let cleanedName = item.split(' (')[0];
+        let cleanedName = item.split(' (')[0].trim();
         let srv;
         let qty = 1;
         let isLiving = item.includes('Juego(s) de Living');
@@ -1436,30 +1447,31 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
           qty = parseInt(item.split(' ')[0]) || 1;
           srv = activeServices?.find(s => s.key === 'srv_living');
         } else {
-          srv = activeServices?.find(s => s.name === cleanedName);
+          srv = activeServices?.find(s => s.name === cleanedName || s.name === item);
         }
         
-        if (srv) {
-          const cost = parseFloat(srv.price);
-          const totalCost = srv.is_per_person ? cost * results.guestCount : cost * qty;
-          addonsHtml += `
-            <tr style="border-bottom: 1px solid #ebdcd5;">
-              <td style="padding: 10px; text-align: left; font-weight: 500;">${srv.name} ${isLiving ? '(' + qty + ' juegos)' : ''}</td>
-              <td style="padding: 10px; text-align: right;">${formatCurrency(cost)} ${srv.is_per_person ? 'x pers.' : 'fijo'}</td>
-              <td style="padding: 10px; text-align: right; font-weight: 700; color: #e05326;">${formatCurrency(totalCost)}</td>
-            </tr>
-          `;
-        }
+        const cost = srv ? parseFloat(srv.price) : 0;
+        const isPerPerson = srv ? srv.is_per_person : false;
+        const totalCost = isPerPerson ? cost * results.guestCount : cost * qty;
+        const displayName = srv ? srv.name : cleanedName;
+
+        addonsHtml += `
+          <tr style="border-bottom: 1px solid #ebdcd5;">
+            <td style="padding: 10px; text-align: left; font-weight: 500;">${displayName} ${isLiving ? '(' + qty + ' juegos)' : ''}</td>
+            <td style="padding: 10px; text-align: right;">${cost > 0 ? formatCurrency(cost) + (isPerPerson ? ' x pers.' : ' fijo') : 'A Cotizar'}</td>
+            <td style="padding: 10px; text-align: right; font-weight: 700; color: #e05326;">${totalCost > 0 ? formatCurrency(totalCost) : 'A Cotizar'}</td>
+          </tr>
+        `;
       });
     } else {
       addonsHtml = `<tr><td colspan="3" style="padding: 15px; color: #80706b; font-style: italic; text-align: center;">Ningún servicio adicional seleccionado.</td></tr>`;
     }
 
-    // 4. Plantilla (Reemplazado el FLEXBOX del Header por una TABLA para evitar bugs en html2canvas)
+    // 4. Plantilla HTML del presupuesto
     const optHtml = `
-      <div style="font-family: 'Outfit', Helvetica, sans-serif; color: #1d1715; padding: 40px; background-color: #ffffff; max-width: 800px; margin: 0 auto; box-sizing: border-box;">
+      <div style="font-family: 'Outfit', Helvetica, sans-serif; color: #1d1715; padding: 40px; background-color: #ffffff; width: 750px; margin: 0 auto; box-sizing: border-box;">
         
-        <!-- Encabezado Seguro (Sin Flexbox) -->
+        <!-- Encabezado en Tabla -->
         <table style="width: 100%; border-bottom: 3px solid #e05326; padding-bottom: 20px; margin-bottom: 30px;">
           <tr>
             <td style="vertical-align: middle;">
@@ -1560,9 +1572,9 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
         return;
       }
 
-      // 5. Inserción en el DOM oculta detrás del sitio (z-index -9999) para renderizado completo en html2canvas
+      // 5. Inserción en el DOM con posición fija para captura libre de scroll offset
       const element = document.createElement('div');
-      element.style.position = 'absolute';
+      element.style.position = 'fixed';
       element.style.left = '0';
       element.style.top = '0';
       element.style.zIndex = '-9999';
@@ -1578,7 +1590,7 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
         margin:       [10, 10, 10, 10],
         filename:     `la_juntada_presupuesto_${clientCleanName}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, windowWidth: 750, logging: false },
+        html2canvas:  { scale: 2, useCORS: true, windowWidth: 750, scrollY: 0, scrollX: 0, logging: false },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
 
