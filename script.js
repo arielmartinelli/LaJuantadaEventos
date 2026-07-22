@@ -1463,127 +1463,117 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
       addonsHtml = `<tr><td colspan="3" style="padding: 15px; color: #80706b; font-style: italic; text-align: center;">Ningún servicio adicional seleccionado.</td></tr>`;
     }
 
-    // 4. Plantilla HTML completa para imprimir o guardar en PDF
-    const printableDocHtml = `<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Presupuesto La Juntada Eventos - ${results.clientName || 'Cliente'}</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap');
-    body { font-family: 'Outfit', Arial, sans-serif; color: #1d1715; margin: 0; padding: 20px; background: #ffffff; }
-    .pdf-container { max-width: 750px; margin: 0 auto; padding: 20px; }
-    table { width: 100%; border-collapse: collapse; }
-    @media print {
-      body { padding: 0; }
-      .no-print { display: none !important; }
-    }
-  </style>
-</head>
-<body>
-  <div class="pdf-container">
-    <table style="width: 100%; border-bottom: 3px solid #e05326; padding-bottom: 20px; margin-bottom: 25px;">
-      <tr>
-        <td style="vertical-align: middle;">
-          <h1 style="margin: 0; color: #e05326; font-size: 28px; font-weight: 800; text-transform: uppercase;">La Juntada</h1>
-          <p style="margin: 4px 0 0 0; color: #80706b; font-size: 13px; font-weight: 600; font-style: italic;">Le agrega sabor a tus encuentros!</p>
-        </td>
-        <td style="text-align: right; vertical-align: middle;">
-          <h2 style="margin: 0; color: #1d1715; font-size: 18px; font-weight: 700;">PRESUPUESTO ESTIMADO</h2>
-          <p style="margin: 4px 0 0 0; color: #80706b; font-size: 12px; font-weight: 500;">Fecha de Emisión: ${today}</p>
-        </td>
-      </tr>
-    </table>
-
-    <div style="background-color: #faf6f0; border-radius: 8px; padding: 18px; margin-bottom: 25px; border-left: 5px solid #e05326;">
-      <h3 style="margin-top: 0; color: #e05326; font-size: 14px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase;">Detalles de la Solicitud y Evento</h3>
-      <table>
-        <tr>
-          <td style="padding: 4px 0; color: #80706b;"><strong>Nombre del Cliente:</strong></td>
-          <td style="padding: 4px 0; text-align: right; font-weight: 700; color: #1d1715;">${results.clientName || 'Cliente'}</td>
-        </tr>
-        <tr>
-          <td style="padding: 4px 0; color: #80706b;"><strong>Fecha del Evento:</strong></td>
-          <td style="padding: 4px 0; text-align: right; font-weight: 600;">${results.eventDate}</td>
-        </tr>
-        <tr>
-          <td style="padding: 4px 0; color: #80706b;"><strong>Salón Elegido:</strong></td>
-          <td style="padding: 4px 0; text-align: right; font-weight: 600;">${results.salonName} ${results.salonCost > 0 ? '(' + formatCurrency(results.salonCost) + ')' : ''}</td>
-        </tr>
-        <tr>
-          <td style="padding: 4px 0; color: #80706b;"><strong>Cantidad de Invitados:</strong></td>
-          <td style="padding: 4px 0; text-align: right; font-weight: 600;">${results.guestCount} personas</td>
-        </tr>
-        <tr style="border-top: 1px dashed #ebdcd5;">
-          <td style="padding: 8px 0 4px 0; color: #1d1715; font-weight: 700;">Gastronomía Acumulada:</td>
-          <td style="padding: 8px 0 4px 0; text-align: right; font-weight: 700; color: #e05326; font-size: 15px;">${formatCurrency(results.perPerson)} x pers.</td>
-        </tr>
-      </table>
-    </div>
-
-    <div style="margin-bottom: 30px;">
-      <h3 style="color: #e05326; font-size: 14px; font-weight: 700; border-bottom: 2px solid #ebdcd5; padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase;">Platos Seleccionados del Menú</h3>
-      <table style="font-size: 13px;">
-        <thead>
-          <tr style="background-color: #faf6f0; color: #1d1715; font-weight: 700; border-bottom: 1px solid #ebdcd5;">
-            <th style="padding: 8px; text-align: left;">Descripción del Plato</th>
-            <th style="padding: 8px; text-align: right; width: 140px;">Valor Unitario</th>
-            <th style="padding: 8px; text-align: right; width: 120px;">Subtotal</th>
+    // 4. Plantilla HTML válida (sin etiquetas doctype/html/body anidadas dentro de un div)
+    const optHtml = `
+      <div style="font-family: Arial, Helvetica, sans-serif; color: #1d1715; padding: 30px; background-color: #ffffff; width: 700px; margin: 0 auto; box-sizing: border-box;">
+        
+        <!-- Header -->
+        <table style="width: 100%; border-bottom: 3px solid #e05326; padding-bottom: 15px; margin-bottom: 20px;">
+          <tr>
+            <td style="vertical-align: middle;">
+              <h1 style="margin: 0; color: #e05326; font-size: 26px; font-weight: 800; text-transform: uppercase;">La Juntada</h1>
+              <p style="margin: 4px 0 0 0; color: #80706b; font-size: 13px; font-weight: 600; font-style: italic;">Le agrega sabor a tus encuentros!</p>
+            </td>
+            <td style="text-align: right; vertical-align: middle;">
+              <h2 style="margin: 0; color: #1d1715; font-size: 16px; font-weight: 700;">PRESUPUESTO ESTIMADO</h2>
+              <p style="margin: 4px 0 0 0; color: #80706b; font-size: 12px; font-weight: 500;">Fecha: ${today}</p>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          ${menuItemsHtml}
-        </tbody>
-      </table>
-    </div>
+        </table>
 
-    <div style="margin-bottom: 35px;">
-      <h3 style="color: #e05326; font-size: 14px; font-weight: 700; border-bottom: 2px solid #ebdcd5; padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase;">Servicios & Alquiler de Equipamiento</h3>
-      <table style="font-size: 13px;">
-        <thead>
-          <tr style="background-color: #faf6f0; color: #1d1715; font-weight: 700; border-bottom: 1px solid #ebdcd5;">
-            <th style="padding: 8px; text-align: left;">Descripción del Servicio</th>
-            <th style="padding: 8px; text-align: right; width: 140px;">Valor Unitario</th>
-            <th style="padding: 8px; text-align: right; width: 120px;">Subtotal</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${addonsHtml}
-        </tbody>
-      </table>
-    </div>
+        <!-- Info Evento -->
+        <div style="background-color: #faf6f0; border-radius: 8px; padding: 16px; margin-bottom: 20px; border-left: 5px solid #e05326;">
+          <h3 style="margin-top: 0; color: #e05326; font-size: 14px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase;">Detalles de la Solicitud y Evento</h3>
+          <table style="width: 100%; font-size: 13px; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 4px 0; color: #80706b;"><strong>Nombre del Cliente:</strong></td>
+              <td style="padding: 4px 0; text-align: right; font-weight: 700; color: #1d1715;">${results.clientName || 'Cliente'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 4px 0; color: #80706b;"><strong>Fecha del Evento:</strong></td>
+              <td style="padding: 4px 0; text-align: right; font-weight: 600;">${results.eventDate}</td>
+            </tr>
+            <tr>
+              <td style="padding: 4px 0; color: #80706b;"><strong>Salón Elegido:</strong></td>
+              <td style="padding: 4px 0; text-align: right; font-weight: 600;">${results.salonName} ${results.salonCost > 0 ? '(' + formatCurrency(results.salonCost) + ')' : ''}</td>
+            </tr>
+            <tr>
+              <td style="padding: 4px 0; color: #80706b;"><strong>Cantidad de Invitados:</strong></td>
+              <td style="padding: 4px 0; text-align: right; font-weight: 600;">${results.guestCount} personas</td>
+            </tr>
+            <tr style="border-top: 1px dashed #ebdcd5;">
+              <td style="padding: 8px 0 4px 0; color: #1d1715; font-weight: 700;">Gastronomía Acumulada:</td>
+              <td style="padding: 8px 0 4px 0; text-align: right; font-weight: 700; color: #e05326; font-size: 15px;">${formatCurrency(results.perPerson)} x pers.</td>
+            </tr>
+          </table>
+        </div>
 
-    <div style="background-color: #1d1715; color: #ffffff; border-radius: 8px; padding: 20px; margin-bottom: 30px; text-align: center;">
-      <p style="margin: 0; font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Presupuesto Estimado Por Persona</p>
-      <h2 style="margin: 4px 0 0 0; color: #e05326; font-size: 24px; font-weight: 800;">ESTIMADO POR PERSONA: ${formatCurrency(results.perPerson)}</h2>
-    </div>
+        <!-- Tabla de Gastronomía -->
+        <div style="margin-bottom: 25px;">
+          <h3 style="color: #e05326; font-size: 13px; font-weight: 700; border-bottom: 2px solid #ebdcd5; padding-bottom: 4px; margin-bottom: 10px; text-transform: uppercase;">Platos Seleccionados del Menú</h3>
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+            <thead>
+              <tr style="background-color: #faf6f0; color: #1d1715; font-weight: 700; border-bottom: 1px solid #ebdcd5;">
+                <th style="padding: 8px; text-align: left;">Descripción del Plato</th>
+                <th style="padding: 8px; text-align: right; width: 130px;">Valor Unitario</th>
+                <th style="padding: 8px; text-align: right; width: 110px;">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${menuItemsHtml}
+            </tbody>
+          </table>
+        </div>
 
-    <div style="border-top: 1px solid #ebdcd5; padding-top: 16px; font-size: 11px; color: #80706b; line-height: 1.5;">
-      <p style="font-weight: 700; color: #1d1715; margin-bottom: 4px; text-transform: uppercase; font-size: 11px;">Aclaraciones e Información Importante:</p>
-      <ul style="margin: 0; padding-left: 15px;">
-        <li>El presente presupuesto constituye una estimación inicial en base a las opciones cargadas online. No asegura disponibilidad de fecha ni congelamiento de precios.</li>
-        <li><strong>Descuento Especial:</strong> Bonificación del 10% sobre el saldo final abonando de contado efectivo.</li>
-        <li>Financiación disponible: consultá planes de pago adaptados a tu comodidad.</li>
-        <li>Los precios informados tienen validez por 15 días corridos a partir de la fecha de generación.</li>
-      </ul>
-      <p style="margin-top: 20px; text-align: center; font-weight: 700; color: #e05326; font-size: 11px;">La Juntada Eventos | Mendoza 3147, Alta Córdoba | Tel: 351 606 9743</p>
-    </div>
-  </div>
-</body>
-</html>`;
+        <!-- Tabla de Servicios Adicionales -->
+        <div style="margin-bottom: 25px;">
+          <h3 style="color: #e05326; font-size: 13px; font-weight: 700; border-bottom: 2px solid #ebdcd5; padding-bottom: 4px; margin-bottom: 10px; text-transform: uppercase;">Servicios & Alquiler de Equipamiento</h3>
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+            <thead>
+              <tr style="background-color: #faf6f0; color: #1d1715; font-weight: 700; border-bottom: 1px solid #ebdcd5;">
+                <th style="padding: 8px; text-align: left;">Descripción del Servicio</th>
+                <th style="padding: 8px; text-align: right; width: 130px;">Valor Unitario</th>
+                <th style="padding: 8px; text-align: right; width: 110px;">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${addonsHtml}
+            </tbody>
+          </table>
+        </div>
 
-    // Intentar primero descarga automática con html2pdf
+        <!-- Caja de Total -->
+        <div style="background-color: #1d1715; color: #ffffff; border-radius: 8px; padding: 18px; margin-bottom: 25px; text-align: center;">
+          <p style="margin: 0; font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Presupuesto Estimado Por Persona</p>
+          <h2 style="margin: 4px 0 0 0; color: #e05326; font-size: 22px; font-weight: 800;">ESTIMADO POR PERSONA: ${formatCurrency(results.perPerson)}</h2>
+        </div>
+
+        <!-- Nota / Legales -->
+        <div style="border-top: 1px solid #ebdcd5; padding-top: 15px; font-size: 11px; color: #80706b; line-height: 1.5;">
+          <p style="font-weight: 700; color: #1d1715; margin-bottom: 4px; text-transform: uppercase; font-size: 11px;">Aclaraciones e Información Importante:</p>
+          <ul style="margin: 0; padding-left: 15px;">
+            <li>El presente presupuesto constituye una estimación inicial en base a las opciones cargadas online. No asegura disponibilidad de fecha ni congelamiento de precios.</li>
+            <li><strong>Descuento Especial:</strong> Bonificación del 10% sobre el saldo final abonando de contado efectivo.</li>
+            <li>Financiación disponible: consultá planes de pago adaptados a tu comodidad.</li>
+            <li>Los precios informados tienen validez por 15 días corridos a partir de la fecha de generación.</li>
+          </ul>
+          <p style="margin-top: 18px; text-align: center; font-weight: 700; color: #e05326; font-size: 11px;">La Juntada Eventos | Mendoza 3147, Alta Córdoba | Tel: 351 606 9743</p>
+        </div>
+      </div>
+    `;
+
     try {
       if (typeof html2pdf !== 'undefined') {
         const tempDiv = document.createElement('div');
         tempDiv.style.position = 'fixed';
         tempDiv.style.left = '0';
         tempDiv.style.top = '0';
-        tempDiv.style.width = '750px';
+        tempDiv.style.width = '700px';
         tempDiv.style.background = '#ffffff';
-        tempDiv.style.opacity = '0.01'; // Casi invisible pero capturable por html2canvas
         tempDiv.style.zIndex = '999999';
-        tempDiv.innerHTML = printableDocHtml;
+        tempDiv.style.opacity = '1';
+        tempDiv.style.visibility = 'visible';
+        tempDiv.innerHTML = optHtml;
         document.body.appendChild(tempDiv);
 
         const clientCleanName = (results.clientName || 'cliente').toLowerCase().replace(/[^a-z0-9]/g, '_');
@@ -1591,7 +1581,7 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
           margin:       [10, 10, 10, 10],
           filename:     `la_juntada_presupuesto_${clientCleanName}.pdf`,
           image:        { type: 'jpeg', quality: 0.98 },
-          html2canvas:  { scale: 2, useCORS: true, windowWidth: 750, logging: false },
+          html2canvas:  { scale: 2, useCORS: true, windowWidth: 700, scrollY: 0, scrollX: 0, logging: false },
           jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
@@ -1600,7 +1590,7 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
         }).catch(err => {
           console.warn("html2pdf falló, recurriendo a ventana de impresión:", err);
           if (document.body.contains(tempDiv)) document.body.removeChild(tempDiv);
-          openPrintFallbackWindow(printableDocHtml);
+          openPrintFallbackWindow(optHtml);
         });
         return;
       }
@@ -1608,8 +1598,7 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
       console.warn("Excepción en html2pdf:", err);
     }
 
-    // Fallback garantizado: Abre ventana con el documento listo para guardar como PDF / Imprimir
-    openPrintFallbackWindow(printableDocHtml);
+    openPrintFallbackWindow(optHtml);
   }
 
   function openPrintFallbackWindow(htmlContent) {
