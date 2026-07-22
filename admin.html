@@ -1520,10 +1520,12 @@
               <input type="text" class="srv-input-tag" value="${tagVal}" placeholder="ej. Premium, Diente Libre">
             </div>
             <div class="admin-form-group" style="margin-bottom: 0;">
-              <label style="font-size: 0.75rem;">Cobro</label>
+              <label style="font-size: 0.75rem;">Cobro / Unidad</label>
               <select class="srv-input-type" ${isSrvLiving ? 'disabled' : ''} style="width: 100%; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 8px; font-family: inherit; font-size: 0.85rem;">
-                <option value="per_person" ${isPerPersonChecked}>Por persona</option>
-                <option value="fixed" ${isFixedChecked}>Fijo</option>
+                <option value="per_person" ${srv && srv.unit_type === 'kilo' ? '' : (srv && srv.unit_type === 'unit' ? '' : (srv && !srv.is_per_person ? '' : 'selected'))}>Por persona (/ pers.)</option>
+                <option value="fixed" ${srv && !srv.is_per_person && (!srv.unit_type || srv.unit_type === 'fixed') ? 'selected' : ''}>Monto Fijo</option>
+                <option value="per_kilo" ${srv && srv.unit_type === 'kilo' ? 'selected' : ''}>Por Kilo (/ kilo)</option>
+                <option value="per_unit" ${srv && srv.unit_type === 'unit' ? 'selected' : ''}>Por Unidad (/ unid.)</option>
               </select>
             </div>
           </div>
@@ -1549,12 +1551,13 @@
             grid.appendChild(createServiceCard({
               key: 'srv_nuevo_' + Math.random().toString(36).substring(2, 7),
               name: '',
-              description: '',
               price: 0,
-              is_per_person: false,
+              is_per_person: true,
+              unit_type: 'person',
               is_available: true,
               category: 'adicional',
-              tag: ''
+              tag: '',
+              description: ''
             }));
           }
         });

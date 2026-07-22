@@ -292,6 +292,14 @@ document.addEventListener('DOMContentLoaded', () => {
     renderGalleryDOM(DEFAULT_GALLERY);
   }
 
+  function getServiceUnitLabel(srv) {
+    if (!srv) return '/ pers.';
+    if (srv.unit_type === 'kilo') return '/ kilo';
+    if (srv.unit_type === 'unit') return '/ unid.';
+    if (srv.unit_type === 'fixed' || !srv.is_per_person) return 'fijo';
+    return '/ pers.';
+  }
+
   // Renderizar checkboxes de adicionales en el cotizador
   function renderServicesDOM() {
     const addonsContainer = document.getElementById('calc-addons-container');
@@ -307,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const disabledAttr = srv.is_available ? '' : 'disabled';
       const disabledClass = srv.is_available ? '' : 'disabled';
       const badgeHtml = srv.is_available ? '' : ' <span class="unavailable-badge">No Disponible</span>';
-      const labelText = srv.name;
+      const labelText = `${srv.name} <span style="color: var(--primary-orange); font-size: 0.82rem; font-weight: 700;">(A cotizar)</span>`;
 
       addonsContainer.innerHTML += `
         <label class="custom-checkbox-container ${disabledClass}">
@@ -349,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
       grid.innerHTML += `
         <div class="menu-item-card ${activeClass} ${disabledClass}" id="rental-card-${srv.key}" style="transition: all 0.3s ease; position: relative; height: 100%; display: flex; flex-direction: column;">
           ${tagHtml}
-          <h4 style="margin-top: 10px;">${srv.name}</h4>
+          <h4 style="margin-top: 10px;">${srv.name} <span style="color: var(--primary-orange); font-size: 0.82rem; font-weight: 700;">(A cotizar)</span></h4>
           <p style="flex-grow: 1;">${srv.description || 'Infraestructura y equipamiento adicional opcional para tu evento.'}</p>
           ${isAvailable ? `
             <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--border-light); padding-top: 15px;">
@@ -418,9 +426,10 @@ document.addEventListener('DOMContentLoaded', () => {
           else priceVal = 25000;
         }
 
+        const unitSuffix = getServiceUnitLabel(srv);
         let priceInfo = '';
         if (priceVal > 0) {
-          priceInfo = srv.category === 'principales' ? `${formatCurrency(priceVal)} x pers.` : `+${formatCurrency(priceVal)} x pers.`;
+          priceInfo = `${formatCurrency(priceVal)} ${unitSuffix}`;
         } else {
           priceInfo = 'Incluido en Menú Base';
         }
@@ -509,7 +518,8 @@ document.addEventListener('DOMContentLoaded', () => {
       items.forEach(srv => {
         const isSelected = selectedMenuItems.has(srv.key);
         const cost = parseFloat(srv.price) || 0;
-        const priceLabel = cost > 0 ? `${formatCurrency(cost)} / pers` : 'Incluido';
+        const unitSuffix = getServiceUnitLabel(srv);
+        const priceLabel = cost > 0 ? `${formatCurrency(cost)} ${unitSuffix}` : 'Incluido';
 
         html += `
           <div class="menu-tiempos-card ${isSelected ? 'selected' : ''}" data-key="${srv.key}" style="background: white; border: 2px solid ${isSelected ? 'var(--primary-orange)' : 'var(--border-light)'}; border-radius: 12px; padding: 12px; cursor: pointer; transition: all 0.2s ease; position: relative;">
@@ -1010,12 +1020,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (srv) {
           const cost = parseFloat(srv.price) || 0;
           menuItemsTotalPerPerson += cost;
-          selectedMenuOptionsList.push(`${srv.name} (${formatCurrency(cost)} x pers.)`);
+          const unitSuffix = getServiceUnitLabel(srv);
+          selectedMenuOptionsList.push(`${srv.name} (${formatCurrency(cost)} ${unitSuffix})`);
           
           dynamicHtml += `
             <div class="summary-item">
               <span>+ ${srv.name}:</span>
-              <strong>${formatCurrency(cost)} x pers.</strong>
+              <strong>${formatCurrency(cost)}</strong>
             </div>`;
         }
       });
@@ -1043,7 +1054,7 @@ document.addEventListener('DOMContentLoaded', () => {
           
           dynamicHtml += `
             <div class="summary-item">
-              <span>+ ${srvName}:</span>
+              <span>+ ${srvName} (A cotizar):</span>
               <strong style="color: var(--primary-orange); font-size: 0.85rem;">A cotizar</strong>
             </div>`;
         }
@@ -1056,7 +1067,7 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedAddonsList.push(`${qty} Juego(s) de Living (A cotizar por Admin)`);
       dynamicHtml += `
         <div class="summary-item">
-          <span>+ ${qty} Juegos de Living:</span>
+          <span>+ ${qty} Juegos de Living (A cotizar):</span>
           <strong style="color: var(--primary-orange); font-size: 0.85rem;">A cotizar</strong>
         </div>`;
     }
@@ -1069,7 +1080,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedOptionalList.push(`${srv.name} (A cotizar)`);
         dynamicHtml += `
           <div class="summary-item">
-            <span>+ ${srv.name} (Alquiler Opcional):</span>
+            <span>+ ${srv.name} (A cotizar):</span>
             <strong style="color: var(--primary-orange); font-size: 0.85rem;">A cotizar</strong>
           </div>`;
       }
