@@ -404,16 +404,20 @@
                 <div class="salon-options-grid">
                   <!-- Opción 1: Catering a Domicilio -->
                   <div class="salon-opt-card selected" data-salon-opt="none">
-                    <span class="salon-opt-badge"><i class="fa-solid fa-check"></i> Seleccionado</span>
-                    <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--charcoal); margin: 0 0 6px;">Opción 1: Catering a Domicilio</h4>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                      <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--charcoal); margin: 0 0 6px;">Opción 1: Catering a Domicilio</h4>
+                      <span class="salon-opt-badge-circle" style="font-size: 0.75rem; font-weight: 800; color: white; background: var(--primary-orange); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">✓</span>
+                    </div>
                     <p style="font-size: 0.83rem; color: var(--charcoal-light); margin: 0; line-height: 1.4;">Servicio completo en tu casa, quinta o salón propio.</p>
                     <div style="margin-top: 12px; font-weight: 800; font-size: 0.95rem; color: var(--primary-orange);">$0 (Sin costo de salón)</div>
                   </div>
 
                   <!-- Opción 2: Salón La Juntada Norte -->
                   <div class="salon-opt-card" data-salon-opt="norte">
-                    <span class="salon-opt-badge"><i class="fa-solid fa-check"></i> Seleccionado</span>
-                    <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--charcoal); margin: 0 0 6px;">Opción 2: Salón La Juntada Norte</h4>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                      <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--charcoal); margin: 0 0 6px;">Opción 2: Salón La Juntada Norte</h4>
+                      <span class="salon-opt-badge-circle" style="font-size: 0.75rem; font-weight: 800; color: white; background: #ccc; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">+</span>
+                    </div>
                     <p style="font-size: 0.83rem; color: var(--charcoal-light); margin: 0; line-height: 1.4;">Villa Allende (Hasta 200 personas, parque & piscina).</p>
                     <div style="margin-top: 12px; font-size: 0.82rem; color: var(--charcoal-muted);">
                       Lun-Jue: <strong style="color: var(--charcoal);">$150.000</strong> | Vie-Dom: <strong style="color: var(--primary-orange);">$250.000</strong>
@@ -422,8 +426,10 @@
 
                   <!-- Opción 3: Salón La Juntada Centro -->
                   <div class="salon-opt-card" data-salon-opt="centro">
-                    <span class="salon-opt-badge"><i class="fa-solid fa-check"></i> Seleccionado</span>
-                    <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--charcoal); margin: 0 0 6px;">Opción 3: Salón La Juntada Centro</h4>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                      <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--charcoal); margin: 0 0 6px;">Opción 3: Salón La Juntada Centro</h4>
+                      <span class="salon-opt-badge-circle" style="font-size: 0.75rem; font-weight: 800; color: white; background: #ccc; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">+</span>
+                    </div>
                     <p style="font-size: 0.83rem; color: var(--charcoal-light); margin: 0; line-height: 1.4;">Alta Córdoba (Hasta 120 personas, pista climatizada).</p>
                     <div style="margin-top: 12px; font-size: 0.82rem; color: var(--charcoal-muted);">
                       Lun-Jue: <strong style="color: var(--charcoal);">$120.000</strong> | Vie-Dom: <strong style="color: var(--primary-orange);">$200.000</strong>
@@ -448,8 +454,8 @@
                   </a>
                 </div>
 
-                <!-- 8 Bloques de Tiempos Gastronómicos -->
-                <div style="display: flex; flex-direction: column; gap: 15px;" id="calc-menu-tiempos-container">
+                <!-- 8 Bloques de Tiempos Gastronómicos con Scroll Interno -->
+                <div style="display: flex; flex-direction: column; gap: 15px; max-height: 520px; overflow-y: auto; padding-right: 8px;" id="calc-menu-tiempos-container">
                   <!-- Carga dinámica por JS -->
                 </div>
               </div>
@@ -506,21 +512,18 @@
 
               <div style="height: 1px; background: var(--border-light); margin: 15px 0;"></div>
 
-              <!-- Bloque de Totales destacados -->
+              <!-- Bloque de Totales destacados (Únicamente por persona) -->
               <div style="display: flex; flex-direction: column; gap: 12px;">
                 
                 <!-- Precio por Persona Destacado -->
-                <div style="background: rgba(224, 83, 38, 0.08); padding: 16px; border-radius: 16px; border: 1.5px dashed var(--primary-orange); text-align: center;">
+                <div style="background: rgba(224, 83, 38, 0.08); padding: 18px; border-radius: 16px; border: 1.5px dashed var(--primary-orange); text-align: center;">
                   <span style="font-size: 0.85rem; font-weight: 700; color: var(--charcoal-light); text-transform: uppercase; letter-spacing: 0.5px; display: block;">Estimado Por Persona</span>
-                  <strong style="font-size: 1.9rem; color: var(--primary-orange); font-weight: 900; display: block; margin-top: 2px;" id="calc-per-person">$25.000</strong>
+                  <strong style="font-size: 2.1rem; color: var(--primary-orange); font-weight: 900; display: block; margin-top: 2px;" id="calc-per-person">$25.000</strong>
                   <span style="font-size: 0.78rem; color: var(--charcoal-muted); font-weight: 600;">(Gastronomía + menú por pers.)</span>
                 </div>
 
-                <!-- Total Estimado del Evento -->
-                <div style="background: #1d1715; color: white; padding: 16px; border-radius: 16px; text-align: center;">
-                  <span style="font-size: 0.8rem; font-weight: 700; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px; display: block;">Total Estimado del Evento</span>
-                  <strong style="font-size: 1.8rem; color: #ffffff; font-weight: 900; display: block; margin-top: 2px;" id="calc-total">$2.000.000</strong>
-                </div>
+                <!-- Total Estimado del Evento oculto de respaldo -->
+                <span id="calc-total" style="display: none;">$0</span>
 
                 <p class="vat-disclaimer" style="font-size: 0.75rem; color: var(--charcoal-muted); margin: 0; text-align: center;">* 10% de descuento abonando de contado efectivo. Financiación disponible.</p>
               </div>

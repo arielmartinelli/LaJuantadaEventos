@@ -1210,12 +1210,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  function updateSalonCardBadges(selectedVal) {
+    document.querySelectorAll('.salon-opt-card').forEach(card => {
+      const val = card.getAttribute('data-salon-opt');
+      const badge = card.querySelector('.salon-opt-badge-circle');
+      if (val === selectedVal) {
+        card.classList.add('selected');
+        card.style.opacity = '1';
+        card.style.borderColor = 'var(--primary-orange)';
+        if (badge) {
+          badge.textContent = '✓';
+          badge.style.background = 'var(--primary-orange)';
+        }
+      } else {
+        card.classList.remove('selected');
+        card.style.opacity = '0.65';
+        card.style.borderColor = 'var(--border-light)';
+        if (badge) {
+          badge.textContent = '+';
+          badge.style.background = '#ccc';
+        }
+      }
+    });
+  }
+
   // Manejador de Tarjetas de Selección de Salón en Pestaña 1
   document.querySelectorAll('.salon-opt-card').forEach(card => {
     card.addEventListener('click', () => {
-      document.querySelectorAll('.salon-opt-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
       const salonVal = card.getAttribute('data-salon-opt');
+      updateSalonCardBadges(salonVal);
       if (calcSalonSelect) {
         calcSalonSelect.value = salonVal;
         calculateBudget();
