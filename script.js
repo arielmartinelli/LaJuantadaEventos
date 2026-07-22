@@ -892,7 +892,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Detectar día de la semana para cálculo interno de salón
     let isWeekend = false;
     let formattedDate = '';
-    const dateVal = dateValOverride || (modalEventDate ? modalEventDate.value : '');
+    const dateVal = dateValOverride || (calcEventDateInput && calcEventDateInput.value ? calcEventDateInput.value : (modalEventDate ? modalEventDate.value : ''));
 
     if (dateVal) {
       const dateParts = dateVal.split('-');
@@ -1039,6 +1039,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalSubmitText) {
       modalSubmitText.textContent = action === 'whatsapp' ? 'Confirmar y Enviar a WhatsApp' : 'Confirmar y Descargar PDF';
     }
+    if (calcEventDateInput && calcEventDateInput.value && modalEventDate) {
+      modalEventDate.value = calcEventDateInput.value;
+    }
     if (modalClientData) {
       modalClientData.style.display = 'flex';
     }
@@ -1079,6 +1082,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Listeners de cambio para la calculadora
+  if (calcEventDateInput) calcEventDateInput.addEventListener('change', () => calculateBudget());
   if (calcSalonSelect) calcSalonSelect.addEventListener('change', () => calculateBudget());
   if (eventTypeSelect && guestCountInput) {
     eventTypeSelect.addEventListener('change', () => calculateBudget());

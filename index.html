@@ -264,14 +264,21 @@
               <!-- Menú Base seleccionado en carta (Input oculto de respaldo) -->
               <input type="hidden" id="event-type" data-base="25000" value="diente-libre">
 
-              <!-- Seleccionar Salón -->
-              <div class="form-group" style="margin-bottom: 20px;">
-                <label for="calc-salon-select"><i class="fa-solid fa-building text-orange"></i> Salón de Eventos (Opcional)</label>
-                <select id="calc-salon-select" class="form-control" style="width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 0.9rem; font-weight: 700; color: var(--charcoal);">
-                  <option value="none" selected>Sin Salón (Solo Servicio de Catering / Evento en Quinta Propia)</option>
-                  <option value="norte">Salón La Juntada Norte (Villa Allende - Hasta 200 pax)</option>
-                  <option value="centro">Salón La Juntada Centro (Alta Córdoba - Hasta 120 pax)</option>
-                </select>
+              <!-- Seleccionar Salón & Fecha del Evento -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="calc-salon-select"><i class="fa-solid fa-building text-orange"></i> Salón de Eventos</label>
+                  <select id="calc-salon-select" class="form-control" style="width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 0.9rem; font-weight: 700; color: var(--charcoal);">
+                    <option value="none" selected>Sin Salón (Solo Catering / Evento propio)</option>
+                    <option value="norte">Salón La Juntada Norte (Villa Allende)</option>
+                    <option value="centro">Salón La Juntada Centro (Alta Córdoba)</option>
+                  </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="calc-event-date"><i class="fa-solid fa-calendar-day text-orange"></i> Fecha del Evento</label>
+                  <input type="date" id="calc-event-date" class="form-control" style="width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 0.9rem; font-weight: 700; color: var(--charcoal);">
+                </div>
               </div>
 
               <div class="form-group">
