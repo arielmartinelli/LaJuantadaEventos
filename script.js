@@ -1397,221 +1397,202 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
     window.open(waUrl, '_blank', 'noopener,noreferrer');
   }
 
-  // Ejecución de descarga de PDF con datos confirmados
+  // Ejecución de descarga de PDF Vectorial Directo (100% sin canvas ni hojas en blanco)
   function executePDFDownload(clientName, rawDate) {
     const results = calculateBudget(clientName, rawDate);
     if (!results) return;
 
     const today = new Date().toLocaleDateString('es-AR');
 
-    // 2. Construir filas HTML de los platos de menú
-    let menuItemsHtml = '';
-    if (results.menuItems && results.menuItems.length > 0) {
-      results.menuItems.forEach(item => {
-        const cleanedName = item.split(' (')[0].trim();
-        const srv = activeServices?.find(s => s.name === cleanedName || s.name === item);
-        let price = srv ? parseFloat(srv.price) || 0 : 0;
-        if (srv && srv.category === 'principales' && price <= 0) {
-          if (srv.key === 'pri_parrillada') price = 35000;
-          else if (srv.key === 'pri_pollo') price = 28000;
-          else price = 25000;
-        }
-        const displayName = srv ? srv.name : cleanedName;
-        const subtotal = price * results.guestCount;
-        menuItemsHtml += `
-          <tr style="border-bottom: 1px solid #ebdcd5;">
-            <td style="padding: 10px; text-align: left; font-weight: 500;">${displayName}</td>
-            <td style="padding: 10px; text-align: right;">${price > 0 ? formatCurrency(price) + ' x pers.' : 'Incluido'}</td>
-            <td style="padding: 10px; text-align: right; font-weight: 700; color: #e05326;">${subtotal > 0 ? formatCurrency(subtotal) : 'Incluido'}</td>
-          </tr>
-        `;
-      });
-    } else {
-      menuItemsHtml = `<tr><td colspan="3" style="padding: 15px; color: #80706b; font-style: italic; text-align: center;">Menú base según contratación (Consultar selección de platos).</td></tr>`;
+    // Obtener instancia de jsPDF
+    const jsPDF = window.jspdf ? window.jspdf.jsPDF : (window.jsPDF || null);
+    
+    if (!jsPDF) {
+      alert("⚠️ El motor de PDF se está cargando. Por favor intentá nuevamente en unos segundos.");
+      return;
     }
-
-    // 3. Construir filas de servicios opcionales
-    let addonsHtml = '';
-    if (results.addons && results.addons.length > 0) {
-      results.addons.forEach(item => {
-        let cleanedName = item.split(' (')[0].trim();
-        let srv;
-        let qty = 1;
-        let isLiving = item.includes('Juego(s) de Living');
-        
-        if (isLiving) {
-          qty = parseInt(item.split(' ')[0]) || 1;
-          srv = activeServices?.find(s => s.key === 'srv_living');
-        } else {
-          srv = activeServices?.find(s => s.name === cleanedName || s.name === item);
-        }
-        
-        const cost = srv ? parseFloat(srv.price) || 0 : 0;
-        const isPerPerson = srv ? srv.is_per_person : false;
-        const totalCost = isPerPerson ? cost * results.guestCount : cost * qty;
-        const displayName = srv ? srv.name : cleanedName;
-
-        addonsHtml += `
-          <tr style="border-bottom: 1px solid #ebdcd5;">
-            <td style="padding: 10px; text-align: left; font-weight: 500;">${displayName} ${isLiving ? '(' + qty + ' juegos)' : ''}</td>
-            <td style="padding: 10px; text-align: right;">${cost > 0 ? formatCurrency(cost) + (isPerPerson ? ' x pers.' : ' fijo') : 'A Cotizar'}</td>
-            <td style="padding: 10px; text-align: right; font-weight: 700; color: #e05326;">${totalCost > 0 ? formatCurrency(totalCost) : 'A Cotizar'}</td>
-          </tr>
-        `;
-      });
-    } else {
-      addonsHtml = `<tr><td colspan="3" style="padding: 15px; color: #80706b; font-style: italic; text-align: center;">Ningún servicio adicional seleccionado.</td></tr>`;
-    }
-
-    // 4. Plantilla HTML válida (sin etiquetas doctype/html/body anidadas dentro de un div)
-    const optHtml = `
-      <div style="font-family: Arial, Helvetica, sans-serif; color: #1d1715; padding: 30px; background-color: #ffffff; width: 700px; margin: 0 auto; box-sizing: border-box;">
-        
-        <!-- Header -->
-        <table style="width: 100%; border-bottom: 3px solid #e05326; padding-bottom: 15px; margin-bottom: 20px;">
-          <tr>
-            <td style="vertical-align: middle;">
-              <h1 style="margin: 0; color: #e05326; font-size: 26px; font-weight: 800; text-transform: uppercase;">La Juntada</h1>
-              <p style="margin: 4px 0 0 0; color: #80706b; font-size: 13px; font-weight: 600; font-style: italic;">Le agrega sabor a tus encuentros!</p>
-            </td>
-            <td style="text-align: right; vertical-align: middle;">
-              <h2 style="margin: 0; color: #1d1715; font-size: 16px; font-weight: 700;">PRESUPUESTO ESTIMADO</h2>
-              <p style="margin: 4px 0 0 0; color: #80706b; font-size: 12px; font-weight: 500;">Fecha: ${today}</p>
-            </td>
-          </tr>
-        </table>
-
-        <!-- Info Evento -->
-        <div style="background-color: #faf6f0; border-radius: 8px; padding: 16px; margin-bottom: 20px; border-left: 5px solid #e05326;">
-          <h3 style="margin-top: 0; color: #e05326; font-size: 14px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase;">Detalles de la Solicitud y Evento</h3>
-          <table style="width: 100%; font-size: 13px; border-collapse: collapse;">
-            <tr>
-              <td style="padding: 4px 0; color: #80706b;"><strong>Nombre del Cliente:</strong></td>
-              <td style="padding: 4px 0; text-align: right; font-weight: 700; color: #1d1715;">${results.clientName || 'Cliente'}</td>
-            </tr>
-            <tr>
-              <td style="padding: 4px 0; color: #80706b;"><strong>Fecha del Evento:</strong></td>
-              <td style="padding: 4px 0; text-align: right; font-weight: 600;">${results.eventDate}</td>
-            </tr>
-            <tr>
-              <td style="padding: 4px 0; color: #80706b;"><strong>Salón Elegido:</strong></td>
-              <td style="padding: 4px 0; text-align: right; font-weight: 600;">${results.salonName} ${results.salonCost > 0 ? '(' + formatCurrency(results.salonCost) + ')' : ''}</td>
-            </tr>
-            <tr>
-              <td style="padding: 4px 0; color: #80706b;"><strong>Cantidad de Invitados:</strong></td>
-              <td style="padding: 4px 0; text-align: right; font-weight: 600;">${results.guestCount} personas</td>
-            </tr>
-            <tr style="border-top: 1px dashed #ebdcd5;">
-              <td style="padding: 8px 0 4px 0; color: #1d1715; font-weight: 700;">Gastronomía Acumulada:</td>
-              <td style="padding: 8px 0 4px 0; text-align: right; font-weight: 700; color: #e05326; font-size: 15px;">${formatCurrency(results.perPerson)} x pers.</td>
-            </tr>
-          </table>
-        </div>
-
-        <!-- Tabla de Gastronomía -->
-        <div style="margin-bottom: 25px;">
-          <h3 style="color: #e05326; font-size: 13px; font-weight: 700; border-bottom: 2px solid #ebdcd5; padding-bottom: 4px; margin-bottom: 10px; text-transform: uppercase;">Platos Seleccionados del Menú</h3>
-          <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-            <thead>
-              <tr style="background-color: #faf6f0; color: #1d1715; font-weight: 700; border-bottom: 1px solid #ebdcd5;">
-                <th style="padding: 8px; text-align: left;">Descripción del Plato</th>
-                <th style="padding: 8px; text-align: right; width: 130px;">Valor Unitario</th>
-                <th style="padding: 8px; text-align: right; width: 110px;">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${menuItemsHtml}
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Tabla de Servicios Adicionales -->
-        <div style="margin-bottom: 25px;">
-          <h3 style="color: #e05326; font-size: 13px; font-weight: 700; border-bottom: 2px solid #ebdcd5; padding-bottom: 4px; margin-bottom: 10px; text-transform: uppercase;">Servicios & Alquiler de Equipamiento</h3>
-          <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-            <thead>
-              <tr style="background-color: #faf6f0; color: #1d1715; font-weight: 700; border-bottom: 1px solid #ebdcd5;">
-                <th style="padding: 8px; text-align: left;">Descripción del Servicio</th>
-                <th style="padding: 8px; text-align: right; width: 130px;">Valor Unitario</th>
-                <th style="padding: 8px; text-align: right; width: 110px;">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${addonsHtml}
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Caja de Total -->
-        <div style="background-color: #1d1715; color: #ffffff; border-radius: 8px; padding: 18px; margin-bottom: 25px; text-align: center;">
-          <p style="margin: 0; font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Presupuesto Estimado Por Persona</p>
-          <h2 style="margin: 4px 0 0 0; color: #e05326; font-size: 22px; font-weight: 800;">ESTIMADO POR PERSONA: ${formatCurrency(results.perPerson)}</h2>
-        </div>
-
-        <!-- Nota / Legales -->
-        <div style="border-top: 1px solid #ebdcd5; padding-top: 15px; font-size: 11px; color: #80706b; line-height: 1.5;">
-          <p style="font-weight: 700; color: #1d1715; margin-bottom: 4px; text-transform: uppercase; font-size: 11px;">Aclaraciones e Información Importante:</p>
-          <ul style="margin: 0; padding-left: 15px;">
-            <li>El presente presupuesto constituye una estimación inicial en base a las opciones cargadas online. No asegura disponibilidad de fecha ni congelamiento de precios.</li>
-            <li><strong>Descuento Especial:</strong> Bonificación del 10% sobre el saldo final abonando de contado efectivo.</li>
-            <li>Financiación disponible: consultá planes de pago adaptados a tu comodidad.</li>
-            <li>Los precios informados tienen validez por 15 días corridos a partir de la fecha de generación.</li>
-          </ul>
-          <p style="margin-top: 18px; text-align: center; font-weight: 700; color: #e05326; font-size: 11px;">La Juntada Eventos | Mendoza 3147, Alta Córdoba | Tel: 351 606 9743</p>
-        </div>
-      </div>
-    `;
 
     try {
-      if (typeof html2pdf !== 'undefined') {
-        const tempDiv = document.createElement('div');
-        tempDiv.style.position = 'fixed';
-        tempDiv.style.left = '0';
-        tempDiv.style.top = '0';
-        tempDiv.style.width = '700px';
-        tempDiv.style.background = '#ffffff';
-        tempDiv.style.zIndex = '999999';
-        tempDiv.style.opacity = '1';
-        tempDiv.style.visibility = 'visible';
-        tempDiv.innerHTML = optHtml;
-        document.body.appendChild(tempDiv);
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
 
-        const clientCleanName = (results.clientName || 'cliente').toLowerCase().replace(/[^a-z0-9]/g, '_');
-        const opt = {
-          margin:       [10, 10, 10, 10],
-          filename:     `la_juntada_presupuesto_${clientCleanName}.pdf`,
-          image:        { type: 'jpeg', quality: 0.98 },
-          html2canvas:  { scale: 2, useCORS: true, windowWidth: 700, scrollY: 0, scrollX: 0, logging: false },
-          jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
+      // 1. Cabecera Naranjo
+      doc.setFillColor(224, 83, 38);
+      doc.rect(0, 0, 210, 26, 'F');
 
-        html2pdf().set(opt).from(tempDiv).save().then(() => {
-          if (document.body.contains(tempDiv)) document.body.removeChild(tempDiv);
-        }).catch(err => {
-          console.warn("html2pdf falló, recurriendo a ventana de impresión:", err);
-          if (document.body.contains(tempDiv)) document.body.removeChild(tempDiv);
-          openPrintFallbackWindow(optHtml);
+      // Título Marca
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(20);
+      doc.setFont('helvetica', 'bold');
+      doc.text('LA JUNTADA EVENTOS', 14, 14);
+
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'italic');
+      doc.text('Le agrega sabor a tus encuentros', 14, 20);
+
+      // Fecha y Titulo Presupuesto
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text('PRESUPUESTO ESTIMADO', 196, 13, { align: 'right' });
+      doc.setFontSize(8.5);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Fecha: ${today}`, 196, 19, { align: 'right' });
+
+      // 2. Tabla de Datos del Cliente / Evento
+      const clientTableRows = [
+        ['Nombre del Cliente', results.clientName || 'Cliente'],
+        ['Fecha del Evento', results.eventDate || 'A confirmar'],
+        ['Salón Elegido', `${results.salonName} ${results.salonCost > 0 ? '(' + formatCurrency(results.salonCost) + ')' : ''}`],
+        ['Cantidad de Invitados', `${results.guestCount} personas`],
+        ['Gastronomía Acumulada', `${formatCurrency(results.perPerson)} x pers.`]
+      ];
+
+      doc.autoTable({
+        startY: 32,
+        head: [['Detalle de Solicitud', 'Información del Evento']],
+        body: clientTableRows,
+        theme: 'striped',
+        headStyles: { fillColor: [29, 23, 21], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 9.5 },
+        bodyStyles: { fontSize: 8.5, textColor: [29, 23, 21] },
+        columnStyles: { 0: { fontStyle: 'bold', cellWidth: 55 } },
+        margin: { left: 14, right: 14 }
+      });
+
+      let currentY = doc.lastAutoTable.finalY + 8;
+
+      // 3. Tabla de Menú Seleccionado
+      const menuRows = [];
+      if (results.menuItems && results.menuItems.length > 0) {
+        results.menuItems.forEach(item => {
+          const cleanedName = item.split(' (')[0].trim();
+          const srv = activeServices?.find(s => s.name === cleanedName || s.name === item);
+          let price = srv ? parseFloat(srv.price) || 0 : 0;
+          if (srv && srv.category === 'principales' && price <= 0) {
+            if (srv.key === 'pri_parrillada') price = 35000;
+            else if (srv.key === 'pri_pollo') price = 28000;
+            else price = 25000;
+          }
+          const displayName = srv ? srv.name : cleanedName;
+          const subtotal = price * results.guestCount;
+          menuRows.push([
+            displayName,
+            price > 0 ? `${formatCurrency(price)} x pers.` : 'Incluido en menú',
+            subtotal > 0 ? formatCurrency(subtotal) : 'Incluido'
+          ]);
         });
-        return;
+      } else {
+        menuRows.push(['Menú base según contratación (Consultar variedad)', '-', 'Incluido']);
       }
+
+      doc.autoTable({
+        startY: currentY,
+        head: [['Plato / Opción de Menú', 'Valor Unitario', 'Subtotal Estimado']],
+        body: menuRows,
+        theme: 'grid',
+        headStyles: { fillColor: [224, 83, 38], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 9 },
+        bodyStyles: { fontSize: 8.5 },
+        columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right', fontStyle: 'bold' } },
+        margin: { left: 14, right: 14 }
+      });
+
+      currentY = doc.lastAutoTable.finalY + 8;
+
+      // 4. Tabla de Servicios Adicionales
+      const addonRows = [];
+      if (results.addons && results.addons.length > 0) {
+        results.addons.forEach(item => {
+          let cleanedName = item.split(' (')[0].trim();
+          let srv;
+          let qty = 1;
+          let isLiving = item.includes('Juego(s) de Living');
+          
+          if (isLiving) {
+            qty = parseInt(item.split(' ')[0]) || 1;
+            srv = activeServices?.find(s => s.key === 'srv_living');
+          } else {
+            srv = activeServices?.find(s => s.name === cleanedName || s.name === item);
+          }
+          
+          const cost = srv ? parseFloat(srv.price) || 0 : 0;
+          const isPerPerson = srv ? srv.is_per_person : false;
+          const totalCost = isPerPerson ? cost * results.guestCount : cost * qty;
+          const displayName = (srv ? srv.name : cleanedName) + (isLiving ? ` (${qty} juegos)` : '');
+
+          addonRows.push([
+            displayName,
+            cost > 0 ? `${formatCurrency(cost)} ${isPerPerson ? 'x pers.' : 'fijo'}` : 'A Cotizar',
+            totalCost > 0 ? formatCurrency(totalCost) : 'A Cotizar'
+          ]);
+        });
+      } else {
+        addonRows.push(['Sin servicios adicionales seleccionados', '-', '-']);
+      }
+
+      doc.autoTable({
+        startY: currentY,
+        head: [['Servicio / Equipamiento Adicional', 'Valor Unitario', 'Subtotal']],
+        body: addonRows,
+        theme: 'grid',
+        headStyles: { fillColor: [224, 83, 38], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 9 },
+        bodyStyles: { fontSize: 8.5 },
+        columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right', fontStyle: 'bold' } },
+        margin: { left: 14, right: 14 }
+      });
+
+      currentY = doc.lastAutoTable.finalY + 10;
+
+      // 5. Cuadro Final Estimado por Persona
+      doc.setFillColor(29, 23, 21);
+      doc.roundedRect(14, currentY, 182, 18, 3, 3, 'F');
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(8.5);
+      doc.setFont('helvetica', 'normal');
+      doc.text('PRESUPUESTO ESTIMADO POR PERSONA', 105, currentY + 6, { align: 'center' });
+
+      doc.setTextColor(224, 83, 38);
+      doc.setFontSize(13);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`ESTIMADO POR PERSONA: ${formatCurrency(results.perPerson)}`, 105, currentY + 13.5, { align: 'center' });
+
+      currentY += 24;
+
+      // 6. Legales y Pie de página
+      doc.setTextColor(128, 112, 107);
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'bold');
+      doc.text('ACLARACIONES E INFORMACIÓN IMPORTANTE:', 14, currentY);
+
+      doc.setFont('helvetica', 'normal');
+      const textLines = [
+        '• El presente presupuesto constituye una estimación inicial en base a las opciones cargadas online. No asegura disponibilidad de fecha ni congelamiento de precios.',
+        '• Descuento Especial: Bonificación del 10% sobre el saldo final abonando de contado efectivo.',
+        '• Financiación disponible: consultá planes de pago adaptados a tu comodidad.',
+        '• Los precios informados tienen validez por 15 días corridos a partir de la fecha de generación.'
+      ];
+      
+      let lineY = currentY + 4;
+      textLines.forEach(line => {
+        doc.text(line, 14, lineY);
+        lineY += 4;
+      });
+
+      // Pie de página final
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(224, 83, 38);
+      doc.text('La Juntada Eventos | Mendoza 3147, Alta Córdoba | Tel: 351 606 9743', 105, 287, { align: 'center' });
+
+      // Guardar archivo PDF directamente
+      const clientCleanName = (results.clientName || 'cliente').toLowerCase().replace(/[^a-z0-9]/g, '_');
+      doc.save(`la_juntada_presupuesto_${clientCleanName}.pdf`);
+
     } catch (err) {
-      console.warn("Excepción en html2pdf:", err);
-    }
-
-    openPrintFallbackWindow(optHtml);
-  }
-
-  function openPrintFallbackWindow(htmlContent) {
-    const printWin = window.open('', '_blank');
-    if (printWin) {
-      printWin.document.write(htmlContent);
-      printWin.document.close();
-      printWin.focus();
-      setTimeout(() => {
-        printWin.print();
-      }, 500);
-    } else {
-      alert("⚠️ Por favor permití las ventanas emergentes en tu navegador para descargar/imprimir el PDF.");
+      console.error("Error al generar PDF vectorial:", err);
+      alert("Ocurrió un error al generar el PDF. Intentalo nuevamente.");
     }
   }
 
