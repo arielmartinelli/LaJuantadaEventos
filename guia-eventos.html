@@ -261,9 +261,9 @@
 <body>
 
   <!-- Header / Navigation -->
-  <header class="main-header">
+  <header class="main-header scrolled" id="header">
     <div class="container header-container">
-      <a href="index.html" class="logo">
+      <a href="index.html" class="logo-link" id="nav-logo" aria-label="La Juntada Inicio">
         <svg class="nav-logo-svg" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg">
           <text x="10" y="65" class="logo-title">La Juntada</text>
           <text x="140" y="105" class="logo-sub1">Le agrega sabor</text>
@@ -296,7 +296,7 @@
   <section class="guia-header">
     <div class="container reveal">
       <span class="sub-header text-orange" style="letter-spacing: 2px; color: var(--primary-orange);">ASESORÍA INTEGRAL & ASISTENTE PROFESIONAL</span>
-      <h1 style="font-size: 2.6rem; font-weight: 800; margin: 10px 0 15px;">Guía & Consejos para tu Evento</h1>
+      <h1 id="guia-main-title" style="font-size: 2.6rem; font-weight: 800; margin: 10px 0 15px;">Guía y consejos para Fiestas de 15s</h1>
       <p style="font-size: 1.05rem; max-width: 750px; margin: 0 auto; opacity: 0.9; line-height: 1.6;">
         Encontrá toda la información clave recopilada por nuestros organizadores y chefs: agendas mes a mes, timings por bloques, trámites de Registro Civil en Córdoba y secretos de barras y catering.
       </p>
@@ -527,26 +527,6 @@
          SECCIÓN 2: 💍 CASAMIENTOS & BODAS
          ========================================================================== -->
     <div class="guia-section-content" id="sec-bodas">
-
-      <!-- Barra de Acciones Rápidas Superior -->
-      <div class="guia-action-bar">
-        <div>
-          <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--charcoal);">
-            <i class="fa-solid fa-gem text-orange"></i> Guía Completa de Casamientos & Bodas
-          </h3>
-          <p style="margin: 4px 0 0; font-size: 0.88rem; color: var(--charcoal-light);">
-            Trámites del Registro Civil en Córdoba, agenda de novios y fórmulas de catering/bebidas.
-          </p>
-        </div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <button type="button" class="btn-secondary" onclick="window.print()" style="padding: 10px 20px; border-radius: 50px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-            <i class="fa-solid fa-file-pdf text-orange"></i> <span>Descargar Guía en PDF</span>
-          </button>
-          <a href="index.html#calculadora" class="btn-primary" style="padding: 10px 22px; border-radius: 50px; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 8px;">
-            <i class="fa-solid fa-calculator"></i> <span>Ir a Cotización Online</span>
-          </a>
-        </div>
-      </div>
 
       <!-- Tarjeta 1: Registro Civil & Trámites en Córdoba -->
       <div class="guia-card">
@@ -797,16 +777,19 @@
       const secBodas = document.getElementById('sec-bodas');
 
       function showSection(sectionKey) {
+        const titleEl = document.getElementById('guia-main-title');
         if (sectionKey === 'bodas') {
           btnBodas.classList.add('active');
           btn15.classList.remove('active');
           secBodas.classList.add('active');
           sec15.classList.remove('active');
+          if (titleEl) titleEl.textContent = 'Guía y consejos para Casamientos y Bodas';
         } else {
           btn15.classList.add('active');
           btnBodas.classList.remove('active');
           sec15.classList.add('active');
           secBodas.classList.remove('active');
+          if (titleEl) titleEl.textContent = 'Guía y consejos para Fiestas de 15s';
         }
       }
 

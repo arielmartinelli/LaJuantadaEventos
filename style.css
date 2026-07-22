@@ -195,8 +195,8 @@ button {
 .logo-link {
   display: flex;
   align-items: center;
-  width: 160px;
-  height: 65px;
+  width: 140px;
+  height: 52px;
 }
 
 .nav-logo-svg {
@@ -578,21 +578,30 @@ button {
 }
 
 .service-btn {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   text-align: center;
-  background-color: transparent;
-  color: var(--primary-orange);
-  border: 2px solid var(--primary-orange);
-  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--primary-orange) 0%, #ff8c00 100%);
+  color: #ffffff !important;
+  border: none;
+  padding: 14px 24px;
   border-radius: 50px;
-  font-weight: 600;
-  transition: var(--transition);
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+  box-shadow: 0 6px 18px rgba(224, 83, 38, 0.35);
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .service-btn:hover {
-  background-color: var(--primary-orange);
-  color: var(--bg-white);
-  box-shadow: var(--shadow-orange);
+  background: linear-gradient(135deg, #e04516 0%, var(--primary-orange) 100%);
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(224, 83, 38, 0.45);
 }
 
 /* --- Rental Section --- */
