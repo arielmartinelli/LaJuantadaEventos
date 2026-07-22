@@ -1136,23 +1136,36 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // Abrir/Cerrar Modal de Confirmación
+  // Abrir/Cerrar Modal de Confirmación de Datos
   function openClientModal(action) {
     pendingAction = action;
-    if (modalSubmitText) {
-      modalSubmitText.textContent = action === 'whatsapp' ? 'Confirmar y Enviar a WhatsApp' : 'Confirmar y Descargar PDF';
+    const modalEl = document.getElementById('modal-client-data');
+    const nameEl = document.getElementById('modal-client-name');
+    const dateEl = document.getElementById('modal-event-date');
+    const submitTextEl = document.getElementById('modal-submit-text');
+
+    if (submitTextEl) {
+      submitTextEl.textContent = action === 'whatsapp' ? 'Confirmar y Enviar a WhatsApp' : 'Confirmar y Descargar PDF';
     }
-    if (calcEventDateInput && calcEventDateInput.value && modalEventDate) {
-      modalEventDate.value = calcEventDateInput.value;
+    
+    if (modalEl) {
+      modalEl.style.display = 'flex';
+      modalEl.style.opacity = '1';
+      modalEl.style.visibility = 'visible';
     }
-    if (modalClientData) {
-      modalClientData.style.display = 'flex';
+
+    if (nameEl) {
+      setTimeout(() => {
+        nameEl.focus();
+      }, 100);
     }
-    if (modalClientName) modalClientName.focus();
   }
 
   function closeClientModal() {
-    if (modalClientData) modalClientData.style.display = 'none';
+    const modalEl = document.getElementById('modal-client-data');
+    if (modalEl) {
+      modalEl.style.display = 'none';
+    }
   }
 
   if (btnCloseModal) btnCloseModal.addEventListener('click', closeClientModal);
@@ -1166,11 +1179,21 @@ document.addEventListener('DOMContentLoaded', () => {
   if (formModalData) {
     formModalData.addEventListener('submit', (e) => {
       e.preventDefault();
-      const clientName = modalClientName ? modalClientName.value.trim() : '';
-      const rawDate = modalEventDate ? modalEventDate.value : '';
+      const nameInput = document.getElementById('modal-client-name');
+      const dateInput = document.getElementById('modal-event-date');
 
-      if (!clientName || !rawDate) {
-        alert('Por favor completá tu Nombre y la Fecha del Evento.');
+      const clientName = nameInput ? nameInput.value.trim() : '';
+      const rawDate = dateInput ? dateInput.value : '';
+
+      if (!clientName) {
+        alert('⚠️ Por favor ingresá tu Nombre y Apellido.');
+        if (nameInput) nameInput.focus();
+        return;
+      }
+
+      if (!rawDate) {
+        alert('⚠️ Por favor seleccioná la Fecha del Evento.');
+        if (dateInput) dateInput.focus();
         return;
       }
 
@@ -1184,144 +1207,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Manejador de Pestañas del Cotizador
-  document.querySelectorAll('.calc-tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.calc-tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.calc-tab-pane').forEach(p => p.classList.remove('active'));
-      
-      btn.classList.add('active');
-      const targetPane = document.getElementById(btn.getAttribute('data-tab'));
-      if (targetPane) targetPane.classList.add('active');
-    });
-  });
-
-  // Manejador de Botones de Acceso Rápido de Pax (50, 80, 100, 150)
-  document.querySelectorAll('.quick-pax-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.quick-pax-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const pax = parseInt(btn.getAttribute('data-pax'));
-      if (guestCountInput) guestCountInput.value = pax;
-      if (guestCountNumBox) guestCountNumBox.value = pax;
-      const guestRange = document.getElementById('guest-count');
-      if (guestRange) guestRange.value = pax;
-      calculateBudget();
-    });
-  });
-
-  function updateSalonCardBadges(selectedVal) {
-    document.querySelectorAll('.salon-opt-card').forEach(card => {
-      const val = card.getAttribute('data-salon-opt');
-      const badge = card.querySelector('.salon-opt-badge-circle');
-      if (val === selectedVal) {
-        card.classList.add('selected');
-        card.style.opacity = '1';
-        card.style.borderColor = 'var(--primary-orange)';
-        if (badge) {
-          badge.textContent = '✓';
-          badge.style.background = 'var(--primary-orange)';
-        }
-      } else {
-        card.classList.remove('selected');
-        card.style.opacity = '0.65';
-        card.style.borderColor = 'var(--border-light)';
-        if (badge) {
-          badge.textContent = '+';
-          badge.style.background = '#ccc';
-        }
-      }
-    });
-  }
-
-  // Manejador de Tarjetas de Selección de Salón en Pestaña 1
-  document.querySelectorAll('.salon-opt-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const salonVal = card.getAttribute('data-salon-opt');
-      updateSalonCardBadges(salonVal);
-      if (calcSalonSelect) {
-        calcSalonSelect.value = salonVal;
-        calculateBudget();
-      }
-    });
-  });
-
-  // Listeners de cambio para la calculadora
-  if (calcSalonSelect) calcSalonSelect.addEventListener('change', () => calculateBudget());
-  
-  // Manejador para botones "Sumar Salón a Cotización"
-  document.querySelectorAll('.btn-select-salon-quote').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const salonKey = btn.getAttribute('data-salon');
-      if (calcSalonSelect) {
-        calcSalonSelect.value = salonKey;
-        // Seleccionar tarjeta visual correspondiente
-        document.querySelectorAll('.salon-opt-card').forEach(c => {
-          c.classList.toggle('selected', c.getAttribute('data-salon-opt') === salonKey);
-        });
-        calculateBudget();
-        const calcSec = document.getElementById('calculadora');
-        if (calcSec) {
-          calcSec.scrollIntoView({ behavior: 'smooth' });
-        }
-      } else {
-        sessionStorage.setItem('lajuntada_selected_salon', salonKey);
-        window.location.href = 'index.html#calculadora';
-      }
-    });
-  });
-
-  // Verificar salón guardado desde salones.html
-  const savedSalon = sessionStorage.getItem('lajuntada_selected_salon');
-  if (savedSalon && calcSalonSelect) {
-    calcSalonSelect.value = savedSalon;
-    document.querySelectorAll('.salon-opt-card').forEach(c => {
-      c.classList.toggle('selected', c.getAttribute('data-salon-opt') === savedSalon);
-    });
-    sessionStorage.removeItem('lajuntada_selected_salon');
-    calculateBudget();
-  }
-  if (eventTypeSelect && guestCountInput) {
-    eventTypeSelect.addEventListener('change', () => calculateBudget());
-    guestCountInput.addEventListener('input', () => calculateBudget());
-  }
-  if (guestCountNumBox && guestCountInput) {
-    guestCountNumBox.addEventListener('input', () => {
-      let val = parseInt(guestCountNumBox.value);
-      if (!isNaN(val)) {
-        guestCountInput.value = val;
-        calculateBudget();
-      }
-    });
-    guestCountNumBox.addEventListener('change', () => {
-      let val = parseInt(guestCountNumBox.value);
-      if (isNaN(val) || val < 15) val = 15;
-      guestCountNumBox.value = val;
-      guestCountInput.value = val;
-      calculateBudget();
-    });
-  }
-  if (srvLivingQtySelect) {
-    srvLivingQtySelect.addEventListener('change', () => calculateBudget());
-  }
-
-  // Botón abrir modal para enviar a WhatsApp
-  if (btnCalcWhatsApp) {
-    btnCalcWhatsApp.addEventListener('click', () => {
+  // Listeners para botones de WhatsApp y PDF con delegación directa
+  document.addEventListener('click', (e) => {
+    const waBtn = e.target.closest('#btn-calc-whatsapp, .btn-whatsapp-send');
+    if (waBtn) {
+      e.preventDefault();
+      e.stopPropagation();
       openClientModal('whatsapp');
-    });
-  }
+      return;
+    }
 
-  // Botón abrir modal para descargar PDF
-  const btnCalcPDF = document.getElementById('btn-calc-pdf');
-  if (btnCalcPDF) {
-    btnCalcPDF.addEventListener('click', () => {
+    const pdfBtn = e.target.closest('#btn-calc-pdf');
+    if (pdfBtn) {
+      e.preventDefault();
+      e.stopPropagation();
       openClientModal('pdf');
-    });
-  }
+      return;
+    }
+  });
 
   // Ejecución de envío a WhatsApp con los datos confirmados
   function executeWhatsAppSend(clientName, rawDate) {
+    if (!clientName || !clientName.trim()) {
+      alert('⚠️ Por favor ingresá tu Nombre y Apellido para enviar la cotización.');
+      openClientModal('whatsapp');
+      return;
+    }
+
     const results = calculateBudget(clientName, rawDate);
     if (!results) return;
     
