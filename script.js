@@ -1207,6 +1207,122 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Manejador de Pestañas del Cotizador
+  document.querySelectorAll('.calc-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.calc-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.calc-tab-pane').forEach(p => p.classList.remove('active'));
+      
+      btn.classList.add('active');
+      const targetPane = document.getElementById(btn.getAttribute('data-tab'));
+      if (targetPane) targetPane.classList.add('active');
+    });
+  });
+
+  // Manejador de Botones de Acceso Rápido de Pax (50, 80, 100, 150)
+  document.querySelectorAll('.quick-pax-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.quick-pax-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const pax = parseInt(btn.getAttribute('data-pax'));
+      if (guestCountInput) guestCountInput.value = pax;
+      if (guestCountNumBox) guestCountNumBox.value = pax;
+      const guestRange = document.getElementById('guest-count');
+      if (guestRange) guestRange.value = pax;
+      calculateBudget();
+    });
+  });
+
+  function updateSalonCardBadges(selectedVal) {
+    document.querySelectorAll('.salon-opt-card').forEach(card => {
+      const val = card.getAttribute('data-salon-opt');
+      const badge = card.querySelector('.salon-opt-badge-circle');
+      if (val === selectedVal) {
+        card.classList.add('selected');
+        card.style.opacity = '1';
+        card.style.borderColor = 'var(--primary-orange)';
+        if (badge) {
+          badge.textContent = '✓';
+          badge.style.background = 'var(--primary-orange)';
+        }
+      } else {
+        card.classList.remove('selected');
+        card.style.opacity = '0.65';
+        card.style.borderColor = 'var(--border-light)';
+        if (badge) {
+          badge.textContent = '+';
+          badge.style.background = '#ccc';
+        }
+      }
+    });
+  }
+
+  // Manejador de Tarjetas de Selección de Salón en Pestaña 1
+  document.querySelectorAll('.salon-opt-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const salonVal = card.getAttribute('data-salon-opt');
+      updateSalonCardBadges(salonVal);
+      if (calcSalonSelect) {
+        calcSalonSelect.value = salonVal;
+        calculateBudget();
+      }
+    });
+  });
+
+  // Listeners de cambio para la calculadora
+  if (calcSalonSelect) calcSalonSelect.addEventListener('change', () => calculateBudget());
+  
+  // Manejador para botones "Sumar Salón a Cotización"
+  document.querySelectorAll('.btn-select-salon-quote').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const salonKey = btn.getAttribute('data-salon');
+      if (calcSalonSelect) {
+        calcSalonSelect.value = salonKey;
+        updateSalonCardBadges(salonKey);
+        calculateBudget();
+        const calcSec = document.getElementById('calculadora');
+        if (calcSec) {
+          calcSec.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        sessionStorage.setItem('lajuntada_selected_salon', salonKey);
+        window.location.href = 'index.html#calculadora';
+      }
+    });
+  });
+
+  // Verificar salón guardado desde salones.html
+  const savedSalon = sessionStorage.getItem('lajuntada_selected_salon');
+  if (savedSalon && calcSalonSelect) {
+    calcSalonSelect.value = savedSalon;
+    updateSalonCardBadges(savedSalon);
+    sessionStorage.removeItem('lajuntada_selected_salon');
+    calculateBudget();
+  }
+  if (eventTypeSelect && guestCountInput) {
+    eventTypeSelect.addEventListener('change', () => calculateBudget());
+    guestCountInput.addEventListener('input', () => calculateBudget());
+  }
+  if (guestCountNumBox && guestCountInput) {
+    guestCountNumBox.addEventListener('input', () => {
+      let val = parseInt(guestCountNumBox.value);
+      if (!isNaN(val)) {
+        guestCountInput.value = val;
+        calculateBudget();
+      }
+    });
+    guestCountNumBox.addEventListener('change', () => {
+      let val = parseInt(guestCountNumBox.value);
+      if (isNaN(val) || val < 15) val = 15;
+      guestCountNumBox.value = val;
+      guestCountInput.value = val;
+      calculateBudget();
+    });
+  }
+  if (srvLivingQtySelect) {
+    srvLivingQtySelect.addEventListener('change', () => calculateBudget());
+  }
+
   // Listeners para botones de WhatsApp y PDF con delegación directa
   document.addEventListener('click', (e) => {
     const waBtn = e.target.closest('#btn-calc-whatsapp, .btn-whatsapp-send');
@@ -1273,7 +1389,7 @@ Mi nombre es *${results.clientName}* y estuve armando mi propuesta en el Cotizad
 🏷️ *PRESUPUESTO ESTIMADO:*
 💰 *Estimado Por Persona:* ${formatCurrency(results.perPerson)} / pers.
 ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(results.salonCost)}\n` : ''}
-💬 *¿Podrían confirmarme disponibilidad para esta fecha y coordinar los detalles? ¡Muchas gracias!`;
+💬 *¿Podrían confirmarme disponibilidad para esta fecha y coordinar los detalles? ¡Muchas gracias!*`;
 
     // Enviar a WhatsApp
     const cleanPhone = activeConfigs.contact_phone1.replace(/\s+/g, '');
