@@ -24,7 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
     contact_phone1: '3516069743',
     contact_phone2: '3512160141',
     contact_address: 'Mendoza 3147, Alta Córdoba, Córdoba',
-    contact_email: 'lajuntadaeventos@gmail.com'
+    contact_email: 'lajuntadaeventos@gmail.com',
+    salon_norte_price_weekday: '150000',
+    salon_norte_price_weekend: '250000',
+    salon_centro_price_weekday: '120000',
+    salon_centro_price_weekend: '200000'
   };
 
   const DEFAULT_SERVICES = [
@@ -839,6 +843,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCalcWhatsApp = document.getElementById('btn-calc-whatsapp');
   const guestCountNumBox = document.getElementById('guest-count-input');
 
+  // Elementos de Entrada del Cotizador
+  const calcClientNameInput = document.getElementById('calc-client-name');
+  const calcEventDateInput = document.getElementById('calc-event-date');
+  const calcSalonSelect = document.getElementById('calc-salon-select');
+  const calcDayBadge = document.getElementById('calc-day-badge');
+
   function calculateBudget() {
     if (!guestCountInput) return;
 
@@ -859,85 +869,92 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Verificar si hay algún plato principal seleccionado
-    const mainDishesInQuote = Array.from(selectedMenuItems).map(k => activeServices.find(s => s.key === k)).filter(Boolean);
-    const hasSelectedMainDish = mainDishesInQuote.some(s => s.category === 'principales');
-    
-    const lockNotice = document.getElementById('cotizador-lock-notice');
-    const addonsContainer = document.getElementById('calc-addons-container');
-    
-    // Actualizar aviso de bloqueo/desbloqueo
-    if (lockNotice) {
-      if (!hasSelectedMainDish) {
-        lockNotice.style.background = 'rgba(224, 83, 38, 0.08)';
-        lockNotice.style.border = '1px dashed var(--primary-orange)';
-        lockNotice.style.color = 'var(--charcoal)';
-        lockNotice.innerHTML = `<i class="fa-solid fa-lock" style="color: var(--primary-orange); font-size: 1.1rem; flex-shrink: 0;"></i> <span>Seleccioná primero un <strong>Plato Principal</strong> en la sección "Nuestra Carta" arriba para iniciar la cotización y habilitar los servicios opcionales.</span>`;
-      } else {
-        lockNotice.style.background = 'rgba(46, 125, 50, 0.08)';
-        lockNotice.style.border = '1px solid #2e7d32';
-        lockNotice.style.color = '#2e7d32';
-        lockNotice.innerHTML = `<i class="fa-solid fa-circle-check" style="font-size: 1.1rem; flex-shrink: 0;"></i> <span>¡Plato Principal Seleccionado! Servicios opcionales habilitados.</span>`;
-      }
-    }
+    // Detectar día de la semana según la fecha ingresada
+    let isWeekend = false;
+    let formattedDate = '';
 
-    // Habilitar/deshabilitar controles opcionales si no hay plato principal elegido
-    if (addonsContainer) {
-      const checkboxes = addonsContainer.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach(chk => {
-        const srvKey = chk.id;
-        const srv = activeServices.find(s => s.key === srvKey);
-        if (srv && !srv.is_available) {
-          chk.disabled = true;
-        } else {
-          chk.disabled = !hasSelectedMainDish;
+    if (calcEventDateInput && calcEventDateInput.value) {
+      const dateParts = calcEventDateInput.value.split('-');
+      if (dateParts.length === 3) {
+        const year = parseInt(dateParts[0]);
+        const month = parseInt(dateParts[1]) - 1;
+        const day = parseInt(dateParts[2]);
+        const dateObj = new Date(year, month, day);
+        const dayOfWeek = dateObj.getDay(); // 0 = Domingo, 1 = Lunes, ..., 5 = Viernes, 6 = Sábado
+        
+        isWeekend = (dayOfWeek === 0 || dayOfWeek === 5 || dayOfWeek === 6);
+        formattedDate = `${day.toString().padStart(2, '0')}/${(month + 1).toString().padStart(2, '0')}/${year}`;
+
+        if (calcDayBadge) {
+          calcDayBadge.style.display = 'inline-block';
+          if (isWeekend) {
+            calcDayBadge.style.color = '#2e7d32';
+            calcDayBadge.textContent = '🎉 Viernes a Domingo (Tarifa Fin de Semana)';
+          } else {
+            calcDayBadge.style.color = '#e05326';
+            calcDayBadge.textContent = '📅 Lunes a Jueves (Tarifa Día Hábil)';
+          }
         }
-      });
+      }
+    } else {
+      if (calcDayBadge) calcDayBadge.style.display = 'none';
     }
 
-    if (srvLivingQtySelect) {
-      srvLivingQtySelect.disabled = !hasSelectedMainDish;
+    // Calcular costo del salón seleccionado
+    let salonCost = 0;
+    let salonName = 'Sin Salón (Evento en Quinta Propia / Catering)';
+    const selectedSalonKey = calcSalonSelect ? calcSalonSelect.value : 'none';
+
+    if (selectedSalonKey === 'norte') {
+      salonName = 'Salón La Juntada Norte (Villa Allende)';
+      const pWeekday = parseFloat(activeConfigs.salon_norte_price_weekday) || 150000;
+      const pWeekend = parseFloat(activeConfigs.salon_norte_price_weekend) || 250000;
+      salonCost = isWeekend ? pWeekend : pWeekday;
+    } else if (selectedSalonKey === 'centro') {
+      salonName = 'Salón La Juntada Centro (Alta Córdoba)';
+      const pWeekday = parseFloat(activeConfigs.salon_centro_price_weekday) || 120000;
+      const pWeekend = parseFloat(activeConfigs.salon_centro_price_weekend) || 200000;
+      salonCost = isWeekend ? pWeekend : pWeekday;
     }
 
-    let menuItemsTotal = 0;
-    let basePricePerPerson = 0;
+    let menuItemsTotalPerPerson = 0;
     let dynamicHtml = '';
     let selectedAddonsList = [];
     let selectedMenuOptionsList = [];
-    let selectedMenuName = 'Ningún menú seleccionado';
 
-    if (hasSelectedMainDish) {
-      // 1. Recorrer los platos seleccionados desde el menú dinámico
+    // 1. Sumar acumulativamente TODOS los platos seleccionados desde la carta
+    if (selectedMenuItems.size > 0) {
       selectedMenuItems.forEach(key => {
         const srv = activeServices.find(s => s.key === key);
         if (srv) {
           const cost = parseFloat(srv.price) || 0;
+          menuItemsTotalPerPerson += cost;
+          selectedMenuOptionsList.push(`${srv.name} (${formatCurrency(cost)} x pers.)`);
           
-          if (srv.category === 'principales') {
-            basePricePerPerson = cost;
-            selectedMenuName = srv.name;
-            dynamicHtml += `
-              <div class="summary-item">
-                <span>• ${srv.name}:</span>
-                <strong>${formatCurrency(cost)} x pers.</strong>
-              </div>`;
-          } else {
-            dynamicHtml += `
-              <div class="summary-item">
-                <span>+ ${srv.name}:</span>
-                <strong style="color: var(--primary-orange); font-size: 0.85rem;">A cotizar</strong>
-              </div>`;
-          }
-          
-          selectedMenuOptionsList.push(srv.name);
+          dynamicHtml += `
+            <div class="summary-item">
+              <span>+ ${srv.name}:</span>
+              <strong>${formatCurrency(cost)} x pers.</strong>
+            </div>`;
         }
       });
     } else {
-      dynamicHtml = `<div style="font-size: 0.85rem; color: var(--charcoal-muted); font-style: italic; text-align: center; padding: 15px 0;">Elegí tu plato principal en "Nuestra Carta" arriba para ver la cotización estimada.</div>`;
+      dynamicHtml = `<div style="font-size: 0.85rem; color: var(--charcoal-muted); font-style: italic; text-align: center; padding: 10px 0;">Sumá tus platos en "Nuestra Carta" arriba para ver la suma por persona.</div>`;
     }
 
-    // 2. Recorrer los servicios opcionales tildados (A cotizar por el admin, costo $0 al estimado)
-    if (addonsContainer && hasSelectedMainDish) {
+    // Mostrar Salón en el resumen si corresponde
+    if (salonCost > 0) {
+      const dayLabel = isWeekend ? 'Fin de Semana' : 'Lunes a Jueves';
+      dynamicHtml += `
+        <div class="summary-item" style="border-top: 1px dashed var(--border-light); padding-top: 8px; margin-top: 8px;">
+          <span>+ ${salonName} (${dayLabel}):</span>
+          <strong style="color: var(--primary-orange);">${formatCurrency(salonCost)}</strong>
+        </div>`;
+    }
+
+    // 2. Recorrer los servicios opcionales tildados
+    const addonsContainer = document.getElementById('calc-addons-container');
+    if (addonsContainer) {
       const checkboxes = addonsContainer.querySelectorAll('input[type="checkbox"]');
       checkboxes.forEach(chk => {
         if (chk.checked && !chk.disabled) {
@@ -953,20 +970,18 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // 3. Cantidad de Juegos de Living (A cotizar por el admin, costo $0 al estimado)
-    if (srvLivingQtySelect && !srvLivingQtySelect.disabled && hasSelectedMainDish) {
+    // 3. Cantidad de Juegos de Living
+    if (srvLivingQtySelect && srvLivingQtySelect.value > 0) {
       const qty = parseInt(srvLivingQtySelect.value);
-      if (qty > 0) {
-        selectedAddonsList.push(`${qty} Juego(s) de Living (A cotizar por Admin)`);
-        dynamicHtml += `
-          <div class="summary-item">
-            <span>+ ${qty} Juegos de Living:</span>
-            <strong style="color: var(--primary-orange); font-size: 0.85rem;">A cotizar</strong>
-          </div>`;
-      }
+      selectedAddonsList.push(`${qty} Juego(s) de Living (A cotizar por Admin)`);
+      dynamicHtml += `
+        <div class="summary-item">
+          <span>+ ${qty} Juegos de Living:</span>
+          <strong style="color: var(--primary-orange); font-size: 0.85rem;">A cotizar</strong>
+        </div>`;
     }
 
-    // 4. Recorrer los alquileres opcionales seleccionados
+    // 4. Recorrer alquileres opcionales
     let selectedOptionalList = [];
     selectedOptionalRentals.forEach(key => {
       const srv = activeServices.find(s => s.key === key);
@@ -982,19 +997,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (dynamicSummaryItems) dynamicSummaryItems.innerHTML = dynamicHtml;
     
-    // El precio por persona estimado es EXCLUSIVAMENTE la tarifa por persona del plato principal seleccionado
-    const pricePerPerson = hasSelectedMainDish ? basePricePerPerson : 0;
-    const grandTotal = pricePerPerson * guestCount;
+    // Cálculo final:
+    const pricePerPerson = menuItemsTotalPerPerson;
+    const grandTotal = (pricePerPerson * guestCount) + salonCost;
     
     if (calcTotal) calcTotal.textContent = formatCurrency(grandTotal);
     
     const calcPerPerson = document.getElementById('calc-per-person');
     if (calcPerPerson) {
-      calcPerPerson.textContent = hasSelectedMainDish ? formatCurrency(pricePerPerson) : "$0";
+      calcPerPerson.textContent = formatCurrency(pricePerPerson);
     }
 
     return {
-      menuName: hasSelectedMainDish ? selectedMenuName : 'Sin Menú Seleccionado',
+      clientName: calcClientNameInput ? calcClientNameInput.value.trim() : '',
+      eventDate: formattedDate,
+      rawDate: calcEventDateInput ? calcEventDateInput.value : '',
+      isWeekend,
+      salonName,
+      salonCost,
       guestCount,
       perPerson: pricePerPerson,
       grandTotal,
@@ -1004,7 +1024,34 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  function validateCotizadorInputs() {
+    let isValid = true;
+    if (calcClientNameInput && !calcClientNameInput.value.trim()) {
+      calcClientNameInput.style.borderColor = '#e05326';
+      calcClientNameInput.focus();
+      isValid = false;
+    } else if (calcClientNameInput) {
+      calcClientNameInput.style.borderColor = 'var(--border-light)';
+    }
+
+    if (calcEventDateInput && !calcEventDateInput.value) {
+      calcEventDateInput.style.borderColor = '#e05326';
+      if (isValid) calcEventDateInput.focus();
+      isValid = false;
+    } else if (calcEventDateInput) {
+      calcEventDateInput.style.borderColor = 'var(--border-light)';
+    }
+
+    if (!isValid) {
+      alert('⚠️ Por favor, completá tu Nombre y la Fecha del Evento para poder generar el presupuesto.');
+    }
+
+    return isValid;
+  }
+
   // Listeners de cambio para la calculadora
+  if (calcEventDateInput) calcEventDateInput.addEventListener('change', calculateBudget);
+  if (calcSalonSelect) calcSalonSelect.addEventListener('change', calculateBudget);
   if (eventTypeSelect && guestCountInput) {
     eventTypeSelect.addEventListener('change', calculateBudget);
     guestCountInput.addEventListener('input', calculateBudget);
@@ -1032,6 +1079,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Botón enviar cotización a WhatsApp
   if (btnCalcWhatsApp) {
     btnCalcWhatsApp.addEventListener('click', () => {
+      if (!validateCotizadorInputs()) return;
+
       const results = calculateBudget();
       if (!results) return;
       
@@ -1041,7 +1090,7 @@ document.addEventListener('DOMContentLoaded', () => {
           menuItemsText += `\n  • ${item}`;
         });
       } else {
-        menuItemsText = '\n  • Ninguno';
+        menuItemsText = '\n  • Ninguno (Menú a definir)';
       }
 
       let addonsText = '';
@@ -1055,18 +1104,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const warningText = results.guestCount < 50 ? '\n⚠️ *Nota:* La cantidad de invitados es menor al mínimo de 50 requerido para contratos generales.' : '';
 
-      const waMessage = `¡Hola La Juntada! Realicé una cotización estimada de mi evento en su sitio web y me interesa coordinar la fecha y los detalles.
+      const waMessage = `¡Hola La Juntada! Mi nombre es *${results.clientName}* y realicé una cotización estimada en su sitio web para la fecha *${results.eventDate}*.
 
-*Detalles del Presupuesto:*
-- *Menú Elegido:* ${results.menuName}
+📌 *Datos de la Solicitud:*
+- *Cliente:* ${results.clientName}
+- *Fecha del Evento:* ${results.eventDate} (${results.isWeekend ? 'Fin de Semana' : 'Día Hábil'})
+- *Salón Elegido:* ${results.salonName}
 - *Invitados:* ${results.guestCount} personas ${warningText}
-- *Platos de Menú Seleccionados:${menuItemsText}*
-- *Servicios Adicionales Seleccionados:${addonsText}*
 
-*Estimado Por Persona:* ${formatCurrency(results.perPerson)}
-*Total Estimado del Evento:* ${formatCurrency(results.grandTotal)}
+🍽️ *Menú Gastronómico Seleccionado (Suma por persona):*${menuItemsText}
 
-¿Podrían confirmarme disponibilidad para presupuesto formal y reserva? ¡Muchas gracias!`;
+✨ *Servicios Opcionales:*${addonsText}
+
+💰 *Estimado Por Persona (Gastronomía):* ${formatCurrency(results.perPerson)} x pers.
+${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(results.salonCost)}\n` : ''}💵 *Total Estimado:* ${formatCurrency(results.grandTotal)}
+
+¿Podrían confirmarme disponibilidad para esta fecha y coordinar los detalles? ¡Muchas gracias!`;
 
       // Enviar a WhatsApp
       const cleanPhone = activeConfigs.contact_phone1.replace(/\s+/g, '');
@@ -1083,6 +1136,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Generación y descarga de PDF con formato estético corporativo
   function downloadBudgetPDF() {
+    if (!validateCotizadorInputs()) return;
+
     const results = calculateBudget();
     if (!results) return;
 
@@ -1182,23 +1237,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <!-- Info Evento -->
         <div style="background-color: #faf6f0; border-radius: 8px; padding: 20px; margin-bottom: 30px; border-left: 5px solid #e05326; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
-          <h3 style="margin-top: 0; color: #e05326; font-size: 15px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px;">Detalles del Evento</h3>
+          <h3 style="margin-top: 0; color: #e05326; font-size: 15px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px;">Detalles de la Solicitud y Evento</h3>
           <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
             <tr>
-              <td style="padding: 5px 0; color: #80706b;"><strong>Menú Base Elegido:</strong></td>
-              <td style="padding: 5px 0; text-align: right; font-weight: 600;">${results.menuName}</td>
+              <td style="padding: 5px 0; color: #80706b;"><strong>Nombre del Cliente:</strong></td>
+              <td style="padding: 5px 0; text-align: right; font-weight: 700; color: #1d1715;">${results.clientName || 'Cliente'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 5px 0; color: #80706b;"><strong>Fecha del Evento:</strong></td>
+              <td style="padding: 5px 0; text-align: right; font-weight: 600;">${results.eventDate} (${results.isWeekend ? 'Fin de Semana' : 'Día Hábil'})</td>
+            </tr>
+            <tr>
+              <td style="padding: 5px 0; color: #80706b;"><strong>Salón Elegido:</strong></td>
+              <td style="padding: 5px 0; text-align: right; font-weight: 600;">${results.salonName} ${results.salonCost > 0 ? '(' + formatCurrency(results.salonCost) + ')' : ''}</td>
             </tr>
             <tr>
               <td style="padding: 5px 0; color: #80706b;"><strong>Cantidad de Invitados:</strong></td>
               <td style="padding: 5px 0; text-align: right; font-weight: 600;">${results.guestCount} personas</td>
             </tr>
-            <tr>
-              <td style="padding: 5px 0; color: #80706b;"><strong>Valor Base Unitario:</strong></td>
-              <td style="padding: 5px 0; text-align: right; font-weight: 600;">${formatCurrency(basePricePerPerson)} x pers.</td>
-            </tr>
-            <tr style="border-top: 1px solid #ebdcd5;">
-              <td style="padding: 10px 0 5px 0; color: #1d1715; font-weight: 700;">Subtotal Gastronomía Base:</td>
-              <td style="padding: 10px 0 5px 0; text-align: right; font-weight: 700; color: #e05326; font-size: 16px;">${formatCurrency(basePricePerPerson * results.guestCount)}</td>
+            <tr style="border-top: 1px dashed #ebdcd5;">
+              <td style="padding: 8px 0 5px 0; color: #1d1715; font-weight: 700;">Gastronomía Acumulada:</td>
+              <td style="padding: 8px 0 5px 0; text-align: right; font-weight: 700; color: #e05326; font-size: 16px;">${formatCurrency(results.perPerson)} x pers.</td>
             </tr>
           </table>
         </div>

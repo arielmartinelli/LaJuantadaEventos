@@ -264,6 +264,29 @@
               <!-- Menú Base seleccionado en carta (Input oculto de respaldo) -->
               <input type="hidden" id="event-type" data-base="25000" value="diente-libre">
 
+              <!-- Datos del Cliente & Evento -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; background: rgba(250, 246, 240, 0.7); padding: 18px; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="calc-client-name" style="font-size: 0.85rem; font-weight: 700;"><i class="fa-solid fa-user text-orange"></i> Tu Nombre y Apellido <span style="color: var(--primary-orange);">*</span></label>
+                  <input type="text" id="calc-client-name" class="form-control" placeholder="Ej. Juan Pérez" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-light); font-size: 0.9rem;">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label for="calc-event-date" style="font-size: 0.85rem; font-weight: 700;"><i class="fa-solid fa-calendar-day text-orange"></i> Fecha del Evento <span style="color: var(--primary-orange);">*</span></label>
+                  <input type="date" id="calc-event-date" class="form-control" style="width: 100%; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--border-light); font-size: 0.9rem;">
+                  <span id="calc-day-badge" style="display: none; font-size: 0.75rem; font-weight: 700; margin-top: 4px;"></span>
+                </div>
+              </div>
+
+              <!-- Seleccionar Salón -->
+              <div class="form-group" style="margin-bottom: 20px;">
+                <label for="calc-salon-select"><i class="fa-solid fa-building text-orange"></i> Salón de Eventos (Opcional)</label>
+                <select id="calc-salon-select" class="form-control" style="width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 0.9rem; font-weight: 700; color: var(--charcoal);">
+                  <option value="none" selected>Sin Salón (Solo Servicio de Catering / Evento en Quinta Propia)</option>
+                  <option value="norte">Salón La Juntada Norte (Villa Allende - Hasta 200 pax)</option>
+                  <option value="centro">Salón La Juntada Centro (Alta Córdoba - Hasta 120 pax)</option>
+                </select>
+              </div>
+
               <div class="form-group">
                 <div class="label-with-value" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
                   <label for="guest-count"><i class="fa-solid fa-users text-orange"></i> Cantidad de Invitados</label>
@@ -282,10 +305,10 @@
                 </div>
               </div>
 
-              <!-- Aviso de selección de Menú Principal -->
-              <div id="cotizador-lock-notice" style="background: rgba(224, 83, 38, 0.08); border: 1px dashed var(--primary-orange); border-radius: 12px; padding: 12px 15px; margin-bottom: 20px; color: var(--charcoal); font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
-                <i class="fa-solid fa-lock" style="color: var(--primary-orange); font-size: 1.1rem; flex-shrink: 0;"></i>
-                <span>Seleccioná primero un <strong>Plato Principal</strong> en la sección "Nuestra Carta" arriba para iniciar la cotización y habilitar los servicios opcionales.</span>
+              <!-- Mensaje informativo de personalización -->
+              <div id="cotizador-lock-notice" style="background: rgba(224, 83, 38, 0.05); border: 1px solid rgba(224, 83, 38, 0.2); border-radius: 12px; padding: 10px 14px; margin-bottom: 20px; color: var(--charcoal); font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-sliders" style="color: var(--primary-orange); font-size: 1.1rem; flex-shrink: 0;"></i>
+                <span>Personalizá libremente tu menú en "Nuestra Carta" arriba y sumá los servicios opcionales que desees.</span>
               </div>
 
               <div class="form-group">
