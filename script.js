@@ -1273,7 +1273,7 @@ Mi nombre es *${results.clientName}* y estuve armando mi propuesta en el Cotizad
 🏷️ *PRESUPUESTO ESTIMADO:*
 💰 *Estimado Por Persona:* ${formatCurrency(results.perPerson)} / pers.
 ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(results.salonCost)}\n` : ''}
-💬 *¿Podrían confirmarme disponibilidad para esta fecha y coordinar los detalles? ¡Muchas gracias!*`;
+💬 *¿Podrían confirmarme disponibilidad para esta fecha y coordinar los detalles? ¡Muchas gracias!`;
 
     // Enviar a WhatsApp
     const cleanPhone = activeConfigs.contact_phone1.replace(/\s+/g, '');
@@ -1283,18 +1283,17 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
 
   // Ejecución de descarga de PDF con datos confirmados
   function executePDFDownload(clientName, rawDate) {
+    // 1. Obtener datos
     const results = calculateBudget(clientName, rawDate);
     if (!results) return;
 
-    // Obtener la fecha de hoy
     const today = new Date().toLocaleDateString('es-AR');
 
-    // Construir lista de platos de menú
+    // 2. Construir filas HTML (Evitando error de .length en arrays nulos)
     let menuItemsHtml = '';
-    if (results.menuItems.length > 0) {
+    if (results.menuItems?.length > 0) {
       results.menuItems.forEach(item => {
-        // Encontrar precio
-        const srv = activeServices.find(s => s.name === item);
+        const srv = activeServices?.find(s => s.name === item);
         const price = srv ? parseFloat(srv.price) : 0;
         menuItemsHtml += `
           <tr style="border-bottom: 1px solid #ebdcd5;">
@@ -1308,20 +1307,20 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
       menuItemsHtml = `<tr><td colspan="3" style="padding: 15px; color: #80706b; font-style: italic; text-align: center;">Ningún plato adicional seleccionado.</td></tr>`;
     }
 
-    // Construir lista de servicios adicionales
+    // 3. Construir filas de servicios opcionales
     let addonsHtml = '';
-    if (results.addons.length > 0) {
+    if (results.addons?.length > 0) {
       results.addons.forEach(item => {
-        // Buscar servicio original
         let cleanedName = item.split(' (')[0];
         let srv;
         let qty = 1;
         let isLiving = item.includes('Juego(s) de Living');
+        
         if (isLiving) {
           qty = parseInt(item.split(' ')[0]) || 1;
-          srv = activeServices.find(s => s.key === 'srv_living');
+          srv = activeServices?.find(s => s.key === 'srv_living');
         } else {
-          srv = activeServices.find(s => s.name === cleanedName);
+          srv = activeServices?.find(s => s.name === cleanedName);
         }
         
         if (srv) {
@@ -1340,49 +1339,27 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
       addonsHtml = `<tr><td colspan="3" style="padding: 15px; color: #80706b; font-style: italic; text-align: center;">Ningún servicio adicional seleccionado.</td></tr>`;
     }
 
-    // Construir lista de alquileres opcionales
-    let optionalRentalsHtml = '';
-    if (results.optionalRentals && results.optionalRentals.length > 0) {
-      results.optionalRentals.forEach(name => {
-        optionalRentalsHtml += `
-          <tr style="border-bottom: 1px solid #ebdcd5;">
-            <td style="padding: 10px; text-align: left; font-weight: 500;">${name}</td>
-            <td style="padding: 10px; text-align: right; color: #80706b;">A Consultar</td>
-            <td style="padding: 10px; text-align: right; font-weight: 700; color: #80706b;">A Consultar</td>
-          </tr>
-        `;
-      });
-    }
-
-    // Buscar precio unitario base del menu elegido
-    let basePricePerPerson = 25000;
-    if (eventTypeSelect) {
-      if (eventTypeSelect.tagName === 'SELECT') {
-        const selOpt = eventTypeSelect.options[eventTypeSelect.selectedIndex];
-        if (selOpt) basePricePerPerson = parseFloat(selOpt.getAttribute('data-base')) || 25000;
-      } else {
-        basePricePerPerson = parseFloat(eventTypeSelect.getAttribute('data-base')) || 25000;
-      }
-    }
-
-    // Crear contenedor temporal con estilos refinados de impresión
+    // 4. Plantilla (Reemplazado el FLEXBOX del Header por una TABLA para evitar bugs en html2canvas)
     const optHtml = `
-      <div style="font-family: 'Outfit', sans-serif; color: #1d1715; padding: 40px; background-color: #ffffff; max-width: 800px; margin: 0 auto; box-sizing: border-box;">
-        <!-- Header -->
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #e05326; padding-bottom: 20px; margin-bottom: 30px;">
-          <div>
-            <h1 style="margin: 0; color: #e05326; font-size: 28px; font-weight: 800; text-transform: uppercase;">La Juntada</h1>
-            <p style="margin: 5px 0 0 0; color: #80706b; font-size: 14px; font-weight: 600; font-style: italic;">Le agrega sabor a tus encuentros!</p>
-          </div>
-          <div style="text-align: right;">
-            <h2 style="margin: 0; color: #1d1715; font-size: 18px; font-weight: 700; letter-spacing: 0.5px;">PRESUPUESTO ESTIMADO</h2>
-            <p style="margin: 5px 0 0 0; color: #80706b; font-size: 12px; font-weight: 500;">Fecha de Emisión: ${today}</p>
-          </div>
-        </div>
+      <div style="font-family: 'Outfit', Helvetica, sans-serif; color: #1d1715; padding: 40px; background-color: #ffffff; max-width: 800px; margin: 0 auto; box-sizing: border-box;">
+        
+        <!-- Encabezado Seguro (Sin Flexbox) -->
+        <table style="width: 100%; border-bottom: 3px solid #e05326; padding-bottom: 20px; margin-bottom: 30px;">
+          <tr>
+            <td style="vertical-align: middle;">
+              <h1 style="margin: 0; color: #e05326; font-size: 28px; font-weight: 800; text-transform: uppercase;">La Juntada</h1>
+              <p style="margin: 5px 0 0 0; color: #80706b; font-size: 14px; font-weight: 600; font-style: italic;">Le agrega sabor a tus encuentros!</p>
+            </td>
+            <td style="text-align: right; vertical-align: middle;">
+              <h2 style="margin: 0; color: #1d1715; font-size: 18px; font-weight: 700; letter-spacing: 0.5px;">PRESUPUESTO ESTIMADO</h2>
+              <p style="margin: 5px 0 0 0; color: #80706b; font-size: 12px; font-weight: 500;">Fecha de Emisión: ${today}</p>
+            </td>
+          </tr>
+        </table>
 
-        <!-- Info Evento -->
-        <div style="background-color: #faf6f0; border-radius: 8px; padding: 20px; margin-bottom: 30px; border-left: 5px solid #e05326; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
-          <h3 style="margin-top: 0; color: #e05326; font-size: 15px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px;">Detalles de la Solicitud y Evento</h3>
+        <!-- Cuadro de datos del cliente y evento -->
+        <div style="background-color: #faf6f0; border-radius: 8px; padding: 20px; margin-bottom: 30px; border-left: 5px solid #e05326;">
+          <h3 style="margin-top: 0; color: #e05326; font-size: 15px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase;">Detalles de la Solicitud y Evento</h3>
           <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
             <tr>
               <td style="padding: 5px 0; color: #80706b;"><strong>Nombre del Cliente:</strong></td>
@@ -1390,7 +1367,7 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
             </tr>
             <tr>
               <td style="padding: 5px 0; color: #80706b;"><strong>Fecha del Evento:</strong></td>
-              <td style="padding: 5px 0; text-align: right; font-weight: 600;">${results.eventDate} (${results.isWeekend ? 'Fin de Semana' : 'Día Hábil'})</td>
+              <td style="padding: 5px 0; text-align: right; font-weight: 600;">${results.eventDate}</td>
             </tr>
             <tr>
               <td style="padding: 5px 0; color: #80706b;"><strong>Salón Elegido:</strong></td>
@@ -1407,9 +1384,9 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
           </table>
         </div>
 
-        <!-- Opciones de Menu -->
+        <!-- Tabla de Gastronomía -->
         <div style="margin-bottom: 35px;">
-          <h3 style="color: #e05326; font-size: 14px; font-weight: 700; border-bottom: 2px solid #ebdcd5; padding-bottom: 6px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px;">Platos Adicionales del Menú</h3>
+          <h3 style="color: #e05326; font-size: 14px; font-weight: 700; border-bottom: 2px solid #ebdcd5; padding-bottom: 6px; margin-bottom: 15px; text-transform: uppercase;">Platos Seleccionados del Menú</h3>
           <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
             <thead>
               <tr style="background-color: #faf6f0; color: #1d1715; font-weight: 700; border-bottom: 1px solid #ebdcd5;">
@@ -1424,28 +1401,9 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
           </table>
         </div>
 
-        <!-- Opciones de Alquiler Opcionales -->
-        ${optionalRentalsHtml ? `
-          <div style="margin-bottom: 35px;">
-            <h3 style="color: #e05326; font-size: 14px; font-weight: 700; border-bottom: 2px solid #ebdcd5; padding-bottom: 6px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px;">Alquileres Opcionales a Consultar</h3>
-            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-              <thead>
-                <tr style="background-color: #faf6f0; color: #1d1715; font-weight: 700; border-bottom: 1px solid #ebdcd5;">
-                  <th style="padding: 10px; text-align: left;">Descripción del Equipamiento</th>
-                  <th style="padding: 10px; text-align: right; width: 140px;">Condición</th>
-                  <th style="padding: 10px; text-align: right; width: 120px;">Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${optionalRentalsHtml}
-              </tbody>
-            </table>
-          </div>
-        ` : ''}
-
-        <!-- Servicios Adicionales -->
+        <!-- Tabla de Servicios Adicionales -->
         <div style="margin-bottom: 45px;">
-          <h3 style="color: #e05326; font-size: 14px; font-weight: 700; border-bottom: 2px solid #ebdcd5; padding-bottom: 6px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px;">Servicios & Alquiler de Equipamiento</h3>
+          <h3 style="color: #e05326; font-size: 14px; font-weight: 700; border-bottom: 2px solid #ebdcd5; padding-bottom: 6px; margin-bottom: 15px; text-transform: uppercase;">Servicios & Alquiler de Equipamiento</h3>
           <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
             <thead>
               <tr style="background-color: #faf6f0; color: #1d1715; font-weight: 700; border-bottom: 1px solid #ebdcd5;">
@@ -1460,15 +1418,15 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
           </table>
         </div>
 
-        <!-- Resumen Financiero -->
-        <div style="background-color: #1d1715; color: #ffffff; border-radius: 8px; padding: 22px; margin-bottom: 35px; text-align: center; box-shadow: 0 10px 25px rgba(29, 23, 21, 0.15);">
+        <!-- Caja de Total Estimado Por Persona -->
+        <div style="background-color: #1d1715; color: #ffffff; border-radius: 8px; padding: 22px; margin-bottom: 35px; text-align: center;">
           <p style="margin: 0; font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Presupuesto Estimado Por Persona</p>
-          <h2 style="margin: 5px 0 0 0; color: #e05326; font-size: 26px; font-weight: 800; font-family: 'Outfit', sans-serif;">ESTIMADO POR PERSONA: ${formatCurrency(results.perPerson)}</h2>
+          <h2 style="margin: 5px 0 0 0; color: #e05326; font-size: 26px; font-weight: 800;">ESTIMADO POR PERSONA: ${formatCurrency(results.perPerson)}</h2>
         </div>
 
-        <!-- Nota / Terminos -->
+        <!-- Nota y Legales -->
         <div style="border-top: 1px solid #ebdcd5; padding-top: 20px; font-size: 11px; color: #80706b; line-height: 1.6;">
-          <p style="font-weight: 700; color: #1d1715; margin-bottom: 5px; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px;">Aclaraciones e Información Importante:</p>
+          <p style="font-weight: 700; color: #1d1715; margin-bottom: 5px; text-transform: uppercase; font-size: 12px;">Aclaraciones e Información Importante:</p>
           <ul style="margin: 0; padding-left: 15px;">
             <li>El presente presupuesto constituye una estimación inicial en base a las opciones cargadas online. No asegura disponibilidad de fecha ni congelamiento de precios.</li>
             <li><strong>Descuento Especial:</strong> Bonificación del 10% sobre el saldo final abonando de contado efectivo.</li>
@@ -1482,16 +1440,18 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
 
     try {
       if (typeof html2pdf === 'undefined') {
-        alert("La librería de exportación de PDF no se cargó correctamente. Por favor, asegúrate de estar conectado a Internet o recarga la página.");
+        alert("La librería de exportación de PDF no se cargó correctamente.");
         return;
       }
 
-      // Generar PDF usando html2pdf
+      // 5. Inserción Segura en el DOM (Usando visibility hidden para no romper html2canvas)
       const element = document.createElement('div');
       element.style.position = 'absolute';
-      element.style.left = '-9999px';
       element.style.top = '0';
+      element.style.left = '0';
       element.style.width = '750px';
+      element.style.visibility = 'hidden'; // Mejor que -9999px
+      element.style.zIndex = '-9999';
       element.style.background = '#ffffff';
       element.innerHTML = optHtml;
       document.body.appendChild(element);
@@ -1501,28 +1461,26 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
         margin:       10,
         filename:     `la_juntada_presupuesto_${clientCleanName}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { 
-          scale: 2, 
-          letterRendering: true,
-          logging: false,
-          useCORS: true
-        },
+        html2canvas:  { scale: 2, useCORS: true, logging: false }, // Se limpió "letterRendering"
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
 
-      // Esperar a que el DOM se dibuje antes de capturar el canvas
+      // 6. Ejecutar y asegurar la limpieza del DOM pase lo que pase
       setTimeout(() => {
-        html2pdf().from(element).set(opt).save().then(() => {
-          if (document.body.contains(element)) document.body.removeChild(element);
-        }).catch(err => {
-          console.error("Error al generar PDF:", err);
-          alert("Ocurrió un error al generar el PDF: " + err.message);
-          if (document.body.contains(element)) document.body.removeChild(element);
-        });
-      }, 300);
+        html2pdf().from(element).set(opt).save()
+          .then(() => {
+            if (document.body.contains(element)) document.body.removeChild(element);
+          })
+          .catch(err => {
+            console.error("Error al generar PDF:", err);
+            alert("Ocurrió un error al generar el PDF.");
+            if (document.body.contains(element)) document.body.removeChild(element);
+          });
+      }, 400); // Aumentado ligeramente para darle más margen a que carguen las fuentes
+
     } catch (e) {
-      console.error("Error en downloadBudgetPDF:", e);
-      alert("Error inesperado en downloadBudgetPDF: " + e.message);
+      console.error("Error en executePDFDownload:", e); // Se corrigió el nombre aquí
+      alert("Error inesperado al preparar la descarga.");
     }
   }
 
