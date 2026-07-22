@@ -45,10 +45,8 @@
         <ul class="nav-list">
           <li class="nav-item"><a href="#hero" class="nav-link active">Inicio</a></li>
           <li class="nav-item"><a href="#servicios" class="nav-link">Servicio</a></li>
-          <li class="nav-item"><a href="#menu-carta" class="nav-link">Nuestra Carta</a></li>
-          <li class="nav-item"><a href="#calculadora" class="nav-link">Cotizador</a></li>
           <li class="nav-item"><a href="salones.html" class="nav-link">Salones</a></li>
-          <li class="nav-item"><a href="#alquiler" class="nav-link">Alquileres</a></li>
+          <li class="nav-item"><a href="#calculadora" class="nav-link">Cotizador</a></li>
           <li class="nav-item"><a href="#condiciones" class="nav-link">Condiciones</a></li>
           <li class="nav-item"><a href="admin.html" class="nav-link admin-nav-link" title="Acceso Admin"><i class="fa-solid fa-shield-halved"></i><span class="admin-text-mobile"> Panel Admin</span></a></li>
           <li class="nav-item"><a href="#contacto" class="nav-link-btn">Contactar</a></li>
@@ -68,7 +66,7 @@
       </p>
       <div class="hero-buttons">
         <a href="#calculadora" class="btn-primary" id="hero-cta-calc"><i class="fa-solid fa-calculator"></i> Presupuestar Online</a>
-        <a href="#menu-carta" class="btn-secondary" id="hero-cta-serv">Ver Menú Completo</a>
+        <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20recibir%20informaci%C3%B3n%20para%20un%20evento." target="_blank" rel="noopener noreferrer" class="btn-secondary"><i class="fa-brands fa-whatsapp"></i> Hablar con Asesor</a>
       </div>
     </div>
     <a href="#servicios" class="scroll-down-indicator" aria-label="Desplazarse hacia abajo">
@@ -106,8 +104,8 @@
   <section class="services-section" id="servicios">
     <div class="container">
       <div class="section-header reveal">
-        <span class="sub-header">Quiénes Somos</span>
-        <h2 class="section-title">Servicio y Organización Familiar</h2>
+        <span class="sub-header">Experiencias Gastronómicas</span>
+        <h2 class="section-title">Servicios a tu Medida</h2>
         <div class="divider"></div>
         <p class="services-intro-desc" style="max-width: 800px; margin: 20px auto 0; color: var(--charcoal-light);">
           <strong>La Juntada</strong> es un micro-emprendimiento familiar en Córdoba dedicado a la producción y logística integral de eventos. Bajo la dirección del Chef, Organizador y Barman profesional <strong>Sánchez Leonardo</strong>, garantizamos una atención detallada para que cada reunión, boda, cumpleaños o evento corporativo sea memorable y tenga el mejor sabor.
@@ -159,90 +157,6 @@
             <a href="#calculadora" class="service-btn" data-event="general">Cotizar Evento</a>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Interactive Menu Section -->
-  <section class="menu-section" id="menu-carta">
-    <div class="container">
-      <div class="section-header reveal">
-        <span class="sub-header">Nuestra Gastronomía</span>
-        <h2 class="section-title">Opciones de Menú</h2>
-        <div class="divider"></div>
-        <p style="font-size: 1.15rem; font-weight: 600; color: var(--primary-orange); margin-top: 15px;">
-          Conocé nuestras opciones y también podés empezar a generar tu presupuesto.
-        </p>
-        <p class="menu-header-note" style="font-size: 0.85rem; color: var(--charcoal-muted); margin-top: 5px;">
-          * Aclaración: En los presupuestos finales se incluye únicamente lo que tenga cantidad marcada en el contrato.
-        </p>
-      </div>
-
-      <!-- Tab Buttons -->
-      <div class="menu-tabs reveal delay-1">
-        <button class="menu-tab-btn active" data-menu="recepcion">1. Recepción</button>
-        <button class="menu-tab-btn" data-menu="entradas">2. Entradas</button>
-        <button class="menu-tab-btn" data-menu="principales">3. Platos Principales</button>
-        <button class="menu-tab-btn" data-menu="postres">4. Postres</button>
-        <button class="menu-tab-btn" data-menu="mesadulce">5. Mesa Dulce</button>
-        <button class="menu-tab-btn" data-menu="bebidas">6. Bebidas & Barras</button>
-        <button class="menu-tab-btn" data-menu="findeevento">7. Fin del Evento</button>
-      </div>
-
-      <!-- Tab Contents -->
-      <div class="menu-content-container reveal delay-2">
-        
-        <!-- Recepción Content -->
-        <div class="menu-tab-content active" id="menu-recepcion">
-          <div class="menu-category-grid" id="grid-recepcion">
-            <!-- Carga dinámica -->
-          </div>
-        </div>
-
-        <!-- Entradas Content -->
-        <div class="menu-tab-content" id="menu-entradas">
-          <div class="menu-category-grid" id="grid-entradas">
-            <!-- Carga dinámica -->
-          </div>
-        </div>
-
-        <!-- Platos Principales Content -->
-        <div class="menu-tab-content" id="menu-principales">
-          <p class="menu-tab-info-text">* Las primeras 6 opciones tienen el mismo valor y son bajo modalidad <strong>Diente Libre</strong>.</p>
-          <div class="menu-category-grid" id="grid-principales">
-            <!-- Carga dinámica -->
-          </div>
-        </div>
-
-        <!-- Postres Content -->
-        <div class="menu-tab-content" id="menu-postres">
-          <div class="menu-category-grid" id="grid-postres">
-            <!-- Carga dinámica -->
-          </div>
-        </div>
-
-        <!-- Mesa Dulce Content -->
-        <div class="menu-tab-content" id="menu-mesadulce">
-          <div class="menu-category-grid" id="grid-mesadulce">
-            <!-- Carga dinámica -->
-          </div>
-        </div>
-
-        <!-- Bebidas y Barras Content -->
-        <div class="menu-tab-content" id="menu-bebidas">
-          <div class="menu-category-grid" id="grid-bebidas">
-            <!-- Carga dinámica -->
-          </div>
-        </div>
-
-        <!-- Fin del Evento Content -->
-        <div class="menu-tab-content" id="menu-findeevento">
-          <p class="menu-tab-info-text">* Opciones especiales para el cierre del evento de madrugada (Trasnoche).</p>
-          <div class="menu-category-grid" id="grid-findeevento">
-            <!-- Carga dinámica -->
-          </div>
-        </div>
-
       </div>
     </div>
   </section>

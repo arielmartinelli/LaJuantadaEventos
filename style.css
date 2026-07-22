@@ -306,7 +306,6 @@ button {
   background-image: url('assets/hero_bg.png');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
   color: var(--bg-white);
   padding-top: 80px;
 }
@@ -2959,5 +2958,17 @@ button {
   gap: 8px;
   box-shadow: 0 4px 12px rgba(255, 140, 0, 0.25);
   animation: pulse 2s infinite;
+}
+
+/* Cotizador más ancho y despejado en computadoras de escritorio */
+@media (min-width: 1200px) {
+  #calculadora .container {
+    max-width: 1420px;
+    width: 95%;
+  }
+  #calculadora .calc-main-grid {
+    grid-template-columns: 2.3fr 1fr !important;
+    gap: 35px !important;
+  }
 }
 

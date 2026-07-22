@@ -1548,15 +1548,9 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
         </div>
 
         <!-- Resumen Financiero -->
-        <div style="background-color: #1d1715; color: #ffffff; border-radius: 8px; padding: 25px; margin-bottom: 35px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 25px rgba(29, 23, 21, 0.15);">
-          <div>
-            <p style="margin: 0; font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Presupuesto Estimado</p>
-            <h2 style="margin: 5px 0 0 0; color: #e05326; font-size: 24px; font-weight: 800; font-family: 'Outfit', sans-serif;">POR PERSONA: ${formatCurrency(results.perPerson)}</h2>
-          </div>
-          <div style="text-align: right;">
-            <p style="margin: 0; font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Valor Total Estimado</p>
-            <h2 style="margin: 5px 0 0 0; color: #ffffff; font-size: 24px; font-weight: 800; font-family: 'Outfit', sans-serif;">${formatCurrency(results.grandTotal)}</h2>
-          </div>
+        <div style="background-color: #1d1715; color: #ffffff; border-radius: 8px; padding: 22px; margin-bottom: 35px; text-align: center; box-shadow: 0 10px 25px rgba(29, 23, 21, 0.15);">
+          <p style="margin: 0; font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Presupuesto Estimado Por Persona</p>
+          <h2 style="margin: 5px 0 0 0; color: #e05326; font-size: 26px; font-weight: 800; font-family: 'Outfit', sans-serif;">ESTIMADO POR PERSONA: ${formatCurrency(results.perPerson)}</h2>
         </div>
 
         <!-- Nota / Terminos -->
@@ -1581,25 +1575,23 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
 
       // Generar PDF usando html2pdf
       const element = document.createElement('div');
-      element.style.position = 'fixed';
-      element.style.left = '0';
+      element.style.position = 'absolute';
+      element.style.left = '-9999px';
       element.style.top = '0';
-      element.style.width = '800px';
+      element.style.width = '750px';
       element.style.background = '#ffffff';
-      element.style.zIndex = '-9999';
       element.innerHTML = optHtml;
       document.body.appendChild(element);
 
+      const clientCleanName = (results.clientName || 'cliente').toLowerCase().replace(/[^a-z0-9]/g, '_');
       const opt = {
         margin:       10,
-        filename:     `la_juntada_presupuesto_${results.menuName.toLowerCase().replace(/\s+/g, '_')}.pdf`,
+        filename:     `la_juntada_presupuesto_${clientCleanName}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { 
           scale: 2, 
           letterRendering: true,
           logging: false,
-          scrollX: 0,
-          scrollY: 0,
           useCORS: true
         },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -1608,11 +1600,11 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
       // Esperar a que el DOM se dibuje antes de capturar el canvas
       setTimeout(() => {
         html2pdf().from(element).set(opt).save().then(() => {
-          document.body.removeChild(element);
+          if (document.body.contains(element)) document.body.removeChild(element);
         }).catch(err => {
           console.error("Error al generar PDF:", err);
           alert("Ocurrió un error al generar el PDF: " + err.message);
-          document.body.removeChild(element);
+          if (document.body.contains(element)) document.body.removeChild(element);
         });
       }, 300);
     } catch (e) {
