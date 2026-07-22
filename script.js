@@ -907,27 +907,29 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedMenuName = 'Ningún menú seleccionado';
 
     if (hasSelectedMainDish) {
-      // 1. Sumar los platos seleccionados desde el menú dinámico
+      // 1. Recorrer los platos seleccionados desde el menú dinámico
       selectedMenuItems.forEach(key => {
         const srv = activeServices.find(s => s.key === key);
         if (srv) {
           const cost = parseFloat(srv.price) || 0;
-          const totalCost = cost * guestCount;
           
           if (srv.category === 'principales') {
-            basePricePerPerson += cost;
+            basePricePerPerson = cost;
             selectedMenuName = srv.name;
+            dynamicHtml += `
+              <div class="summary-item">
+                <span>• ${srv.name}:</span>
+                <strong>${formatCurrency(cost)} x pers.</strong>
+              </div>`;
           } else {
-            menuItemsTotal += totalCost;
+            dynamicHtml += `
+              <div class="summary-item">
+                <span>+ ${srv.name}:</span>
+                <strong style="color: var(--primary-orange); font-size: 0.85rem;">A cotizar</strong>
+              </div>`;
           }
           
           selectedMenuOptionsList.push(srv.name);
-          
-          dynamicHtml += `
-            <div class="summary-item">
-              <span>+ ${srv.name}:</span>
-              <strong>${formatCurrency(totalCost)}</strong>
-            </div>`;
         }
       });
     } else {
@@ -980,9 +982,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (dynamicSummaryItems) dynamicSummaryItems.innerHTML = dynamicHtml;
     
-    // Si no hay plato principal seleccionado, el estimado es $0
-    const grandTotal = hasSelectedMainDish ? ((basePricePerPerson * guestCount) + menuItemsTotal) : 0;
-    const pricePerPerson = hasSelectedMainDish ? (grandTotal / guestCount) : 0;
+    // El precio por persona estimado es EXCLUSIVAMENTE la tarifa por persona del plato principal seleccionado
+    const pricePerPerson = hasSelectedMainDish ? basePricePerPerson : 0;
+    const grandTotal = pricePerPerson * guestCount;
     
     if (calcTotal) calcTotal.textContent = formatCurrency(grandTotal);
     
