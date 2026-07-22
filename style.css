@@ -2972,3 +2972,122 @@ button {
   }
 }
 
+/* ==========================================================================
+   Mejoras de Adaptabilidad y UX en Móviles (Smartphones & Tablets)
+   ========================================================================== */
+
+/* Pestañas del Cotizador con Scroll Horizontal Suave en Celulares */
+.calc-tabs-header {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.calc-tabs-header::-webkit-scrollbar {
+  display: none;
+}
+.calc-tab-btn {
+  flex-shrink: 0;
+  padding: 10px 16px;
+  font-size: 0.88rem;
+}
+
+@media (max-width: 768px) {
+  /* Contenedor principal del Cotizador en móviles */
+  #calculadora .calc-main-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  /* Botones de Selección Rápida de Personas en 4 Columnas perfectas */
+  .quick-pax-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  .quick-pax-btn {
+    width: 100%;
+    text-align: center;
+    padding: 8px 4px;
+    font-size: 0.8rem;
+  }
+
+  /* Tarjetas de Selección de Salón en 1 columna amplia */
+  .salon-options-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Menú de Tiempos interno dentro del Cotizador */
+  #calc-menu-tiempos-container {
+    max-height: 480px;
+    padding-right: 4px;
+  }
+  
+  /* Modal de Datos del Cliente adaptable a teclados virtuales */
+  #modal-client-data .modal-content {
+    width: 92%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+
+  /* Hero Section: Botones y títulos optimizados */
+  .hero-buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .hero-buttons .btn-primary, 
+  .hero-buttons .btn-secondary {
+    width: 100%;
+    justify-content: center;
+    padding: 14px;
+  }
+
+  /* Tarjeta Sidebar del Cotizador */
+  .sticky-sidebar-card {
+    position: relative;
+    top: 0;
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Botones de Enviar WhatsApp y PDF en móviles */
+  .btn-whatsapp-send,
+  #btn-calc-pdf {
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 0.95rem;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .calculator-section {
+    padding: 25px 0;
+  }
+  .calc-form {
+    padding: 16px 12px;
+  }
+  .calc-header h2 {
+    font-size: 1.2rem;
+  }
+  .gauge-legend-grid {
+    gap: 8px;
+    font-size: 0.78rem;
+  }
+  .total-price {
+    font-size: 1.6rem;
+  }
+}
+
