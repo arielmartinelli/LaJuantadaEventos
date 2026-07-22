@@ -847,14 +847,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const calcClientNameInput = document.getElementById('calc-client-name');
   const calcEventDateInput = document.getElementById('calc-event-date');
   const calcSalonSelect = document.getElementById('calc-salon-select');
-  const calcDayBadge = document.getElementById('calc-day-badge');
+  // Modal Popup & Gestor de Acciones
+  const modalClientData = document.getElementById('modal-client-data');
+  const formModalData = document.getElementById('form-modal-data');
+  const modalClientName = document.getElementById('modal-client-name');
+  const modalEventDate = document.getElementById('modal-event-date');
+  const btnCloseModal = document.getElementById('btn-close-modal');
+  const modalSubmitText = document.getElementById('modal-submit-text');
 
-  function calculateBudget() {
+  let pendingAction = null; // 'whatsapp' | 'pdf'
+
+  function updateSalonPriceDisplays() {
+    const norteWkday = document.getElementById('norte-price-weekday');
+    const norteWkend = document.getElementById('norte-price-weekend');
+    const centroWkday = document.getElementById('centro-price-weekday');
+    const centroWkend = document.getElementById('centro-price-weekend');
+
+    if (norteWkday) norteWkday.textContent = formatCurrency(parseFloat(activeConfigs.salon_norte_price_weekday) || 150000);
+    if (norteWkend) norteWkend.textContent = formatCurrency(parseFloat(activeConfigs.salon_norte_price_weekend) || 250000);
+    if (centroWkday) centroWkday.textContent = formatCurrency(parseFloat(activeConfigs.salon_centro_price_weekday) || 120000);
+    if (centroWkend) centroWkend.textContent = formatCurrency(parseFloat(activeConfigs.salon_centro_price_weekend) || 200000);
+  }
+
+  function calculateBudget(clientNameOverride = '', dateValOverride = '') {
     if (!guestCountInput) return;
 
     const guestCount = parseInt(guestCountInput.value) || 80;
     
-    // Actualizar campo de invitados numérico y burbuja
+    // Actualizar campo de invitados numérico
     if (guestCountVal) guestCountVal.textContent = guestCount;
     if (guestCountNumBox && document.activeElement !== guestCountNumBox) {
       guestCountNumBox.value = guestCount;
@@ -869,12 +889,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Detectar día de la semana según la fecha ingresada
+    // Detectar día de la semana para cálculo interno de salón
     let isWeekend = false;
     let formattedDate = '';
+    const dateVal = dateValOverride || (modalEventDate ? modalEventDate.value : '');
 
-    if (calcEventDateInput && calcEventDateInput.value) {
-      const dateParts = calcEventDateInput.value.split('-');
+    if (dateVal) {
+      const dateParts = dateVal.split('-');
       if (dateParts.length === 3) {
         const year = parseInt(dateParts[0]);
         const month = parseInt(dateParts[1]) - 1;
@@ -884,20 +905,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         isWeekend = (dayOfWeek === 0 || dayOfWeek === 5 || dayOfWeek === 6);
         formattedDate = `${day.toString().padStart(2, '0')}/${(month + 1).toString().padStart(2, '0')}/${year}`;
-
-        if (calcDayBadge) {
-          calcDayBadge.style.display = 'inline-block';
-          if (isWeekend) {
-            calcDayBadge.style.color = '#2e7d32';
-            calcDayBadge.textContent = '🎉 Viernes a Domingo (Tarifa Fin de Semana)';
-          } else {
-            calcDayBadge.style.color = '#e05326';
-            calcDayBadge.textContent = '📅 Lunes a Jueves (Tarifa Día Hábil)';
-          }
-        }
       }
-    } else {
-      if (calcDayBadge) calcDayBadge.style.display = 'none';
     }
 
     // Calcular costo del salón seleccionado
@@ -944,10 +952,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mostrar Salón en el resumen si corresponde
     if (salonCost > 0) {
-      const dayLabel = isWeekend ? 'Fin de Semana' : 'Lunes a Jueves';
       dynamicHtml += `
         <div class="summary-item" style="border-top: 1px dashed var(--border-light); padding-top: 8px; margin-top: 8px;">
-          <span>+ ${salonName} (${dayLabel}):</span>
+          <span>+ ${salonName}:</span>
           <strong style="color: var(--primary-orange);">${formatCurrency(salonCost)}</strong>
         </div>`;
     }
@@ -1008,11 +1015,13 @@ document.addEventListener('DOMContentLoaded', () => {
       calcPerPerson.textContent = formatCurrency(pricePerPerson);
     }
 
+    // Actualizar badges de precios en la sección salones
+    updateSalonPriceDisplays();
+
     return {
-      clientName: calcClientNameInput ? calcClientNameInput.value.trim() : '',
+      clientName: clientNameOverride || (modalClientName ? modalClientName.value.trim() : ''),
       eventDate: formattedDate,
-      rawDate: calcEventDateInput ? calcEventDateInput.value : '',
-      isWeekend,
+      rawDate: dateVal,
       salonName,
       salonCost,
       guestCount,
@@ -1024,37 +1033,56 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  function validateCotizadorInputs() {
-    let isValid = true;
-    if (calcClientNameInput && !calcClientNameInput.value.trim()) {
-      calcClientNameInput.style.borderColor = '#e05326';
-      calcClientNameInput.focus();
-      isValid = false;
-    } else if (calcClientNameInput) {
-      calcClientNameInput.style.borderColor = 'var(--border-light)';
+  // Abrir/Cerrar Modal de Confirmación
+  function openClientModal(action) {
+    pendingAction = action;
+    if (modalSubmitText) {
+      modalSubmitText.textContent = action === 'whatsapp' ? 'Confirmar y Enviar a WhatsApp' : 'Confirmar y Descargar PDF';
     }
-
-    if (calcEventDateInput && !calcEventDateInput.value) {
-      calcEventDateInput.style.borderColor = '#e05326';
-      if (isValid) calcEventDateInput.focus();
-      isValid = false;
-    } else if (calcEventDateInput) {
-      calcEventDateInput.style.borderColor = 'var(--border-light)';
+    if (modalClientData) {
+      modalClientData.style.display = 'flex';
     }
+    if (modalClientName) modalClientName.focus();
+  }
 
-    if (!isValid) {
-      alert('⚠️ Por favor, completá tu Nombre y la Fecha del Evento para poder generar el presupuesto.');
-    }
+  function closeClientModal() {
+    if (modalClientData) modalClientData.style.display = 'none';
+  }
 
-    return isValid;
+  if (btnCloseModal) btnCloseModal.addEventListener('click', closeClientModal);
+  if (modalClientData) {
+    modalClientData.addEventListener('click', (e) => {
+      if (e.target === modalClientData) closeClientModal();
+    });
+  }
+
+  // Submit Handler del Modal
+  if (formModalData) {
+    formModalData.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const clientName = modalClientName ? modalClientName.value.trim() : '';
+      const rawDate = modalEventDate ? modalEventDate.value : '';
+
+      if (!clientName || !rawDate) {
+        alert('Por favor completá tu Nombre y la Fecha del Evento.');
+        return;
+      }
+
+      closeClientModal();
+
+      if (pendingAction === 'whatsapp') {
+        executeWhatsAppSend(clientName, rawDate);
+      } else if (pendingAction === 'pdf') {
+        executePDFDownload(clientName, rawDate);
+      }
+    });
   }
 
   // Listeners de cambio para la calculadora
-  if (calcEventDateInput) calcEventDateInput.addEventListener('change', calculateBudget);
-  if (calcSalonSelect) calcSalonSelect.addEventListener('change', calculateBudget);
+  if (calcSalonSelect) calcSalonSelect.addEventListener('change', () => calculateBudget());
   if (eventTypeSelect && guestCountInput) {
-    eventTypeSelect.addEventListener('change', calculateBudget);
-    guestCountInput.addEventListener('input', calculateBudget);
+    eventTypeSelect.addEventListener('change', () => calculateBudget());
+    guestCountInput.addEventListener('input', () => calculateBudget());
   }
   if (guestCountNumBox && guestCountInput) {
     guestCountNumBox.addEventListener('input', () => {
@@ -1073,42 +1101,54 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   if (srvLivingQtySelect) {
-    srvLivingQtySelect.addEventListener('change', calculateBudget);
+    srvLivingQtySelect.addEventListener('change', () => calculateBudget());
   }
 
-  // Botón enviar cotización a WhatsApp
+  // Botón abrir modal para enviar a WhatsApp
   if (btnCalcWhatsApp) {
     btnCalcWhatsApp.addEventListener('click', () => {
-      if (!validateCotizadorInputs()) return;
+      openClientModal('whatsapp');
+    });
+  }
 
-      const results = calculateBudget();
-      if (!results) return;
-      
-      let menuItemsText = '';
-      if (results.menuItems.length > 0) {
-        results.menuItems.forEach(item => {
-          menuItemsText += `\n  • ${item}`;
-        });
-      } else {
-        menuItemsText = '\n  • Ninguno (Menú a definir)';
-      }
+  // Botón abrir modal para descargar PDF
+  const btnCalcPDF = document.getElementById('btn-calc-pdf');
+  if (btnCalcPDF) {
+    btnCalcPDF.addEventListener('click', () => {
+      openClientModal('pdf');
+    });
+  }
 
-      let addonsText = '';
-      if (results.addons.length > 0) {
-        results.addons.forEach(item => {
-          addonsText += `\n  • ${item}`;
-        });
-      } else {
-        addonsText = '\n  • Ninguno';
-      }
+  // Ejecución de envío a WhatsApp con los datos confirmados
+  function executeWhatsAppSend(clientName, rawDate) {
+    const results = calculateBudget(clientName, rawDate);
+    if (!results) return;
+    
+    let menuItemsText = '';
+    if (results.menuItems.length > 0) {
+      results.menuItems.forEach(item => {
+        menuItemsText += `\n  • ${item}`;
+      });
+    } else {
+      menuItemsText = '\n  • Ninguno (Menú a definir)';
+    }
 
-      const warningText = results.guestCount < 50 ? '\n⚠️ *Nota:* La cantidad de invitados es menor al mínimo de 50 requerido para contratos generales.' : '';
+    let addonsText = '';
+    if (results.addons.length > 0) {
+      results.addons.forEach(item => {
+        addonsText += `\n  • ${item}`;
+      });
+    } else {
+      addonsText = '\n  • Ninguno';
+    }
 
-      const waMessage = `¡Hola La Juntada! Mi nombre es *${results.clientName}* y realicé una cotización estimada en su sitio web para la fecha *${results.eventDate}*.
+    const warningText = results.guestCount < 50 ? '\n⚠️ *Nota:* La cantidad de invitados es menor al mínimo de 50 requerido para contratos generales.' : '';
+
+    const waMessage = `¡Hola La Juntada! Mi nombre es *${results.clientName}* y me interesa solicitar una cotización para el día *${results.eventDate}*.
 
 📌 *Datos de la Solicitud:*
 - *Cliente:* ${results.clientName}
-- *Fecha del Evento:* ${results.eventDate} (${results.isWeekend ? 'Fin de Semana' : 'Día Hábil'})
+- *Fecha del Evento:* ${results.eventDate}
 - *Salón Elegido:* ${results.salonName}
 - *Invitados:* ${results.guestCount} personas ${warningText}
 
@@ -1117,28 +1157,19 @@ document.addEventListener('DOMContentLoaded', () => {
 ✨ *Servicios Opcionales:*${addonsText}
 
 💰 *Estimado Por Persona (Gastronomía):* ${formatCurrency(results.perPerson)} x pers.
-${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(results.salonCost)}\n` : ''}💵 *Total Estimado:* ${formatCurrency(results.grandTotal)}
+${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(results.salonCost)}\n` : ''}💵 *Total Estimado del Evento:* ${formatCurrency(results.grandTotal)}
 
 ¿Podrían confirmarme disponibilidad para esta fecha y coordinar los detalles? ¡Muchas gracias!`;
 
-      // Enviar a WhatsApp
-      const cleanPhone = activeConfigs.contact_phone1.replace(/\s+/g, '');
-      const waUrl = `https://wa.me/549${cleanPhone}?text=${encodeURIComponent(waMessage)}`;
-      window.open(waUrl, '_blank', 'noopener,noreferrer');
-    });
+    // Enviar a WhatsApp
+    const cleanPhone = activeConfigs.contact_phone1.replace(/\s+/g, '');
+    const waUrl = `https://wa.me/549${cleanPhone}?text=${encodeURIComponent(waMessage)}`;
+    window.open(waUrl, '_blank', 'noopener,noreferrer');
   }
 
-  // Botón descargar PDF
-  const btnCalcPDF = document.getElementById('btn-calc-pdf');
-  if (btnCalcPDF) {
-    btnCalcPDF.addEventListener('click', downloadBudgetPDF);
-  }
-
-  // Generación y descarga de PDF con formato estético corporativo
-  function downloadBudgetPDF() {
-    if (!validateCotizadorInputs()) return;
-
-    const results = calculateBudget();
+  // Ejecución de descarga de PDF con datos confirmados
+  function executePDFDownload(clientName, rawDate) {
+    const results = calculateBudget(clientName, rawDate);
     if (!results) return;
 
     // Obtener la fecha de hoy
