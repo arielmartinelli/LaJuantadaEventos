@@ -247,119 +247,8 @@
     </div>
   </section>
 
-  <!-- Budget Calculator Section -->
-  <section class="calculator-section" id="calculadora">
-    <div class="container">
-      <div class="calculator-card reveal-scale">
-        <div class="calc-header">
-          <i class="fa-solid fa-calculator calc-main-icon"></i>
-          <h2>Cotizador de Eventos Online</h2>
-          <p>Calculá al instante una estimación del costo de tu catering y servicios adicionales en pesos.</p>
-        </div>
-        
-        <form id="budget-form" class="calc-form">
-          <div class="calc-grid">
-            <!-- Col Left: Configuration -->
-            <div class="calc-settings">
-              <!-- Menú Base seleccionado en carta (Input oculto de respaldo) -->
-              <input type="hidden" id="event-type" data-base="25000" value="diente-libre">
-
-              <!-- Seleccionar Salón -->
-              <div class="form-group" style="margin-bottom: 20px;">
-                <label for="calc-salon-select"><i class="fa-solid fa-building text-orange"></i> Salón de Eventos (Opcional)</label>
-                <select id="calc-salon-select" class="form-control" style="width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 0.9rem; font-weight: 700; color: var(--charcoal);">
-                  <option value="none" selected>Sin Salón (Solo Servicio de Catering / Evento en Quinta Propia)</option>
-                  <option value="norte">Salón La Juntada Norte (Villa Allende - Hasta 200 pax)</option>
-                  <option value="centro">Salón La Juntada Centro (Alta Córdoba - Hasta 120 pax)</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <div class="label-with-value" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
-                  <label for="guest-count"><i class="fa-solid fa-users text-orange"></i> Cantidad de Invitados</label>
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <input type="number" id="guest-count-input" class="guest-num-box" min="15" max="500" value="80" style="width: 80px; text-align: center; font-weight: 800; font-size: 1.05rem; color: var(--primary-orange); border: 2px solid var(--primary-orange); border-radius: 12px; padding: 4px 8px; background: #ffffff; outline: none;">
-                    <span style="font-size: 0.85rem; font-weight: 700; color: var(--charcoal-muted);">pers.</span>
-                  </div>
-                </div>
-                <input type="range" id="guest-count" class="form-range" min="15" max="300" step="5" value="80">
-                <div id="min-guests-warning" class="min-warning-msg" style="display: none; color: var(--primary-orange); font-size: 0.85rem; font-weight: 700; margin-top: 5px;">
-                  <i class="fa-solid fa-triangle-exclamation"></i> Mínimo 50 invitados requerido (En diciembre de Viernes a Domingos mínimo 100).
-                </div>
-                <div class="range-limits">
-                  <span>15 pers.</span>
-                  <span>300 pers.</span>
-                </div>
-              </div>
-
-              <!-- Mensaje informativo de personalización -->
-              <div id="cotizador-lock-notice" style="background: rgba(224, 83, 38, 0.05); border: 1px solid rgba(224, 83, 38, 0.2); border-radius: 12px; padding: 10px 14px; margin-bottom: 20px; color: var(--charcoal); font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 10px;">
-                <i class="fa-solid fa-sliders" style="color: var(--primary-orange); font-size: 1.1rem; flex-shrink: 0;"></i>
-                <span>Personalizá libremente tu menú en "Nuestra Carta" arriba y sumá los servicios opcionales que desees.</span>
-              </div>
-
-              <div class="form-group">
-                <label><i class="fa-solid fa-circle-plus text-orange"></i> Servicios Opcionales</label>
-                
-                <div class="checkbox-options-grid" id="calc-addons-container">
-                  <!-- Carga dinámica -->
-                </div>
-              </div>
-
-              <!-- Juegos de Living selector -->
-              <div class="form-group">
-                <label for="srv-living-qty"><i class="fa-solid fa-couch text-orange"></i> Juegos de Living (butacón para 10 personas)</label>
-                <select id="srv-living-qty" class="form-control" data-cost="18000">
-                  <option value="0" selected>Ninguno ($18.000 c/u)</option>
-                  <option value="1">1 Juego de Living (+$18.000)</option>
-                  <option value="2">2 Juegos de Living (+$36.000)</option>
-                  <option value="3">3 Juegos de Living (+$54.000)</option>
-                  <option value="4">4 Juegos de Living (+$72.000)</option>
-                  <option value="5">5 Juegos de Living (+$90.000)</option>
-                  <option value="6">6 Juegos de Living (+$108.000)</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Col Right: Live Results -->
-            <div class="calc-results">
-              <div class="results-inner">
-                <h3>Resumen de la Cotización</h3>
-                <div class="summary-details" id="summary-details">
-                  <!-- Dynamic items inserted by JS -->
-                  <div id="dynamic-summary-items"></div>
-                </div>
-
-                <div class="summary-divider"></div>
-
-                <div class="total-display" style="display: flex; flex-direction: column; gap: 8px;">
-                  <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(224, 83, 38, 0.08); padding: 15px 20px; border-radius: 16px; border: 1px dashed var(--primary-orange);">
-                    <span style="font-size: 1rem; font-weight: 700; color: var(--charcoal);">Estimado por Persona:</span>
-                    <strong style="font-size: 1.6rem; color: var(--primary-orange);" id="calc-per-person">$25.000</strong>
-                  </div>
-                  <!-- Total del Evento oculto -->
-                  <span id="calc-total" style="display: none;">$0</span>
-                  <p class="vat-disclaimer" style="margin-top: 5px;">* Financiación disponible. 10% de descuento abonando de contado efectivo.</p>
-                </div>
-
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-                  <button type="button" class="btn-whatsapp-send" id="btn-calc-whatsapp" style="margin-top: 0; width: 100%;">
-                    <i class="fa-brands fa-whatsapp"></i> Enviar Cotización a WhatsApp
-                  </button>
-                  <button type="button" class="btn-primary" id="btn-calc-pdf" style="background-color: var(--charcoal); display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; border-radius: 50px; padding: 14px 20px; font-weight: 700; color: white; border: none; cursor: pointer;">
-                    <i class="fa-solid fa-file-pdf"></i> Descargar Cotización (PDF)
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </section>
-
   <!-- Salones Section Intro -->
-  <section class="salones-section-intro" style="padding: 80px 0; background-color: var(--bg-white); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);">
+  <section class="salones-section-intro" id="salones" style="padding: 80px 0; background-color: var(--bg-white); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);">
     <div class="container">
       <div class="section-header reveal">
         <span class="sub-header">Salones de Eventos</span>
@@ -404,21 +293,254 @@
     </div>
   </section>
 
-  <!-- Opciones de Alquiler Opcionales Section (Debajo del Cotizador) -->
-  <section class="rental-section" id="alquiler" style="padding: 80px 0; background-color: var(--bg-light); border-top: 1px solid var(--border-light);">
+  <!-- Budget Calculator Section (Ubicado después de Salones) -->
+  <section class="calculator-section" id="calculadora" style="padding: 80px 0; background-color: var(--bg-light);">
     <div class="container">
       <div class="section-header reveal">
-        <span class="sub-header">Servicios Opcionales</span>
-        <h2 class="section-title">Equipamiento y Alquileres Opcionales</h2>
+        <span class="sub-header">Presupuesto Inteligente</span>
+        <h2 class="section-title">Cotizador de Menú y Eventos Online</h2>
         <p style="text-align: center; color: var(--charcoal-light); max-width: 750px; margin: 12px auto 0; font-size: 1.05rem; line-height: 1.6;">
-          Podés sumar estas opciones de equipamiento a tu cotización (se agregarán a tu presupuesto a consultar, sin sumar costo fijo en la estimación inicial) o realizar una consulta directa por WhatsApp.
+          Configurá la cantidad de invitados, la locación y los platos de tu menú por tiempos para obtener tu presupuesto estimado en vivo.
         </p>
         <div class="divider"></div>
       </div>
 
-      <div class="optional-rentals-grid" id="optional-rentals-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px;">
-        <!-- Carga dinámica por JS -->
+      <!-- B. Medidor Visual de Distribución del Presupuesto (Gauge Bar) -->
+      <div class="gauge-bar-card reveal-scale">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <h4 style="margin: 0; font-size: 1rem; font-weight: 800; color: var(--charcoal);">
+            <i class="fa-solid fa-chart-pie text-orange"></i> Distribución Visual del Presupuesto
+          </h4>
+          <span style="font-size: 0.85rem; color: var(--charcoal-light); font-weight: 600;">Cálculo dinámico en tiempo real</span>
+        </div>
+
+        <div class="gauge-bar-track">
+          <div class="gauge-segment gauge-segment-salon" id="gauge-seg-salon" style="width: 0%;" title="Salón"></div>
+          <div class="gauge-segment gauge-segment-gastro" id="gauge-seg-gastro" style="width: 100%;" title="Gastronomía"></div>
+          <div class="gauge-segment gauge-segment-addons" id="gauge-seg-addons" style="width: 0%;" title="Servicios"></div>
+        </div>
+
+        <div class="gauge-legend-grid">
+          <div class="gauge-legend-item">
+            <span class="gauge-dot" style="background-color: #2b6cb0;"></span>
+            <span>🏛️ Salón / Locación: <strong id="gauge-pct-salon">0%</strong></span>
+          </div>
+          <div class="gauge-legend-item">
+            <span class="gauge-dot" style="background-color: var(--primary-orange);"></span>
+            <span>🍽️ Gastronomía & Menú: <strong id="gauge-pct-gastro">100%</strong></span>
+          </div>
+          <div class="gauge-legend-item">
+            <span class="gauge-dot" style="background-color: #2e7d32;"></span>
+            <span>✨ Servicios Opcionales: <strong id="gauge-pct-addons">0%</strong></span>
+          </div>
+        </div>
       </div>
+
+      <!-- C. Cuerpo Principal Grid (Pestañas Izquierda + Sidebar Sticky Derecha) -->
+      <form id="budget-form" class="calc-form">
+        <!-- Menú Base oculto de respaldo -->
+        <input type="hidden" id="event-type" data-base="25000" value="diente-libre">
+        <select id="calc-salon-select" style="display: none;">
+          <option value="none" selected>Sin Salón</option>
+          <option value="norte">Salón Norte</option>
+          <option value="centro">Salón Centro</option>
+        </select>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; align-items: start;" class="calc-main-grid">
+          
+          <!-- Columna Izquierda: Configurador por Pestañas -->
+          <div class="calc-workspace">
+            
+            <!-- Navegador de Pestañas -->
+            <div class="calc-tabs-header">
+              <button type="button" class="calc-tab-btn active" data-tab="tab-pax-salon">
+                <i class="fa-solid fa-users"></i> <span>1. Invitados & Salón</span>
+              </button>
+              <button type="button" class="calc-tab-btn" data-tab="tab-menu-tiempos">
+                <i class="fa-solid fa-utensils"></i> <span>2. Menú por Tiempos</span>
+              </button>
+              <button type="button" class="calc-tab-btn" data-tab="tab-servicios-opc">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> <span>3. Servicios Opcionales</span>
+              </button>
+            </div>
+
+            <!-- Pestaña 1: 🏛️ Invitados & Salón -->
+            <div class="calc-tab-pane active" id="tab-pax-salon">
+              <div style="background: white; padding: 25px; border-radius: 20px; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); margin-bottom: 25px;">
+                <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--charcoal); margin-bottom: 15px;">
+                  <i class="fa-solid fa-users text-orange"></i> Cantidad de Invitados
+                </h3>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 12px;">
+                  <span style="font-size: 0.95rem; font-weight: 700; color: var(--charcoal-light);">Indicá el número estimado de personas:</span>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <input type="number" id="guest-count-input" class="guest-num-box" min="15" max="500" value="80" style="width: 95px; text-align: center; font-weight: 800; font-size: 1.1rem; color: var(--primary-orange); border: 2px solid var(--primary-orange); border-radius: 12px; padding: 6px 10px; background: #ffffff; outline: none;">
+                    <span style="font-size: 0.9rem; font-weight: 700; color: var(--charcoal-muted);">invitados</span>
+                  </div>
+                </div>
+
+                <input type="range" id="guest-count" class="form-range" min="15" max="300" step="5" value="80">
+                <div id="min-guests-warning" class="min-warning-msg" style="display: none; color: var(--primary-orange); font-size: 0.85rem; font-weight: 700; margin-top: 6px;">
+                  <i class="fa-solid fa-triangle-exclamation"></i> Mínimo 50 invitados requerido para reservas de fin de semana.
+                </div>
+
+                <!-- Botones de acceso rápido pax -->
+                <div class="quick-pax-container">
+                  <span style="font-size: 0.82rem; font-weight: 700; color: var(--charcoal-muted); display: flex; align-items: center;">Accesos rápidos:</span>
+                  <button type="button" class="quick-pax-btn" data-pax="50">50 pers.</button>
+                  <button type="button" class="quick-pax-btn active" data-pax="80">80 pers.</button>
+                  <button type="button" class="quick-pax-btn" data-pax="100">100 pers.</button>
+                  <button type="button" class="quick-pax-btn" data-pax="150">150 pers.</button>
+                </div>
+              </div>
+
+              <!-- Tarjetas Seleccionables de Salón / Locación -->
+              <div style="background: white; padding: 25px; border-radius: 20px; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm);">
+                <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--charcoal); margin-bottom: 8px;">
+                  <i class="fa-solid fa-building text-orange"></i> Selección de Locación o Salón
+                </h3>
+                <p style="font-size: 0.9rem; color: var(--charcoal-light); margin-bottom: 18px;">Elegí dónde se realizará tu festejo. Los precios por día del salón se actualizarán en tu cotización.</p>
+
+                <div class="salon-options-grid">
+                  <!-- Opción 1: Catering a Domicilio -->
+                  <div class="salon-opt-card selected" data-salon-opt="none">
+                    <span class="salon-opt-badge"><i class="fa-solid fa-check"></i> Seleccionado</span>
+                    <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--charcoal); margin: 0 0 6px;">Opción 1: Catering a Domicilio</h4>
+                    <p style="font-size: 0.83rem; color: var(--charcoal-light); margin: 0; line-height: 1.4;">Servicio completo en tu casa, quinta o salón propio.</p>
+                    <div style="margin-top: 12px; font-weight: 800; font-size: 0.95rem; color: var(--primary-orange);">$0 (Sin costo de salón)</div>
+                  </div>
+
+                  <!-- Opción 2: Salón La Juntada Norte -->
+                  <div class="salon-opt-card" data-salon-opt="norte">
+                    <span class="salon-opt-badge"><i class="fa-solid fa-check"></i> Seleccionado</span>
+                    <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--charcoal); margin: 0 0 6px;">Opción 2: Salón La Juntada Norte</h4>
+                    <p style="font-size: 0.83rem; color: var(--charcoal-light); margin: 0; line-height: 1.4;">Villa Allende (Hasta 200 personas, parque & piscina).</p>
+                    <div style="margin-top: 12px; font-size: 0.82rem; color: var(--charcoal-muted);">
+                      Lun-Jue: <strong style="color: var(--charcoal);">$150.000</strong> | Vie-Dom: <strong style="color: var(--primary-orange);">$250.000</strong>
+                    </div>
+                  </div>
+
+                  <!-- Opción 3: Salón La Juntada Centro -->
+                  <div class="salon-opt-card" data-salon-opt="centro">
+                    <span class="salon-opt-badge"><i class="fa-solid fa-check"></i> Seleccionado</span>
+                    <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--charcoal); margin: 0 0 6px;">Opción 3: Salón La Juntada Centro</h4>
+                    <p style="font-size: 0.83rem; color: var(--charcoal-light); margin: 0; line-height: 1.4;">Alta Córdoba (Hasta 120 personas, pista climatizada).</p>
+                    <div style="margin-top: 12px; font-size: 0.82rem; color: var(--charcoal-muted);">
+                      Lun-Jue: <strong style="color: var(--charcoal);">$120.000</strong> | Vie-Dom: <strong style="color: var(--primary-orange);">$200.000</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pestaña 2: 🍽️ Menú Gastronómico por Tiempos (8 Categorías) -->
+            <div class="calc-tab-pane" id="tab-menu-tiempos">
+              <div style="background: white; padding: 25px; border-radius: 20px; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+                  <div>
+                    <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--charcoal); margin: 0;">
+                      <i class="fa-solid fa-utensils text-orange"></i> Selección de Platos por Tiempos
+                    </h3>
+                    <p style="font-size: 0.88rem; color: var(--charcoal-light); margin-top: 4px;">Sumá los platos que deseas incluir en tu evento. Todos se valúan por persona.</p>
+                  </div>
+                  <a href="#menu-carta" style="font-size: 0.85rem; font-weight: 700; color: var(--primary-orange); text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                    <i class="fa-solid fa-book-open"></i> Ver fotos en Nuestra Carta
+                  </a>
+                </div>
+
+                <!-- 8 Bloques de Tiempos Gastronómicos -->
+                <div style="display: flex; flex-direction: column; gap: 15px;" id="calc-menu-tiempos-container">
+                  <!-- Carga dinámica por JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Pestaña 3: ✨ Servicios Opcionales -->
+            <div class="calc-tab-pane" id="tab-servicios-opc">
+              <div style="background: white; padding: 25px; border-radius: 20px; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm);">
+                <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--charcoal); margin-bottom: 8px;">
+                  <i class="fa-solid fa-wand-magic-sparkles text-orange"></i> Servicios & Equipamiento Opcional
+                </h3>
+                <p style="font-size: 0.88rem; color: var(--charcoal-light); margin-bottom: 20px;">Elegí los servicios adicionales para equipar tu evento.</p>
+
+                <div class="checkbox-options-grid" id="calc-addons-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px;">
+                  <!-- Carga dinámica por JS -->
+                </div>
+
+                <!-- Selector de Juegos de Living -->
+                <div style="margin-top: 25px; background: rgba(250, 246, 240, 0.7); padding: 18px; border-radius: 16px; border: 1px solid var(--border-light);">
+                  <label for="srv-living-qty" style="font-weight: 700; font-size: 0.95rem; color: var(--charcoal); display: block; margin-bottom: 8px;">
+                    <i class="fa-solid fa-couch text-orange"></i> Juegos de Living (Butacón para 10 personas)
+                  </label>
+                  <select id="srv-living-qty" class="form-control" data-cost="18000" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 0.95rem; font-weight: 700; color: var(--charcoal);">
+                    <option value="0" selected>Ninguno ($18.000 c/u)</option>
+                    <option value="1">1 Juego de Living (+$18.000)</option>
+                    <option value="2">2 Juegos de Living (+$36.000)</option>
+                    <option value="3">3 Juegos de Living (+$54.000)</option>
+                    <option value="4">4 Juegos de Living (+$72.000)</option>
+                    <option value="5">5 Juegos de Living (+$90.000)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Columna Derecha: Tarjeta Flotante Sticky Sidebar -->
+          <div class="calc-sidebar">
+            <div class="sticky-sidebar-card">
+              
+              <!-- Badge Beneficio VIP si pax >= 100 -->
+              <div id="vip-benefit-badge" class="vip-benefit-badge" style="display: none;">
+                <i class="fa-solid fa-crown" style="font-size: 1.1rem;"></i>
+                <span>¡+100 invitados incluye beneficio especial de recepción!</span>
+              </div>
+
+              <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--charcoal); margin-top: 0; margin-bottom: 15px; border-bottom: 2px solid var(--border-light); padding-bottom: 10px;">
+                <i class="fa-solid fa-receipt text-orange"></i> Resumen de Cotización
+              </h3>
+
+              <div class="summary-details" id="summary-details" style="max-height: 260px; overflow-y: auto; padding-right: 5px;">
+                <div id="dynamic-summary-items"></div>
+              </div>
+
+              <div style="height: 1px; background: var(--border-light); margin: 15px 0;"></div>
+
+              <!-- Bloque de Totales destacados -->
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                
+                <!-- Precio por Persona Destacado -->
+                <div style="background: rgba(224, 83, 38, 0.08); padding: 16px; border-radius: 16px; border: 1.5px dashed var(--primary-orange); text-align: center;">
+                  <span style="font-size: 0.85rem; font-weight: 700; color: var(--charcoal-light); text-transform: uppercase; letter-spacing: 0.5px; display: block;">Estimado Por Persona</span>
+                  <strong style="font-size: 1.9rem; color: var(--primary-orange); font-weight: 900; display: block; margin-top: 2px;" id="calc-per-person">$25.000</strong>
+                  <span style="font-size: 0.78rem; color: var(--charcoal-muted); font-weight: 600;">(Gastronomía + menú por pers.)</span>
+                </div>
+
+                <!-- Total Estimado del Evento -->
+                <div style="background: #1d1715; color: white; padding: 16px; border-radius: 16px; text-align: center;">
+                  <span style="font-size: 0.8rem; font-weight: 700; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px; display: block;">Total Estimado del Evento</span>
+                  <strong style="font-size: 1.8rem; color: #ffffff; font-weight: 900; display: block; margin-top: 2px;" id="calc-total">$2.000.000</strong>
+                </div>
+
+                <p class="vat-disclaimer" style="font-size: 0.75rem; color: var(--charcoal-muted); margin: 0; text-align: center;">* 10% de descuento abonando de contado efectivo. Financiación disponible.</p>
+              </div>
+
+              <!-- Botones de Acción -->
+              <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 18px;">
+                <button type="button" class="btn-whatsapp-send" id="btn-calc-whatsapp" style="width: 100%; padding: 14px 18px; border-radius: 50px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                  <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Solicitar Presupuesto (WhatsApp)
+                </button>
+
+                <button type="button" class="btn-primary" id="btn-calc-pdf" style="background-color: var(--charcoal); width: 100%; border-radius: 50px; padding: 12px 18px; font-weight: 700; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.88rem;">
+                  <i class="fa-solid fa-file-pdf"></i> Descargar Presupuesto (PDF)
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </form>
     </div>
   </section>
 

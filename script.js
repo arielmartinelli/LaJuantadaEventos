@@ -468,6 +468,79 @@ document.addEventListener('DOMContentLoaded', () => {
         card.style.setProperty('--mouse-y', `${y}px`);
       });
     });
+    renderTab2MenuTiemposDOM();
+  }
+
+  // Renderizar 8 Tiempos del Menú en la Pestaña 2 del Cotizador
+  function renderTab2MenuTiemposDOM() {
+    const container = document.getElementById('calc-menu-tiempos-container');
+    if (!container) return;
+
+    const timeCategories = [
+      { key: 'recepcion', label: '1. Recepción & Bocaditos' },
+      { key: 'entradas', label: '2. Entrada' },
+      { key: 'principales', label: '3. Plato Principal' },
+      { key: 'postres', label: '4. Postre' },
+      { key: 'mesadulce', label: '5. Mesa Dulce' },
+      { key: 'bebidas', label: '6. Bebidas & Gaseosas' },
+      { key: 'barratragos', label: '7. Barra de Tragos' },
+      { key: 'findeevento', label: '8. Fin de Evento (Trasnoche)' }
+    ];
+
+    let html = '';
+
+    timeCategories.forEach(cat => {
+      let items = activeServices.filter(s => s.category === cat.key);
+      if (cat.key === 'barratragos' && items.length === 0) {
+        items = activeServices.filter(s => s.key === 'srv_barra' || s.name.toLowerCase().includes('barra'));
+      }
+
+      if (items.length === 0) return;
+
+      html += `
+        <div style="background: rgba(250, 246, 240, 0.6); border: 1px solid var(--border-light); border-radius: 16px; padding: 16px;">
+          <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--charcoal); margin: 0 0 12px; display: flex; align-items: center; justify-content: space-between;">
+            <span><i class="fa-solid fa-utensils text-orange"></i> ${cat.label}</span>
+            <span style="font-size: 0.75rem; color: var(--charcoal-muted); font-weight: 600;">${items.length} opción(es)</span>
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+      `;
+
+      items.forEach(srv => {
+        const isSelected = selectedMenuItems.has(srv.key);
+        const cost = parseFloat(srv.price) || 0;
+        const priceLabel = cost > 0 ? `${formatCurrency(cost)} / pers` : 'Incluido';
+
+        html += `
+          <div class="menu-tiempos-card ${isSelected ? 'selected' : ''}" data-key="${srv.key}" style="background: white; border: 2px solid ${isSelected ? 'var(--primary-orange)' : 'var(--border-light)'}; border-radius: 12px; padding: 12px; cursor: pointer; transition: all 0.2s ease; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+              <strong style="font-size: 0.88rem; color: var(--charcoal); line-height: 1.3;">${srv.name}</strong>
+              <span style="font-size: 0.75rem; font-weight: 800; color: white; background: ${isSelected ? 'var(--primary-orange)' : '#ccc'}; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">${isSelected ? '✓' : '+'}</span>
+            </div>
+            <p style="font-size: 0.78rem; color: var(--charcoal-light); margin: 6px 0 8px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${srv.description || 'Deliciosa especialidad para tu evento.'}</p>
+            <div style="font-size: 0.82rem; font-weight: 800; color: var(--primary-orange);">${priceLabel}</div>
+          </div>
+        `;
+      });
+
+      html += `</div></div>`;
+    });
+
+    container.innerHTML = html;
+
+    // Registrar clics
+    container.querySelectorAll('.menu-tiempos-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const key = card.getAttribute('data-key');
+        if (selectedMenuItems.has(key)) {
+          selectedMenuItems.delete(key);
+        } else {
+          selectedMenuItems.add(key);
+        }
+        renderMenuDOM();
+        calculateBudget();
+      });
+    });
   }
 
   function toggleMenuItemInQuote(key) {
@@ -1006,13 +1079,43 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Cálculo final:
     const pricePerPerson = menuItemsTotalPerPerson;
-    const grandTotal = (pricePerPerson * guestCount) + salonCost;
+    const gastroCostTotal = menuItemsTotalPerPerson * guestCount;
+    const addonsCostTotal = (srvLivingQtySelect && srvLivingQtySelect.value > 0 ? parseInt(srvLivingQtySelect.value) * 18000 : 0);
+    const grandTotal = gastroCostTotal + salonCost + addonsCostTotal;
     
     if (calcTotal) calcTotal.textContent = formatCurrency(grandTotal);
     
     const calcPerPerson = document.getElementById('calc-per-person');
     if (calcPerPerson) {
       calcPerPerson.textContent = formatCurrency(pricePerPerson);
+    }
+
+    // Actualizar Gauge Bar de Porcentajes de Presupuesto
+    const segSalon = document.getElementById('gauge-seg-salon');
+    const segGastro = document.getElementById('gauge-seg-gastro');
+    const segAddons = document.getElementById('gauge-seg-addons');
+    const pctSalonLbl = document.getElementById('gauge-pct-salon');
+    const pctGastroLbl = document.getElementById('gauge-pct-gastro');
+    const pctAddonsLbl = document.getElementById('gauge-pct-addons');
+
+    if (grandTotal > 0) {
+      const pctSalon = Math.round((salonCost / grandTotal) * 100);
+      const pctAddons = Math.round((addonsCostTotal / grandTotal) * 100);
+      const pctGastro = Math.max(0, 100 - pctSalon - pctAddons);
+
+      if (segSalon) segSalon.style.width = pctSalon + '%';
+      if (segGastro) segGastro.style.width = pctGastro + '%';
+      if (segAddons) segAddons.style.width = pctAddons + '%';
+
+      if (pctSalonLbl) pctSalonLbl.textContent = pctSalon + '%';
+      if (pctGastroLbl) pctGastroLbl.textContent = pctGastro + '%';
+      if (pctAddonsLbl) pctAddonsLbl.textContent = pctAddons + '%';
+    }
+
+    // Actualizar VIP benefit badge
+    const vipBadge = document.getElementById('vip-benefit-badge');
+    if (vipBadge) {
+      vipBadge.style.display = guestCount >= 100 ? 'flex' : 'none';
     }
 
     // Actualizar badges de precios en la sección salones
@@ -1081,6 +1184,45 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Manejador de Pestañas del Cotizador
+  document.querySelectorAll('.calc-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.calc-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.calc-tab-pane').forEach(p => p.classList.remove('active'));
+      
+      btn.classList.add('active');
+      const targetPane = document.getElementById(btn.getAttribute('data-tab'));
+      if (targetPane) targetPane.classList.add('active');
+    });
+  });
+
+  // Manejador de Botones de Acceso Rápido de Pax (50, 80, 100, 150)
+  document.querySelectorAll('.quick-pax-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.quick-pax-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const pax = parseInt(btn.getAttribute('data-pax'));
+      if (guestCountInput) guestCountInput.value = pax;
+      if (guestCountNumBox) guestCountNumBox.value = pax;
+      const guestRange = document.getElementById('guest-count');
+      if (guestRange) guestRange.value = pax;
+      calculateBudget();
+    });
+  });
+
+  // Manejador de Tarjetas de Selección de Salón en Pestaña 1
+  document.querySelectorAll('.salon-opt-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.salon-opt-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      const salonVal = card.getAttribute('data-salon-opt');
+      if (calcSalonSelect) {
+        calcSalonSelect.value = salonVal;
+        calculateBudget();
+      }
+    });
+  });
+
   // Listeners de cambio para la calculadora
   if (calcSalonSelect) calcSalonSelect.addEventListener('change', () => calculateBudget());
   
@@ -1090,6 +1232,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const salonKey = btn.getAttribute('data-salon');
       if (calcSalonSelect) {
         calcSalonSelect.value = salonKey;
+        // Seleccionar tarjeta visual correspondiente
+        document.querySelectorAll('.salon-opt-card').forEach(c => {
+          c.classList.toggle('selected', c.getAttribute('data-salon-opt') === salonKey);
+        });
         calculateBudget();
         const calcSec = document.getElementById('calculadora');
         if (calcSec) {
@@ -1106,6 +1252,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedSalon = sessionStorage.getItem('lajuntada_selected_salon');
   if (savedSalon && calcSalonSelect) {
     calcSalonSelect.value = savedSalon;
+    document.querySelectorAll('.salon-opt-card').forEach(c => {
+      c.classList.toggle('selected', c.getAttribute('data-salon-opt') === savedSalon);
+    });
     sessionStorage.removeItem('lajuntada_selected_salon');
     calculateBudget();
   }

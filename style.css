@@ -2771,3 +2771,193 @@ button {
   }
 }
 
+/* --- Rediseño Cotizador UX/UI --- */
+.gauge-bar-card {
+  background: var(--bg-white);
+  border-radius: var(--radius-md);
+  padding: 20px 25px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+  margin-bottom: 35px;
+}
+
+.gauge-bar-track {
+  height: 14px;
+  border-radius: 50px;
+  background-color: #eee4de;
+  display: flex;
+  overflow: hidden;
+  margin: 12px 0 10px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.gauge-segment {
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+.gauge-segment-salon { background-color: #2b6cb0; }
+.gauge-segment-gastro { background-color: var(--primary-orange); }
+.gauge-segment-addons { background-color: #2e7d32; }
+
+.gauge-legend-grid {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 15px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.gauge-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gauge-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.calc-tabs-header {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  border-bottom: 2px solid var(--border-light);
+  padding-bottom: 10px;
+  overflow-x: auto;
+}
+
+.calc-tab-btn {
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: var(--bg-light);
+  color: var(--charcoal);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.calc-tab-btn:hover {
+  background: rgba(224, 83, 38, 0.08);
+  color: var(--primary-orange);
+}
+
+.calc-tab-btn.active {
+  background: var(--primary-orange);
+  color: white;
+  box-shadow: 0 4px 15px rgba(224, 83, 38, 0.3);
+}
+
+.calc-tab-pane {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.calc-tab-pane.active {
+  display: block;
+}
+
+.quick-pax-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.quick-pax-btn {
+  padding: 6px 14px;
+  border-radius: 50px;
+  border: 1px solid var(--border-light);
+  background: white;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--charcoal);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-pax-btn:hover, .quick-pax-btn.active {
+  border-color: var(--primary-orange);
+  background: var(--primary-orange);
+  color: white;
+}
+
+.salon-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.salon-opt-card {
+  border: 2px solid var(--border-light);
+  border-radius: 16px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+  position: relative;
+}
+
+.salon-opt-card:hover {
+  border-color: var(--primary-orange);
+  transform: translateY(-2px);
+}
+
+.salon-opt-card.selected {
+  border-color: var(--primary-orange);
+  background: rgba(224, 83, 38, 0.04);
+  box-shadow: 0 4px 15px rgba(224, 83, 38, 0.15);
+}
+
+.salon-opt-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--primary-orange);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 50px;
+  display: none;
+}
+
+.salon-opt-card.selected .salon-opt-badge {
+  display: inline-block;
+}
+
+.sticky-sidebar-card {
+  position: sticky;
+  top: 110px;
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-light);
+}
+
+.vip-benefit-badge {
+  background: linear-gradient(135deg, #ffd700, #ff8c00);
+  color: #1d1715;
+  font-weight: 800;
+  font-size: 0.82rem;
+  padding: 8px 12px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.25);
+  animation: pulse 2s infinite;
+}
+
