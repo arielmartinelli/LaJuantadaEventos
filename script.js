@@ -1560,11 +1560,12 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
         return;
       }
 
-      // 5. Inserción en el DOM fuera de la vista para renderizado correcto en html2canvas
+      // 5. Inserción en el DOM oculta detrás del sitio (z-index -9999) para renderizado completo en html2canvas
       const element = document.createElement('div');
-      element.style.position = 'fixed';
-      element.style.left = '-9999px';
+      element.style.position = 'absolute';
+      element.style.left = '0';
       element.style.top = '0';
+      element.style.zIndex = '-9999';
       element.style.width = '750px';
       element.style.background = '#ffffff';
       element.style.opacity = '1';
