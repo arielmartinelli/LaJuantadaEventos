@@ -1082,8 +1082,33 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Listeners de cambio para la calculadora
-  if (calcEventDateInput) calcEventDateInput.addEventListener('change', () => calculateBudget());
   if (calcSalonSelect) calcSalonSelect.addEventListener('change', () => calculateBudget());
+  
+  // Manejador para botones "Sumar Salón a Cotización"
+  document.querySelectorAll('.btn-select-salon-quote').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const salonKey = btn.getAttribute('data-salon');
+      if (calcSalonSelect) {
+        calcSalonSelect.value = salonKey;
+        calculateBudget();
+        const calcSec = document.getElementById('calculadora');
+        if (calcSec) {
+          calcSec.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        sessionStorage.setItem('lajuntada_selected_salon', salonKey);
+        window.location.href = 'index.html#calculadora';
+      }
+    });
+  });
+
+  // Verificar salón guardado desde salones.html
+  const savedSalon = sessionStorage.getItem('lajuntada_selected_salon');
+  if (savedSalon && calcSalonSelect) {
+    calcSalonSelect.value = savedSalon;
+    sessionStorage.removeItem('lajuntada_selected_salon');
+    calculateBudget();
+  }
   if (eventTypeSelect && guestCountInput) {
     eventTypeSelect.addEventListener('change', () => calculateBudget());
     guestCountInput.addEventListener('input', () => calculateBudget());
