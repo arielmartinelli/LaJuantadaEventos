@@ -842,22 +842,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function calculateBudget() {
     if (!guestCountInput) return;
 
-    let basePricePerPerson = 25000;
-    let selectedMenuName = 'Catering Base La Juntada';
-
-    if (eventTypeSelect) {
-      if (eventTypeSelect.tagName === 'SELECT') {
-        const selOpt = eventTypeSelect.options[eventTypeSelect.selectedIndex];
-        if (selOpt) {
-          basePricePerPerson = parseFloat(selOpt.getAttribute('data-base')) || 25000;
-          selectedMenuName = selOpt.text.split(' (')[0];
-        }
-      } else {
-        basePricePerPerson = parseFloat(eventTypeSelect.getAttribute('data-base')) || 25000;
-        selectedMenuName = 'Catering Base La Juntada';
-      }
-    }
-
     const guestCount = parseInt(guestCountInput.value) || 80;
     
     // Actualizar campo de invitados numérico y burbuja
@@ -875,96 +859,140 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    const baseCateringTotal = basePricePerPerson * guestCount;
-    if (sumBase) sumBase.textContent = `${formatCurrency(baseCateringTotal)} (${guestCount} invitados)`;
+    // Verificar si hay algún plato principal seleccionado
+    const mainDishesInQuote = Array.from(selectedMenuItems).map(k => activeServices.find(s => s.key === k)).filter(Boolean);
+    const hasSelectedMainDish = mainDishesInQuote.some(s => s.category === 'principales');
     
-    let additionalTotal = 0;
-    let menuItemsTotal = 0;
-    let dynamicHtml = '';
-    let selectedAddonsList = [];
-    let selectedMenuOptionsList = [];
-
-    // 1. Sumar los platos seleccionados desde el menú dinámico (Set)
-    selectedMenuItems.forEach(key => {
-      const srv = activeServices.find(s => s.key === key);
-      if (srv) {
-        const cost = parseFloat(srv.price) || 0;
-        const totalCost = cost * guestCount;
-        menuItemsTotal += totalCost;
-        selectedMenuOptionsList.push(srv.name);
-        
-        dynamicHtml += `
-          <div class="summary-item">
-            <span>+ ${srv.name}:</span>
-            <strong>${formatCurrency(totalCost)}</strong>
-          </div>`;
-      }
-    });
-
-    // 2. Recorrer dinámicamente los adicionales del contenedor
+    const lockNotice = document.getElementById('cotizador-lock-notice');
     const addonsContainer = document.getElementById('calc-addons-container');
+    
+    // Actualizar aviso de bloqueo/desbloqueo
+    if (lockNotice) {
+      if (!hasSelectedMainDish) {
+        lockNotice.style.background = 'rgba(224, 83, 38, 0.08)';
+        lockNotice.style.border = '1px dashed var(--primary-orange)';
+        lockNotice.style.color = 'var(--charcoal)';
+        lockNotice.innerHTML = `<i class="fa-solid fa-lock" style="color: var(--primary-orange); font-size: 1.1rem; flex-shrink: 0;"></i> <span>Seleccioná primero un <strong>Plato Principal</strong> en la sección "Nuestra Carta" arriba para iniciar la cotización y habilitar los servicios opcionales.</span>`;
+      } else {
+        lockNotice.style.background = 'rgba(46, 125, 50, 0.08)';
+        lockNotice.style.border = '1px solid #2e7d32';
+        lockNotice.style.color = '#2e7d32';
+        lockNotice.innerHTML = `<i class="fa-solid fa-circle-check" style="font-size: 1.1rem; flex-shrink: 0;"></i> <span>¡Plato Principal Seleccionado! Servicios opcionales habilitados.</span>`;
+      }
+    }
+
+    // Habilitar/deshabilitar controles opcionales si no hay plato principal elegido
     if (addonsContainer) {
       const checkboxes = addonsContainer.querySelectorAll('input[type="checkbox"]');
       checkboxes.forEach(chk => {
-        if (chk.checked && !chk.disabled) {
-          const cost = parseFloat(chk.getAttribute('data-cost')) || 0;
-          const isPerPerson = chk.getAttribute('data-per-person') === 'true';
-          const totalCost = isPerPerson ? cost * guestCount : cost;
-          const srvName = chk.getAttribute('data-name');
+        const srvKey = chk.id;
+        const srv = activeServices.find(s => s.key === srvKey);
+        if (srv && !srv.is_available) {
+          chk.disabled = true;
+        } else {
+          chk.disabled = !hasSelectedMainDish;
+        }
+      });
+    }
+
+    if (srvLivingQtySelect) {
+      srvLivingQtySelect.disabled = !hasSelectedMainDish;
+    }
+
+    let menuItemsTotal = 0;
+    let basePricePerPerson = 0;
+    let dynamicHtml = '';
+    let selectedAddonsList = [];
+    let selectedMenuOptionsList = [];
+    let selectedMenuName = 'Ningún menú seleccionado';
+
+    if (hasSelectedMainDish) {
+      // 1. Sumar los platos seleccionados desde el menú dinámico
+      selectedMenuItems.forEach(key => {
+        const srv = activeServices.find(s => s.key === key);
+        if (srv) {
+          const cost = parseFloat(srv.price) || 0;
+          const totalCost = cost * guestCount;
           
-          additionalTotal += totalCost;
-          selectedAddonsList.push(`${srvName} (${isPerPerson ? guestCount + ' pers.' : 'fijo'})`);
+          if (srv.category === 'principales') {
+            basePricePerPerson += cost;
+            selectedMenuName = srv.name;
+          } else {
+            menuItemsTotal += totalCost;
+          }
+          
+          selectedMenuOptionsList.push(srv.name);
           
           dynamicHtml += `
             <div class="summary-item">
-              <span>${srvName}:</span>
+              <span>+ ${srv.name}:</span>
               <strong>${formatCurrency(totalCost)}</strong>
+            </div>`;
+        }
+      });
+    } else {
+      dynamicHtml = `<div style="font-size: 0.85rem; color: var(--charcoal-muted); font-style: italic; text-align: center; padding: 15px 0;">Elegí tu plato principal en "Nuestra Carta" arriba para ver la cotización estimada.</div>`;
+    }
+
+    // 2. Recorrer los servicios opcionales tildados (A cotizar por el admin, costo $0 al estimado)
+    if (addonsContainer && hasSelectedMainDish) {
+      const checkboxes = addonsContainer.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(chk => {
+        if (chk.checked && !chk.disabled) {
+          const srvName = chk.getAttribute('data-name');
+          selectedAddonsList.push(`${srvName} (A cotizar por Admin)`);
+          
+          dynamicHtml += `
+            <div class="summary-item">
+              <span>+ ${srvName}:</span>
+              <strong style="color: var(--primary-orange); font-size: 0.85rem;">A cotizar</strong>
             </div>`;
         }
       });
     }
 
-    // 3. Cantidad de Juegos de Living (livingQty * srv_living_price)
-    if (srvLivingQtySelect && !srvLivingQtySelect.disabled) {
+    // 3. Cantidad de Juegos de Living (A cotizar por el admin, costo $0 al estimado)
+    if (srvLivingQtySelect && !srvLivingQtySelect.disabled && hasSelectedMainDish) {
       const qty = parseInt(srvLivingQtySelect.value);
-      const costPerUnit = parseFloat(srvLivingQtySelect.getAttribute('data-cost')) || 0;
       if (qty > 0) {
-        const totalCost = qty * costPerUnit;
-        additionalTotal += totalCost;
-        selectedAddonsList.push(`${qty} Juego(s) de Living`);
+        selectedAddonsList.push(`${qty} Juego(s) de Living (A cotizar por Admin)`);
         dynamicHtml += `
           <div class="summary-item">
-            <span>${qty} Juegos de Living:</span>
-            <strong>${formatCurrency(totalCost)}</strong>
+            <span>+ ${qty} Juegos de Living:</span>
+            <strong style="color: var(--primary-orange); font-size: 0.85rem;">A cotizar</strong>
           </div>`;
       }
     }
 
-    // 4. Recorrer los alquileres opcionales seleccionados (sin costo fijo adicionado)
+    // 4. Recorrer los alquileres opcionales seleccionados
     let selectedOptionalList = [];
     selectedOptionalRentals.forEach(key => {
       const srv = activeServices.find(s => s.key === key);
       if (srv) {
-        selectedOptionalList.push(srv.name);
+        selectedOptionalList.push(`${srv.name} (A cotizar)`);
         dynamicHtml += `
           <div class="summary-item">
-            <span>+ ${srv.name} (Alquiler Opcional)</span>
+            <span>+ ${srv.name} (Alquiler Opcional):</span>
+            <strong style="color: var(--primary-orange); font-size: 0.85rem;">A cotizar</strong>
           </div>`;
       }
     });
 
     if (dynamicSummaryItems) dynamicSummaryItems.innerHTML = dynamicHtml;
     
-    const grandTotal = baseCateringTotal + menuItemsTotal + additionalTotal;
-    const pricePerPerson = guestCount > 0 ? grandTotal / guestCount : 0;
+    // Si no hay plato principal seleccionado, el estimado es $0
+    const grandTotal = hasSelectedMainDish ? ((basePricePerPerson * guestCount) + menuItemsTotal) : 0;
+    const pricePerPerson = hasSelectedMainDish ? (grandTotal / guestCount) : 0;
     
     if (calcTotal) calcTotal.textContent = formatCurrency(grandTotal);
     
     const calcPerPerson = document.getElementById('calc-per-person');
-    if (calcPerPerson) calcPerPerson.textContent = formatCurrency(pricePerPerson);
+    if (calcPerPerson) {
+      calcPerPerson.textContent = hasSelectedMainDish ? formatCurrency(pricePerPerson) : "$0";
+    }
 
     return {
-      menuName: selectedMenuName,
+      menuName: hasSelectedMainDish ? selectedMenuName : 'Sin Menú Seleccionado',
       guestCount,
       perPerson: pricePerPerson,
       grandTotal,
