@@ -1458,7 +1458,7 @@ document.addEventListener('DOMContentLoaded', () => {
       addonsText = '\n  🔹 Ninguno';
     }
 
-    const warningText = results.guestCount < 50 ? '\n\n⚠️ *Nota:* La cantidad de invitados es menor al mínimo de 50 requerido para contratos generales.' : '';
+    const warningText = results.guestCount < 40 ? '\n\n⚠️ *Nota:* La cantidad de invitados es menor al mínimo de 40 personas requerido.' : '';
 
     const waMessage = `👋 *¡Hola equipo de La Juntada Eventos!*
 Mi nombre es *${results.clientName}* y estuve armando mi propuesta en el Cotizador Online.
