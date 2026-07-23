@@ -120,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let activeConfigs = { ...DEFAULT_CONFIGS };
   let activeServices = [...DEFAULT_SERVICES];
   let selectedMenuItems = new Set();
+  let specialDietPax = 0;
 
   /* ==========================================================================
      1. Menú de Navegación y Scroll
@@ -457,14 +458,41 @@ document.addEventListener('DOMContentLoaded', () => {
           priceInfo = 'Incluido en Menú Base';
         }
         
-        // Determinar si está seleccionado
-        const isSelected = selectedMenuItems.has(srv.key);
+        // Determinar si es ítem de dieta especial
+        const isDietItem = srv.key === 'pri_dietas' || srv.key.startsWith('pri_dietas');
+        const isSelected = isDietItem ? (specialDietPax > 0) : selectedMenuItems.has(srv.key);
         const activeClass = isSelected ? 'active' : '';
         const buttonText = isSelected ? 'Quitar de Cotización' : 'Sumar a Cotización';
         const buttonClass = isSelected ? 'btn-secondary' : 'btn-primary';
         
         const descText = srv.description || '';
         const needsToggle = descText.length > 65;
+
+        if (isDietItem) {
+          grid.innerHTML += `
+            <div class="menu-item-card ${activeClass} ${disabledClass}" id="menu-card-${srv.key}" style="transition: all 0.3s ease; position: relative; height: 100%; display: flex; flex-direction: column; border: 2px solid ${specialDietPax > 0 ? 'var(--primary-orange)' : 'var(--border-light)'};">
+              <span class="menu-tag orange"><i class="fa-solid fa-leaf"></i> Especial / Aislado</span>
+              <h4 style="margin-top: 10px;">${srv.name}</h4>
+
+              <div class="item-desc-container" style="flex-grow: 1; margin-bottom: 10px;">
+                <p class="item-desc-text" id="desc-text-menu-${srv.key}">${descText}</p>
+              </div>
+
+              ${isAvailable ? `
+                <div style="margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--border-light); padding-top: 15px;">
+                  <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-orange);">${priceInfo}</span>
+                  
+                  <div style="display: flex; align-items: center; gap: 6px; background: #faf6f0; padding: 4px 10px; border-radius: 50px; border: 1px solid var(--border-light);">
+                    <button type="button" class="btn-diet-menu-minus" style="width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border-light); background: white; font-weight: 800; cursor: pointer; font-size: 0.9rem; color: var(--charcoal);">-</button>
+                    <span style="font-size: 0.88rem; font-weight: 800; min-width: 20px; text-align: center; color: var(--primary-orange);">${specialDietPax} pers.</span>
+                    <button type="button" class="btn-diet-menu-plus" style="width: 26px; height: 26px; border-radius: 50%; border: none; background: var(--primary-orange); color: white; font-weight: 800; cursor: pointer; font-size: 0.9rem;">+</button>
+                  </div>
+                </div>
+              ` : `<span class="unavailable-badge" style="font-size: 0.75rem; margin-top: auto; display: inline-block; padding-top: 10px;">No Disponible</span>`}
+            </div>
+          `;
+          return;
+        }
 
         grid.innerHTML += `
           <div class="menu-item-card ${activeClass} ${disabledClass}" id="menu-card-${srv.key}" style="transition: all 0.3s ease; position: relative; height: 100%; display: flex; flex-direction: column;">
@@ -490,6 +518,27 @@ document.addEventListener('DOMContentLoaded', () => {
             ` : `<span class="unavailable-badge" style="font-size: 0.75rem; margin-top: auto; display: inline-block; padding-top: 10px;">No Disponible</span>`}
           </div>
         `;
+      });
+    });
+
+    // Registrar escuchadores de la dieta especial en la carta
+    document.querySelectorAll('.btn-diet-menu-minus').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (specialDietPax > 0) specialDietPax--;
+        renderMenuDOM();
+        renderTab2MenuTiemposDOM();
+        calculateBudget();
+      });
+    });
+
+    document.querySelectorAll('.btn-diet-menu-plus').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        specialDietPax++;
+        renderMenuDOM();
+        renderTab2MenuTiemposDOM();
+        calculateBudget();
       });
     });
 
@@ -551,7 +600,8 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
 
       items.forEach(srv => {
-        const isSelected = selectedMenuItems.has(srv.key);
+        const isDietItem = srv.key === 'pri_dietas' || srv.key.startsWith('pri_dietas');
+        const isSelected = isDietItem ? (specialDietPax > 0) : selectedMenuItems.has(srv.key);
         let priceVal = parseFloat(srv.price) || 0;
         if (srv.category === 'principales' && priceVal <= 0) {
           if (srv.key === 'pri_parrillada') priceVal = 35000;
@@ -563,6 +613,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const descText = srv.description || 'Deliciosa especialidad para tu evento.';
         const needsToggle = descText.length > 60;
+
+        if (isDietItem) {
+          html += `
+            <div class="menu-tiempos-card ${isSelected ? 'selected' : ''}" data-key="${srv.key}" data-is-diet="true" style="background: white; border: 2px solid ${specialDietPax > 0 ? 'var(--primary-orange)' : 'var(--border-light)'}; border-radius: 12px; padding: 12px; transition: all 0.2s ease; position: relative;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                <strong style="font-size: 0.88rem; color: var(--charcoal); line-height: 1.3;">${srv.name}</strong>
+                <span style="font-size: 0.7rem; font-weight: 800; color: white; background: #2e7d32; border-radius: 50px; padding: 2px 8px; flex-shrink: 0;"><i class="fa-solid fa-leaf"></i> Especial</span>
+              </div>
+
+              <div class="item-desc-container" style="margin: 6px 0 6px;">
+                <p class="item-desc-text" id="desc-text-cat-${cat.key}-${srv.key}">${descText}</p>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; border-top: 1px dashed var(--border-light); padding-top: 8px;">
+                <div style="font-size: 0.82rem; font-weight: 800; color: var(--primary-orange);">${priceLabel}</div>
+                
+                <div style="display: flex; align-items: center; gap: 6px; background: #faf6f0; padding: 4px 8px; border-radius: 50px; border: 1px solid var(--border-light);" onclick="event.stopPropagation();">
+                  <button type="button" class="btn-diet-tab2-minus" style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border-light); background: white; font-weight: 800; cursor: pointer; font-size: 0.85rem; color: var(--charcoal);">-</button>
+                  <span style="font-size: 0.85rem; font-weight: 800; min-width: 18px; text-align: center; color: var(--primary-orange);">${specialDietPax} pers.</span>
+                  <button type="button" class="btn-diet-tab2-plus" style="width: 24px; height: 24px; border-radius: 50%; border: none; background: var(--primary-orange); color: white; font-weight: 800; cursor: pointer; font-size: 0.85rem;">+</button>
+                </div>
+              </div>
+            </div>
+          `;
+          return;
+        }
 
         html += `
           <div class="menu-tiempos-card ${isSelected ? 'selected' : ''}" data-key="${srv.key}" style="background: white; border: 2px solid ${isSelected ? 'var(--primary-orange)' : 'var(--border-light)'}; border-radius: 12px; padding: 12px; cursor: pointer; transition: all 0.2s ease; position: relative;">
@@ -590,27 +666,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
     container.innerHTML = html;
 
-    // Registrar clics
-    container.querySelectorAll('.menu-tiempos-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const key = card.getAttribute('data-key');
-        if (selectedMenuItems.has(key)) {
-          selectedMenuItems.delete(key);
-        } else {
-          selectedMenuItems.add(key);
-        }
+    // Registrar escuchadores de la dieta especial en tab 2
+    container.querySelectorAll('.btn-diet-tab2-minus').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (specialDietPax > 0) specialDietPax--;
+        renderTab2MenuTiemposDOM();
         renderMenuDOM();
         calculateBudget();
+      });
+    });
+
+    container.querySelectorAll('.btn-diet-tab2-plus').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        specialDietPax++;
+        renderTab2MenuTiemposDOM();
+        renderMenuDOM();
+        calculateBudget();
+      });
+    });
+
+    // Registrar clics
+    container.querySelectorAll('.menu-tiempos-card').forEach(card => {
+      if (card.getAttribute('data-is-diet') === 'true') {
+        card.addEventListener('click', () => {
+          if (specialDietPax === 0) specialDietPax = 1;
+          else specialDietPax = 0;
+          renderTab2MenuTiemposDOM();
+          renderMenuDOM();
+          calculateBudget();
+        });
+        return;
+      }
+
+      card.addEventListener('click', () => {
+        const key = card.getAttribute('data-key');
+        toggleMenuItemInQuote(key);
       });
     });
   }
 
   function toggleMenuItemInQuote(key) {
+    if (key === 'pri_dietas' || key.startsWith('pri_dietas')) {
+      if (specialDietPax === 0) specialDietPax = 1;
+      else specialDietPax = 0;
+      renderTab2MenuTiemposDOM();
+      renderMenuDOM();
+      calculateBudget();
+      return;
+    }
+
     if (selectedMenuItems.has(key)) {
       selectedMenuItems.delete(key);
     } else {
       selectedMenuItems.add(key);
     }
+    renderTab2MenuTiemposDOM();
     renderMenuDOM();
     calculateBudget();
   }
@@ -1164,11 +1276,26 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    // 5. Menú Dietas Especiales por personas individuales
+    let specialDietCostTotal = 0;
+    if (specialDietPax > 0) {
+      const dietSrv = activeServices.find(s => s.key === 'pri_dietas' || s.key.startsWith('pri_dietas'));
+      let dietPrice = dietSrv ? (parseFloat(dietSrv.price) || 25000) : 25000;
+      if (dietPrice <= 0) dietPrice = 25000;
+      specialDietCostTotal = specialDietPax * dietPrice;
+
+      selectedMenuOptionsList.push(`Menú Dietas Especiales (${specialDietPax} pers.) - ${formatCurrency(specialDietCostTotal)}`);
+      dynamicHtml += `
+        <div class="summary-item" style="border-top: 1px dashed var(--border-light); padding-top: 6px; margin-top: 6px;">
+          <span><i class="fa-solid fa-leaf text-orange" style="font-size: 0.8rem; margin-right: 6px;"></i> ${specialDietPax} Menú(s) Dieta Especial (${formatCurrency(specialDietCostTotal)})</span>
+        </div>`;
+    }
+
     if (dynamicSummaryItems) dynamicSummaryItems.innerHTML = dynamicHtml;
     
     // Cálculo final:
     const pricePerPerson = menuItemsTotalPerPerson;
-    const gastroCostTotal = menuItemsTotalPerPerson * guestCount;
+    const gastroCostTotal = (menuItemsTotalPerPerson * guestCount) + specialDietCostTotal;
     const addonsCostTotal = 0;
     const grandTotal = gastroCostTotal + salonCost;
     
