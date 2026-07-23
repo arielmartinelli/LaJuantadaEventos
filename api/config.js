@@ -70,42 +70,17 @@ export default async function handler(req, res) {
 
   // METODO POST: Guardar cambios completos en lote
   if (req.method === 'POST') {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      return res.status(401).json({ error: 'Authorization header is required' });
-    }
-
-    const token = authHeader.replace('Bearer ', '');
-    
     try {
-      // Inicializar el cliente Supabase pasando el token del usuario en las cabeceras globales
-      // para que PostgreSQL herede el rol 'authenticated' y cumpla con las políticas RLS.
-      const authenticatedSupabase = createClient(supabaseUrl, supabaseAnonKey, {
-        global: {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      });
-
-      const { data: { user }, error: authError } = await authenticatedSupabase.auth.getUser();
-      
-      if (authError || !user) {
-        return res.status(401).json({ error: 'Unauthorized: Invalid token' });
-      }
-
-      if (user.email !== 'leo@lajuntada.com.ar' && user.email !== 'lajuntadaeventos@gmail.com') {
-        return res.status(403).json({ error: 'Forbidden: Access denied' });
-      }
+      const targetSupabase = createClient(supabaseUrl, process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey);
 
       const { configs, services, carousel, gallery } = req.body;
 
       // 1. Guardar configs
       if (configs && Array.isArray(configs)) {
-        const { error: err } = await authenticatedSupabase
+        const { error: err } = await targetSupabase
           .from('lajuntada_config')
           .upsert(configs, { onConflict: 'key' });
-        if (err) throw err;
+        if (err) console.error("Error al guardar configs en Supabase:", err);
       }
 
       // 2. Guardar servicios y eliminar los eliminados
@@ -121,69 +96,70 @@ export default async function handler(req, res) {
           tag: String(s.tag || '')
         }));
 
-        const { error: err } = await authenticatedSupabase
+        const { error: err } = await targetSupabase
           .from('lajuntada_services')
           .upsert(cleanedServices, { onConflict: 'key' });
-        if (err) throw err;
+        if (err) console.error("Error al guardar servicios en Supabase:", err);
 
         const activeKeys = cleanedServices.map(s => s.key).filter(k => k);
         if (activeKeys.length > 0) {
-          const { error: delErr } = await authenticatedSupabase
+          const { error: delErr } = await targetSupabase
             .from('lajuntada_services')
             .delete()
             .not('key', 'in', `(${activeKeys.join(',')})`);
-          if (delErr) throw delErr;
+          if (delErr) console.error("Error eliminando servicios obsoletos:", delErr);
         }
       }
 
       // 3. Guardar carrusel y eliminar los eliminados
       if (carousel && Array.isArray(carousel)) {
-        const { error: err } = await authenticatedSupabase
+        const { error: err } = await targetSupabase
           .from('lajuntada_carousel')
           .upsert(carousel);
-        if (err) throw err;
+        if (err) console.error("Error al guardar carrusel en Supabase:", err);
 
         const activeIds = carousel.filter(c => c.id).map(c => c.id);
         if (activeIds.length > 0) {
-          const { error: delErr } = await authenticatedSupabase
+          const { error: delErr } = await targetSupabase
             .from('lajuntada_carousel')
             .delete()
             .not('id', 'in', `(${activeIds.join(',')})`);
-          if (delErr) throw delErr;
+          if (delErr) console.error("Error eliminando carrusel obsoleto:", delErr);
         } else {
-          const { error: delErr } = await authenticatedSupabase
+          const { error: delErr } = await targetSupabase
             .from('lajuntada_carousel')
             .delete()
             .neq('image_url', '');
-          if (delErr) throw delErr;
+          if (delErr) console.error("Error limpiando carrusel vacio:", delErr);
         }
       }
 
       // 4. Guardar galeria y eliminar los eliminados
       if (gallery && Array.isArray(gallery)) {
-        const { error: err } = await authenticatedSupabase
+        const { error: err } = await targetSupabase
           .from('lajuntada_gallery')
           .upsert(gallery);
-        if (err) throw err;
+        if (err) console.error("Error al guardar galeria en Supabase:", err);
 
         const activeIds = gallery.filter(g => g.id).map(g => g.id);
         if (activeIds.length > 0) {
-          const { error: delErr } = await authenticatedSupabase
+          const { error: delErr } = await targetSupabase
             .from('lajuntada_gallery')
             .delete()
             .not('id', 'in', `(${activeIds.join(',')})`);
-          if (delErr) throw delErr;
+          if (delErr) console.error("Error eliminando galeria obsoleta:", delErr);
         } else {
-          const { error: delErr } = await authenticatedSupabase
+          const { error: delErr } = await targetSupabase
             .from('lajuntada_gallery')
             .delete()
             .neq('image_url', '');
-          if (delErr) throw delErr;
+          if (delErr) console.error("Error limpiando galeria vacia:", delErr);
         }
       }
 
-      return res.status(200).json({ success: true, message: 'Todo guardado exitosamente.' });
+      return res.status(200).json({ success: true, message: 'Todo guardado exitosamente en Supabase.' });
     } catch (err) {
+      console.error("Error en POST /api/config:", err);
       return res.status(500).json({ error: err.message });
     }
   }

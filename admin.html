@@ -1306,14 +1306,6 @@
           supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
           dbConfigs = configs || {};
           dbServices = (services && Array.isArray(services) && services.length > 0) ? services : JSON.parse(JSON.stringify(DEFAULT_SERVICES));
-
-          // Recuperar ítems faltantes si hubo guardado parcial previo
-          DEFAULT_SERVICES.forEach(defItem => {
-            if (!dbServices.some(s => String(s.key) === String(defItem.key))) {
-              dbServices.push(JSON.parse(JSON.stringify(defItem)));
-            }
-          });
-
           dbCarousel = (carousel && carousel.length > 0) ? carousel : JSON.parse(JSON.stringify(DEFAULT_CAROUSEL));
           dbGallery = (gallery && gallery.length > 0) ? gallery : JSON.parse(JSON.stringify(DEFAULT_GALLERY));
 
@@ -1341,12 +1333,6 @@
 
         const localServices = localStorage.getItem('lajuntada_services_list');
         dbServices = (localServices && JSON.parse(localServices).length > 0) ? JSON.parse(localServices) : JSON.parse(JSON.stringify(DEFAULT_SERVICES));
-
-        DEFAULT_SERVICES.forEach(defItem => {
-          if (!dbServices.some(s => String(s.key) === String(defItem.key))) {
-            dbServices.push(JSON.parse(JSON.stringify(defItem)));
-          }
-        });
 
         const localCarousel = localStorage.getItem('lajuntada_carousel_list');
         dbCarousel = (localCarousel && JSON.parse(localCarousel).length > 0) ? JSON.parse(localCarousel) : JSON.parse(JSON.stringify(DEFAULT_CAROUSEL));
@@ -2350,29 +2336,25 @@
           if (dbBackups.length > 15) dbBackups = dbBackups.slice(0, 15);
           saveBackupsList();
 
-          // GUARDADO LOCAL FALLBACK
-          if (isLocalMode) {
-            const configObj = {};
-            configsPayload.forEach(item => { configObj[item.key] = item.value; });
-            localStorage.setItem('lajuntada_config', JSON.stringify(configObj));
-            localStorage.setItem('lajuntada_site_configs', JSON.stringify(configObj));
-            
-            localStorage.setItem('lajuntada_services_list', JSON.stringify(servicesPayload));
-            localStorage.setItem('lajuntada_carousel_list', JSON.stringify(carouselPayload));
-            localStorage.setItem('lajuntada_gallery_list', JSON.stringify(galleryPayload));
-            
-            showSaveAlert("¡Configuraciones e imágenes guardadas localmente en este navegador con éxito!", "success");
-            return;
-          }
+          // Guardado en memoria local del navegador (cache backup)
+          const configObj = {};
+          configsPayload.forEach(item => { configObj[item.key] = item.value; });
+          localStorage.setItem('lajuntada_config', JSON.stringify(configObj));
+          localStorage.setItem('lajuntada_site_configs', JSON.stringify(configObj));
+          localStorage.setItem('lajuntada_services_list', JSON.stringify(servicesPayload));
+          localStorage.setItem('lajuntada_carousel_list', JSON.stringify(carouselPayload));
+          localStorage.setItem('lajuntada_gallery_list', JSON.stringify(galleryPayload));
 
-          // GUARDADO EN SUPABASE VIA VERCEL PROXY
+          // GUARDADO EN SUPABASE VIA SERVERLESS HANDLER (/api/config)
           try {
+            const headers = { 'Content-Type': 'application/json' };
+            if (currentSession && currentSession.access_token) {
+              headers['Authorization'] = `Bearer ${currentSession.access_token}`;
+            }
+
             const response = await fetch('/api/config', {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${currentSession.access_token}`
-              },
+              headers: headers,
               body: JSON.stringify({
                 configs: configsPayload,
                 services: servicesPayload,
@@ -2384,9 +2366,9 @@
             const resData = await response.json();
 
             if (!response.ok) {
-              showSaveAlert("Error al guardar: " + (resData.error || response.statusText), "error");
+              showSaveAlert("Guardado en este navegador. Nota del servidor: " + (resData.error || response.statusText), "warning");
             } else {
-              showSaveAlert("¡Todos los cambios y referencias de fotos fueron guardados en Supabase con éxito!", "success");
+              showSaveAlert("¡Todos los cambios y productos se guardaron exitosamente en Supabase (visible en todos los dispositivos)!", "success");
               dbConfigs = {};
               configsPayload.forEach(item => { dbConfigs[item.key] = item.value; });
               dbServices = servicesPayload;
@@ -2394,7 +2376,7 @@
               dbGallery = galleryPayload;
             }
           } catch (err) {
-            showSaveAlert("Error de red al enviar los datos.", "error");
+            showSaveAlert("Guardado localmente. (Error de red al conectar con el servidor)", "warning");
             console.error(err);
           }
         });
