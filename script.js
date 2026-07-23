@@ -25,10 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
     contact_phone2: '3512160141',
     contact_address: 'Mendoza 3147, Alta Córdoba, Córdoba',
     contact_email: 'lajuntadaeventos@gmail.com',
-    salon_norte_price_weekday: '150000',
-    salon_norte_price_weekend: '250000',
-    salon_centro_price_weekday: '120000',
-    salon_centro_price_weekend: '200000'
+    salon_norte_base_price: '300000',
+    salon_norte_extra_pax_price: '7500',
+    salon_centro_base_price: '300000',
+    salon_centro_extra_pax_price: '7500',
+    salon_weekday_discount_percent: '15'
   };
 
   const DEFAULT_SERVICES = [
@@ -950,10 +951,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const centroWkday = document.getElementById('centro-price-weekday');
     const centroWkend = document.getElementById('centro-price-weekend');
 
-    if (norteWkday) norteWkday.textContent = formatCurrency(300000);
-    if (norteWkend) norteWkend.textContent = '15% OFF';
-    if (centroWkday) centroWkday.textContent = formatCurrency(300000);
-    if (centroWkend) centroWkend.textContent = '15% OFF';
+    const norteBase = parseFloat(activeConfigs.salon_norte_base_price) || 300000;
+    const centroBase = parseFloat(activeConfigs.salon_centro_base_price) || 300000;
+    const discountPercent = parseFloat(activeConfigs.salon_weekday_discount_percent) || 15;
+
+    if (norteWkday) norteWkday.textContent = formatCurrency(norteBase);
+    if (norteWkend) norteWkend.textContent = `${discountPercent}% OFF`;
+    if (centroWkday) centroWkday.textContent = formatCurrency(centroBase);
+    if (centroWkend) centroWkend.textContent = `${discountPercent}% OFF`;
   }
 
   function calculateBudget(clientNameOverride = '', dateValOverride = '') {
@@ -1013,23 +1018,27 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Calcular costo del salón seleccionado: Base $300.000 (hasta 40 personas) + $7.500 p/persona adicional.
-    // 15% OFF en días de semana (Lunes a Jueves: dayOfWeek 1, 2, 3, 4).
+    // Calcular costo del salón seleccionado desde la configuración activa del admin.
     let salonCost = 0;
     let salonName = 'Sin Salón (Evento en Quinta Propia / Catering a Domicilio)';
 
     if (isSalonSelected) {
-      salonName = selectedSalonKey === 'norte' ? 'Salón La Juntada Norte (Villa Allende)' : 'Salón La Juntada Centro (Alta Córdoba)';
-      const basePrice = 300000;
-      const extraRate = 7500;
+      const isNorte = selectedSalonKey === 'norte';
+      salonName = isNorte ? 'Salón La Juntada Norte (Villa Allende)' : 'Salón La Juntada Centro (Alta Córdoba)';
+
+      const basePrice = parseFloat(isNorte ? activeConfigs.salon_norte_base_price : activeConfigs.salon_centro_base_price) || 300000;
+      const extraRate = parseFloat(isNorte ? activeConfigs.salon_norte_extra_pax_price : activeConfigs.salon_centro_extra_pax_price) || 7500;
+      const discountPercent = parseFloat(activeConfigs.salon_weekday_discount_percent) || 15;
+
       const extraPax = Math.max(0, guestCount - 40);
       let baseTotalSalon = basePrice + (extraPax * extraRate);
 
-      // Descuento 15% OFF Lunes a Jueves
+      // Descuento en días de semana (Lunes a Jueves: dayOfWeek 1, 2, 3, 4)
       const isWeekdayDiscount = (dayOfWeek >= 1 && dayOfWeek <= 4);
-      if (isWeekdayDiscount) {
-        salonCost = Math.round(baseTotalSalon * 0.85);
-        salonName += ' (15% OFF aplicado)';
+      if (isWeekdayDiscount && discountPercent > 0) {
+        const discountFactor = (100 - discountPercent) / 100;
+        salonCost = Math.round(baseTotalSalon * discountFactor);
+        salonName += ` (${discountPercent}% OFF aplicado)`;
       } else {
         salonCost = baseTotalSalon;
       }

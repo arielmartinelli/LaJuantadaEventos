@@ -883,11 +883,13 @@
       let currentCalDate = new Date();
 
       async function loadSalonDates() {
+        let configs = {};
         try {
           const res = await fetch('/api/config');
           if (res.ok) {
             const data = await res.json();
             if (data.configs) {
+              configs = data.configs;
               if (data.configs.salon_norte_reserved_dates) {
                 try { norteReservedDates = JSON.parse(data.configs.salon_norte_reserved_dates); } catch(e){}
               }
@@ -901,7 +903,25 @@
           const localCentro = localStorage.getItem('lajuntada_salon_centro_reserved_dates');
           if (localNorte) try { norteReservedDates = JSON.parse(localNorte); } catch(e){}
           if (localCentro) try { centroReservedDates = JSON.parse(localCentro); } catch(e){}
+
+          const localConfigs = localStorage.getItem('lajuntada_site_configs');
+          if (localConfigs) try { configs = JSON.parse(localConfigs); } catch(e){}
         }
+
+        const norteBase = parseFloat(configs.salon_norte_base_price) || 300000;
+        const centroBase = parseFloat(configs.salon_centro_base_price) || 300000;
+        const discountPercent = parseFloat(configs.salon_weekday_discount_percent) || 15;
+
+        const norteWkday = document.getElementById('norte-price-weekday');
+        const norteWkend = document.getElementById('norte-price-weekend');
+        const centroWkday = document.getElementById('centro-price-weekday');
+        const centroWkend = document.getElementById('centro-price-weekend');
+
+        if (norteWkday) norteWkday.textContent = `$${norteBase.toLocaleString('es-AR')}`;
+        if (norteWkend) norteWkend.textContent = `${discountPercent}% OFF`;
+        if (centroWkday) centroWkday.textContent = `$${centroBase.toLocaleString('es-AR')}`;
+        if (centroWkend) centroWkend.textContent = `${discountPercent}% OFF`;
+
         renderSalonCalendar('calendar-norte', norteReservedDates);
         renderSalonCalendar('calendar-centro', centroReservedDates);
       }
