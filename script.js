@@ -1258,9 +1258,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.calc-tab-btn').forEach(b => {
       if (b.getAttribute('data-tab') === targetTabId) b.classList.add('active');
     });
-    // Scroll hacia la sección del cotizador
-    const calcSection = document.getElementById('calculadora');
-    if (calcSection) calcSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   document.querySelectorAll('.btn-tab-next, .btn-tab-prev').forEach(btn => {
