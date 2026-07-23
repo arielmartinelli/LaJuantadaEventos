@@ -572,8 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateLivingSelector(livingService) {
     const srvLivingQtySelect = document.getElementById('srv-living-qty');
     if (srvLivingQtySelect && livingService) {
-      const price = parseFloat(livingService.price);
-      srvLivingQtySelect.setAttribute('data-cost', price);
+      srvLivingQtySelect.setAttribute('data-cost', 0);
       
       if (!livingService.is_available) {
         srvLivingQtySelect.disabled = true;
@@ -581,13 +580,13 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         srvLivingQtySelect.disabled = false;
         srvLivingQtySelect.innerHTML = `
-          <option value="0" selected>Ninguno (${formatCurrency(price)} c/u)</option>
-          <option value="1">1 Juego de Living (+${formatCurrency(price)})</option>
-          <option value="2">2 Juegos de Living (+${formatCurrency(price * 2)})</option>
-          <option value="3">3 Juegos de Living (+${formatCurrency(price * 3)})</option>
-          <option value="4">4 Juegos de Living (+${formatCurrency(price * 4)})</option>
-          <option value="5">5 Juegos de Living (+${formatCurrency(price * 5)})</option>
-          <option value="6">6 Juegos de Living (+${formatCurrency(price * 6)})</option>
+          <option value="0" selected>Ninguno (A cotizar)</option>
+          <option value="1">1 Juego de Living (A cotizar)</option>
+          <option value="2">2 Juegos de Living (A cotizar)</option>
+          <option value="3">3 Juegos de Living (A cotizar)</option>
+          <option value="4">4 Juegos de Living (A cotizar)</option>
+          <option value="5">5 Juegos de Living (A cotizar)</option>
+          <option value="6">6 Juegos de Living (A cotizar)</option>
         `;
       }
     }
@@ -1114,8 +1113,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cálculo final:
     const pricePerPerson = menuItemsTotalPerPerson;
     const gastroCostTotal = menuItemsTotalPerPerson * guestCount;
-    const addonsCostTotal = (srvLivingQtySelect && srvLivingQtySelect.value > 0 ? parseInt(srvLivingQtySelect.value) * 18000 : 0);
-    const grandTotal = gastroCostTotal + salonCost + addonsCostTotal;
+    const addonsCostTotal = 0;
+    const grandTotal = gastroCostTotal + salonCost;
     
     if (calcTotal) calcTotal.textContent = formatCurrency(grandTotal);
     
@@ -1616,8 +1615,8 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
 
           addonRows.push([
             displayName,
-            cost > 0 ? `${formatCurrency(cost)} ${isPerPerson ? 'x pers.' : 'fijo'}` : 'A Cotizar',
-            totalCost > 0 ? formatCurrency(totalCost) : 'A Cotizar'
+            'A Cotizar por Admin',
+            'A Cotizar por Admin'
           ]);
         });
       } else {
