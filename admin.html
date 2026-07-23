@@ -1597,6 +1597,36 @@
       // ==========================================================================
       // RENDER SERVICIOS ADICIONALES & CARTA
       // ==========================================================================
+      function syncCurrentDOMServicesToMemory() {
+        if (!dbServices || !Array.isArray(dbServices)) return;
+        const serviceRows = document.querySelectorAll('.service-card-edit');
+        serviceRows.forEach(row => {
+          const keyInput = row.querySelector('.srv-input-key');
+          if (!keyInput) return;
+          const key = keyInput.value.trim();
+          if (!key) return;
+
+          const name = row.querySelector('.srv-input-name').value.trim();
+          const description = row.querySelector('.srv-input-desc').value.trim();
+          const price = parseFloat(row.querySelector('.srv-input-price').value) || 0;
+          const typeVal = row.querySelector('.srv-input-type').value;
+          const isPerPerson = typeVal === 'per_person';
+          const unitType = typeVal === 'per_kilo' ? 'kilo' : (typeVal === 'per_unit' ? 'unit' : (typeVal === 'per_person' ? 'person' : 'fixed'));
+          const isAvailable = row.querySelector('.srv-input-available').checked;
+          const category = row.querySelector('.srv-input-category').value;
+          const tag = row.querySelector('.srv-input-tag').value.trim();
+
+          const existingIdx = dbServices.findIndex(s => String(s.key) === key);
+          const serviceObj = { key, name, description, price, is_per_person: isPerPerson, unit_type: unitType, is_available: isAvailable, category, tag };
+
+          if (existingIdx >= 0) {
+            dbServices[existingIdx] = { ...dbServices[existingIdx], ...serviceObj };
+          } else {
+            dbServices.push(serviceObj);
+          }
+        });
+      }
+
       function renderServicesTable(services) {
         const grid = document.getElementById('services-grid');
         if (!grid) return;
@@ -1628,6 +1658,7 @@
       const adminCategoryFilter = document.getElementById('admin-category-filter');
       if (adminCategoryFilter) {
         adminCategoryFilter.addEventListener('change', () => {
+          syncCurrentDOMServicesToMemory();
           renderServicesTable(dbServices);
         });
       }
@@ -1958,30 +1989,9 @@
             });
           });
 
-          // 2. Recopilar servicios
-          const servicesPayload = [];
-          const serviceRows = document.querySelectorAll('.service-card-edit');
-          serviceRows.forEach(row => {
-            const key = row.querySelector('.srv-input-key').value.trim();
-            const name = row.querySelector('.srv-input-name').value.trim();
-            const description = row.querySelector('.srv-input-desc').value.trim();
-            const price = parseFloat(row.querySelector('.srv-input-price').value) || 0;
-            const isPerPerson = row.querySelector('.srv-input-type').value === 'per_person';
-            const isAvailable = row.querySelector('.srv-input-available').checked;
-            const category = row.querySelector('.srv-input-category').value;
-            const tag = row.querySelector('.srv-input-tag').value.trim();
-            
-            servicesPayload.push({
-              key,
-              name,
-              description,
-              price,
-              is_per_person: isPerPerson,
-              is_available: isAvailable,
-              category,
-              tag
-            });
-          });
+          // 2. Recopilar y sincronizar la lista completa de servicios
+          syncCurrentDOMServicesToMemory();
+          const servicesPayload = JSON.parse(JSON.stringify(dbServices));
 
           // 3. Recopilar carrusel
           const carouselPayload = [];
