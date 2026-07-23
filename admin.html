@@ -1224,6 +1224,13 @@
           dbConfigs = configs || {};
           dbServices = (services && Array.isArray(services) && services.length > 0) ? services : JSON.parse(JSON.stringify(DEFAULT_SERVICES));
 
+          // Recuperar ítems faltantes si hubo guardado parcial previo
+          DEFAULT_SERVICES.forEach(defItem => {
+            if (!dbServices.some(s => String(s.key) === String(defItem.key))) {
+              dbServices.push(JSON.parse(JSON.stringify(defItem)));
+            }
+          });
+
           dbCarousel = (carousel && carousel.length > 0) ? carousel : JSON.parse(JSON.stringify(DEFAULT_CAROUSEL));
           dbGallery = (gallery && gallery.length > 0) ? gallery : JSON.parse(JSON.stringify(DEFAULT_GALLERY));
 
@@ -1251,6 +1258,12 @@
 
         const localServices = localStorage.getItem('lajuntada_services_list');
         dbServices = (localServices && JSON.parse(localServices).length > 0) ? JSON.parse(localServices) : JSON.parse(JSON.stringify(DEFAULT_SERVICES));
+
+        DEFAULT_SERVICES.forEach(defItem => {
+          if (!dbServices.some(s => String(s.key) === String(defItem.key))) {
+            dbServices.push(JSON.parse(JSON.stringify(defItem)));
+          }
+        });
 
         const localCarousel = localStorage.getItem('lajuntada_carousel_list');
         dbCarousel = (localCarousel && JSON.parse(localCarousel).length > 0) ? JSON.parse(localCarousel) : JSON.parse(JSON.stringify(DEFAULT_CAROUSEL));
@@ -2115,6 +2128,23 @@
             }
           } catch(e){}
         }
+
+        // Si no hay ninguna copia guardada, inicializar con la copia baseline de fábrica
+        if (!backups || backups.length === 0) {
+          const now = new Date();
+          const initialBackup = {
+            id: 'backup_initial',
+            name: 'Copia Inicial de Fábrica (Valores Base)',
+            timestamp: now.toISOString(),
+            dateStr: now.toLocaleDateString('es-AR') + ' ' + now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
+            configs: { ...DEFAULT_CONFIGS },
+            services: JSON.parse(JSON.stringify(DEFAULT_SERVICES)),
+            carousel: JSON.parse(JSON.stringify(DEFAULT_CAROUSEL)),
+            gallery: JSON.parse(JSON.stringify(DEFAULT_GALLERY))
+          };
+          backups = [initialBackup];
+        }
+
         dbBackups = backups;
         renderBackupsDOM();
       }

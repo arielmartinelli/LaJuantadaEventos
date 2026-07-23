@@ -218,6 +218,13 @@ document.addEventListener('DOMContentLoaded', () => {
         activeServices = [...DEFAULT_SERVICES];
       }
 
+      // Asegurar que no falten categorías por guardados parciales anteriores
+      DEFAULT_SERVICES.forEach(defItem => {
+        if (!activeServices.some(s => String(s.key) === String(defItem.key))) {
+          activeServices.push(JSON.parse(JSON.stringify(defItem)));
+        }
+      });
+
       // Garantizar precios actualizados en platos principales
       activeServices.forEach(s => {
         if (s.category === 'principales' && (!s.price || s.price <= 0)) {
@@ -266,6 +273,12 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       activeServices = [...DEFAULT_SERVICES];
     }
+
+    DEFAULT_SERVICES.forEach(defItem => {
+      if (!activeServices.some(s => String(s.key) === String(defItem.key))) {
+        activeServices.push(JSON.parse(JSON.stringify(defItem)));
+      }
+    });
 
     // Garantizar precios actualizados en platos principales
     activeServices.forEach(s => {
