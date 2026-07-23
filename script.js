@@ -25,10 +25,19 @@ document.addEventListener('DOMContentLoaded', () => {
     contact_phone2: '3512160141',
     contact_address: 'Mendoza 3147, Alta Córdoba, Córdoba',
     contact_email: 'lajuntadaeventos@gmail.com',
+    min_guests_qty: '40',
+    cash_discount_percent: '10',
+    living_set_price: '18000',
     salon_norte_base_price: '300000',
     salon_norte_extra_pax_price: '7500',
+    salon_norte_cover_image: 'assets/wedding_event.png',
+    salon_norte_carousel_images: '["assets/wedding_event.png","assets/hero_bg.png","assets/catering_premium.png"]',
+    salon_norte_equipamiento: '["Capacidad: hasta 40 personas","Parque verde y piscina","Climatización central","Asadores de gran capacidad","Estacionamiento privado","Conectividad de alta velocidad"]',
     salon_centro_base_price: '300000',
     salon_centro_extra_pax_price: '7500',
+    salon_centro_cover_image: 'assets/social_event.png',
+    salon_centro_carousel_images: '["assets/social_event.png","assets/birthday_sweet.png","assets/birthday_event.png"]',
+    salon_centro_equipamiento: '["Capacidad: hasta 40 personas","Ubicación céntrica accesible","Ambiente climatizado","Equipamiento de DJ e audio","Iluminación perimetral led","Seguridad médica integrada"]',
     salon_weekday_discount_percent: '15',
     admin_username: 'leo',
     admin_password: 'leo123'
@@ -1001,13 +1010,14 @@ document.addEventListener('DOMContentLoaded', () => {
   function calculateBudget(clientNameOverride = '', dateValOverride = '') {
     if (!guestCountInput) return;
 
-    let guestCount = parseInt(guestCountInput.value) || 40;
-    if (guestCount < 40) {
-      guestCount = 40;
-      guestCountInput.value = 40;
-      if (guestCountNumBox) guestCountNumBox.value = 40;
+    const minGuestsLimit = parseInt(activeConfigs.min_guests_qty) || 40;
+    let guestCount = parseInt(guestCountInput.value) || minGuestsLimit;
+    if (guestCount < minGuestsLimit) {
+      guestCount = minGuestsLimit;
+      guestCountInput.value = minGuestsLimit;
+      if (guestCountNumBox) guestCountNumBox.value = minGuestsLimit;
       const guestRange = document.getElementById('guest-count');
-      if (guestRange) guestRange.value = 40;
+      if (guestRange) guestRange.value = minGuestsLimit;
     }
     
     // Detectar si hay salón seleccionado para tope de capacidad

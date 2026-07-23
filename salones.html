@@ -514,7 +514,7 @@
     <!-- Salón Norte Preview Card -->
     <div class="salon-preview-card reveal-left" id="card-norte">
       <div class="salon-preview-thumb">
-        <img src="assets/wedding_event.png" alt="Salón La Juntada Norte">
+        <img src="assets/wedding_event.png" alt="Salón La Juntada Norte" id="norte-cover-img">
         <span class="salon-overlay-tag">Zona Norte</span>
       </div>
       
@@ -567,7 +567,7 @@
             </div>
           </div>
 
-          <div class="salon-amenities" style="margin-bottom: 20px;">
+          <div class="salon-amenities" id="amenities-norte" style="margin-bottom: 20px;">
             <div class="amenity-item"><i class="fa-solid fa-users"></i><span>Capacidad: hasta 40 personas</span></div>
             <div class="amenity-item"><i class="fa-solid fa-tree"></i><span>Parque verde y piscina</span></div>
             <div class="amenity-item"><i class="fa-solid fa-snowflake"></i><span>Climatización central</span></div>
@@ -600,7 +600,7 @@
     <!-- Salón Centro Preview Card -->
     <div class="salon-preview-card reveal-right" id="card-centro">
       <div class="salon-preview-thumb">
-        <img src="assets/social_event.png" alt="Salón La Juntada Centro">
+        <img src="assets/social_event.png" alt="Salón La Juntada Centro" id="centro-cover-img">
         <span class="salon-overlay-tag">Zona Centro</span>
       </div>
       
@@ -653,7 +653,7 @@
             </div>
           </div>
 
-          <div class="salon-amenities" style="margin-bottom: 20px;">
+          <div class="salon-amenities" id="amenities-centro" style="margin-bottom: 20px;">
             <div class="amenity-item"><i class="fa-solid fa-users"></i><span>Capacidad: hasta 40 personas</span></div>
             <div class="amenity-item"><i class="fa-solid fa-building-user"></i><span>Ubicación céntrica accesible</span></div>
             <div class="amenity-item"><i class="fa-solid fa-snowflake"></i><span>Ambiente climatizado</span></div>
@@ -922,8 +922,73 @@
         if (centroWkday) centroWkday.textContent = `$${centroBase.toLocaleString('es-AR')}`;
         if (centroWkend) centroWkend.textContent = `${discountPercent}% OFF`;
 
+        // Fotos de portada dinámicas
+        const norteCover = document.getElementById('norte-cover-img');
+        const centroCover = document.getElementById('centro-cover-img');
+        if (norteCover && configs.salon_norte_cover_image) norteCover.src = configs.salon_norte_cover_image;
+        if (centroCover && configs.salon_centro_cover_image) centroCover.src = configs.salon_centro_cover_image;
+
+        // Carruseles dinámicos
+        renderDynamicCarousel('carousel-norte', configs.salon_norte_carousel_images);
+        renderDynamicCarousel('carousel-centro', configs.salon_centro_carousel_images);
+
+        // Equipamiento dinámico
+        renderDynamicAmenities('amenities-norte', configs.salon_norte_equipamiento);
+        renderDynamicAmenities('amenities-centro', configs.salon_centro_equipamiento);
+
         renderSalonCalendar('calendar-norte', norteReservedDates);
         renderSalonCalendar('calendar-centro', centroReservedDates);
+      }
+
+      function renderDynamicCarousel(carouselId, rawData) {
+        const carousel = document.getElementById(carouselId);
+        if (!carousel || !rawData) return;
+        let images = [];
+        try { images = typeof rawData === 'string' ? JSON.parse(rawData) : rawData; } catch(e){}
+        if (!Array.isArray(images) || images.length === 0) return;
+
+        const slidesContainer = carousel.querySelector('.salon-carousel-slides');
+        const dotsContainer = carousel.querySelector('.salon-carousel-dots');
+        if (!slidesContainer || !dotsContainer) return;
+
+        let slidesHtml = '';
+        let dotsHtml = '';
+        images.forEach((imgUrl, idx) => {
+          slidesHtml += `<img src="${imgUrl}" alt="Foto ${idx + 1}" class="salon-carousel-slide">`;
+          dotsHtml += `<span class="salon-carousel-dot ${idx === 0 ? 'active' : ''}"></span>`;
+        });
+
+        slidesContainer.innerHTML = slidesHtml;
+        dotsContainer.innerHTML = dotsHtml;
+        if (window.initSalonCarousel) window.initSalonCarousel(carouselId);
+      }
+
+      function renderDynamicAmenities(containerId, rawData) {
+        const container = document.getElementById(containerId);
+        if (!container || !rawData) return;
+        let items = [];
+        try { items = typeof rawData === 'string' ? JSON.parse(rawData) : rawData; } catch(e){}
+        if (!Array.isArray(items) || items.length === 0) return;
+
+        let html = '';
+        items.forEach(text => {
+          const lower = text.toLowerCase();
+          let icon = 'fa-check';
+          if (lower.includes('capacidad') || lower.includes('personas')) icon = 'fa-users';
+          else if (lower.includes('parque') || lower.includes('piscina') || lower.includes('patio')) icon = 'fa-tree';
+          else if (lower.includes('clima') || lower.includes('aire')) icon = 'fa-snowflake';
+          else if (lower.includes('asador') || lower.includes('parrilla') || lower.includes('cocina')) icon = 'fa-fire-burner';
+          else if (lower.includes('estacionamiento') || lower.includes('cochera')) icon = 'fa-square-parking';
+          else if (lower.includes('wifi') || lower.includes('conectividad') || lower.includes('internet')) icon = 'fa-wifi';
+          else if (lower.includes('dj') || lower.includes('sonido') || lower.includes('audio') || lower.includes('pista')) icon = 'fa-compact-disc';
+          else if (lower.includes('luz') || lower.includes('luces') || lower.includes('led')) icon = 'fa-lightbulb';
+          else if (lower.includes('ubicación') || lower.includes('céntrica')) icon = 'fa-building-user';
+          else if (lower.includes('seguridad') || lower.includes('médica')) icon = 'fa-shield-halved';
+
+          html += `<div class="amenity-item"><i class="fa-solid ${icon}"></i><span>${text}</span></div>`;
+        });
+
+        container.innerHTML = html;
       }
 
       function renderSalonCalendar(containerId, reservedDates) {

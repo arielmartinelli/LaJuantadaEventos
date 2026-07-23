@@ -1018,9 +1018,15 @@
                   Selecciona el salón, elegí el mes y haz clic sobre cualquier día para alternar entre <strong>Disponible (Verde)</strong> y <strong>Reservado (Rojo)</strong>. Los días marcados como reservados se verán deshabilitados para tus clientes en la web de Salones.
                 </p>
 
-                <!-- Inputs ocultos para sincronizar fechas reservadas en Supabase / Local -->
+                <!-- Inputs ocultos para sincronizar fechas reservadas y media de salones -->
                 <input type="hidden" id="db-salon_norte_reserved_dates" value="[]">
                 <input type="hidden" id="db-salon_centro_reserved_dates" value="[]">
+                <input type="hidden" id="db-salon_norte_cover_image" value="assets/wedding_event.png">
+                <input type="hidden" id="db-salon_norte_carousel_images" value="[]">
+                <input type="hidden" id="db-salon_norte_equipamiento" value="[]">
+                <input type="hidden" id="db-salon_centro_cover_image" value="assets/social_event.png">
+                <input type="hidden" id="db-salon_centro_carousel_images" value="[]">
+                <input type="hidden" id="db-salon_centro_equipamiento" value="[]">
 
                 <div style="display: flex; gap: 15px; margin-bottom: 25px; align-items: center; flex-wrap: wrap; background: #faf6f0; padding: 15px; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
                   <div style="flex: 1; min-width: 240px;">
@@ -1050,6 +1056,70 @@
                   <div id="admin-cal-days-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;">
                     <!-- Días interactivos -->
                   </div>
+                </div>
+              </div>
+
+              <!-- Bloque adicional: Gestión de Fotos & Equipamiento -->
+              <div class="admin-box" style="margin-top: 25px;">
+                <h3><i class="fa-solid fa-camera"></i> Fotos & Equipamiento de Salones</h3>
+                <p style="font-size: 0.85rem; color: var(--charcoal-muted); margin-bottom: 20px;">
+                  Modifica la foto de portada, las imágenes del carrusel y la lista de equipamiento/comodidades para cada salón.
+                </p>
+
+                <!-- Tabs selector Norte / Centro -->
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                  <button type="button" class="btn-salon-toggle active" id="btn-toggle-salon-norte" style="padding: 10px 22px; border-radius: 50px; font-weight: 800; border: none; cursor: pointer; background: var(--primary-orange); color: white;">
+                    <i class="fa-solid fa-building"></i> Salón Norte (Villa Allende)
+                  </button>
+                  <button type="button" class="btn-salon-toggle" id="btn-toggle-salon-centro" style="padding: 10px 22px; border-radius: 50px; font-weight: 800; border: 1px solid var(--border-light); cursor: pointer; background: white; color: var(--charcoal);">
+                    <i class="fa-solid fa-building"></i> Salón Centro (Alta Córdoba)
+                  </button>
+                </div>
+
+                <!-- Panel Salón Norte Editor -->
+                <div id="salon-editor-norte" class="salon-editor-panel">
+                  <h4 style="color: var(--primary-orange); font-weight: 800; margin-bottom: 15px;">Salón La Juntada Norte</h4>
+                  
+                  <div style="display: grid; grid-template-columns: 240px 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                      <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Foto de Portada</label>
+                      <img id="preview-norte-cover" src="assets/wedding_event.png" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border-light); margin-bottom: 8px;">
+                      <input type="file" id="file-norte-cover" accept="image/*" style="font-size: 0.8rem; width: 100%;">
+                    </div>
+                    <div>
+                      <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Equipamiento & Comodidades (Escribir 1 ítem por línea)</label>
+                      <textarea id="editor-norte-equipamiento" rows="6" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-light); font-family: inherit; font-size: 0.85rem;" placeholder="Capacidad: hasta 40 personas&#10;Parque verde y piscina..."></textarea>
+                    </div>
+                  </div>
+
+                  <h5 style="font-weight: 700; font-size: 0.9rem; margin-bottom: 10px;"><i class="fa-solid fa-images text-orange"></i> Fotos del Carrusel (Salón Norte)</h5>
+                  <div id="container-norte-carousel" class="admin-cards-grid" style="margin-bottom: 15px;"></div>
+                  <button type="button" class="admin-btn-export" id="btn-add-norte-carousel" style="padding: 8px 16px; font-size: 0.85rem; background-color: var(--primary-orange); border-radius: 50px;">
+                    <i class="fa-solid fa-plus"></i> Añadir Foto al Carrusel Norte
+                  </button>
+                </div>
+
+                <!-- Panel Salón Centro Editor -->
+                <div id="salon-editor-centro" class="salon-editor-panel" style="display: none;">
+                  <h4 style="color: var(--primary-orange); font-weight: 800; margin-bottom: 15px;">Salón La Juntada Centro</h4>
+                  
+                  <div style="display: grid; grid-template-columns: 240px 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                      <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Foto de Portada</label>
+                      <img id="preview-centro-cover" src="assets/social_event.png" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border-light); margin-bottom: 8px;">
+                      <input type="file" id="file-centro-cover" accept="image/*" style="font-size: 0.8rem; width: 100%;">
+                    </div>
+                    <div>
+                      <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Equipamiento & Comodidades (Escribir 1 ítem por línea)</label>
+                      <textarea id="editor-centro-equipamiento" rows="6" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-light); font-family: inherit; font-size: 0.85rem;" placeholder="Capacidad: hasta 40 personas&#10;Ubicación céntrica accesible..."></textarea>
+                    </div>
+                  </div>
+
+                  <h5 style="font-weight: 700; font-size: 0.9rem; margin-bottom: 10px;"><i class="fa-solid fa-images text-orange"></i> Fotos del Carrusel (Salón Centro)</h5>
+                  <div id="container-centro-carousel" class="admin-cards-grid" style="margin-bottom: 15px;"></div>
+                  <button type="button" class="admin-btn-export" id="btn-add-centro-carousel" style="padding: 8px 16px; font-size: 0.85rem; background-color: var(--primary-orange); border-radius: 50px;">
+                    <i class="fa-solid fa-plus"></i> Añadir Foto al Carrusel Centro
+                  </button>
                 </div>
               </div>
             </div>
@@ -1460,6 +1530,156 @@
           }
         });
         initAdminCalendar();
+        initSalonMediaEditors();
+      }
+
+      function initSalonMediaEditors() {
+        const btnToggleNorte = document.getElementById('btn-toggle-salon-norte');
+        const btnToggleCentro = document.getElementById('btn-toggle-salon-centro');
+        const editorNorte = document.getElementById('salon-editor-norte');
+        const editorCentro = document.getElementById('salon-editor-centro');
+
+        if (btnToggleNorte && btnToggleCentro) {
+          btnToggleNorte.onclick = () => {
+            btnToggleNorte.style.background = 'var(--primary-orange)';
+            btnToggleNorte.style.color = 'white';
+            btnToggleCentro.style.background = 'white';
+            btnToggleCentro.style.color = 'var(--charcoal)';
+            editorNorte.style.display = 'block';
+            editorCentro.style.display = 'none';
+          };
+
+          btnToggleCentro.onclick = () => {
+            btnToggleCentro.style.background = 'var(--primary-orange)';
+            btnToggleCentro.style.color = 'white';
+            btnToggleNorte.style.background = 'white';
+            btnToggleNorte.style.color = 'var(--charcoal)';
+            editorCentro.style.display = 'block';
+            editorNorte.style.display = 'none';
+          };
+        }
+
+        ['norte', 'centro'].forEach(salon => {
+          const coverHidden = document.getElementById(`db-salon_${salon}_cover_image`);
+          const carouselHidden = document.getElementById(`db-salon_${salon}_carousel_images`);
+          const equipHidden = document.getElementById(`db-salon_${salon}_equipamiento`);
+
+          const coverPreview = document.getElementById(`preview-${salon}-cover`);
+          const coverFileInput = document.getElementById(`file-${salon}-cover`);
+          const equipTextarea = document.getElementById(`editor-${salon}-equipamiento`);
+          const carouselContainer = document.getElementById(`container-${salon}-carousel`);
+          const addCarouselBtn = document.getElementById(`btn-add-${salon}-carousel`);
+
+          if (coverHidden && coverPreview && coverHidden.value) {
+            coverPreview.src = coverHidden.value;
+          }
+
+          if (coverFileInput && coverHidden && coverPreview) {
+            coverFileInput.onchange = async (e) => {
+              const file = e.target.files[0];
+              if (file) {
+                coverPreview.src = 'assets/loading.gif';
+                const url = await handleImageUpload(file, 'salones');
+                if (url) {
+                  coverPreview.src = url;
+                  coverHidden.value = url;
+                }
+              }
+            };
+          }
+
+          if (equipHidden && equipTextarea) {
+            let items = [];
+            try { items = JSON.parse(equipHidden.value); } catch(e){}
+            if (Array.isArray(items) && items.length > 0) {
+              equipTextarea.value = items.join('\n');
+            } else if (typeof equipHidden.value === 'string' && equipHidden.value) {
+              equipTextarea.value = equipHidden.value;
+            }
+            
+            equipTextarea.oninput = () => {
+              const lines = equipTextarea.value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+              equipHidden.value = JSON.stringify(lines);
+            };
+          }
+
+          function renderSalonCarouselAdmin() {
+            if (!carouselContainer || !carouselHidden) return;
+            carouselContainer.innerHTML = '';
+            let images = [];
+            try { images = JSON.parse(carouselHidden.value); } catch(e){}
+            if (!Array.isArray(images) || images.length === 0) {
+              images = salon === 'norte' 
+                ? ["assets/wedding_event.png", "assets/hero_bg.png", "assets/catering_premium.png"]
+                : ["assets/social_event.png", "assets/birthday_sweet.png", "assets/birthday_event.png"];
+              carouselHidden.value = JSON.stringify(images);
+            }
+
+            images.forEach((imgUrl, idx) => {
+              const card = document.createElement('div');
+              card.className = 'slide-edit-card';
+              card.innerHTML = `
+                <img src="${imgUrl}" class="slide-preview-img" alt="Vista previa">
+                <div class="slide-edit-inputs">
+                  <div class="admin-form-group" style="margin-bottom: 5px;">
+                    <label style="font-size: 0.75rem;">Foto #${idx + 1}</label>
+                    <input type="file" class="salon-carousel-file" accept="image/*" style="font-size: 0.8rem; width: 100%;">
+                    <input type="hidden" class="salon-carousel-url" value="${imgUrl}">
+                  </div>
+                </div>
+                <button type="button" class="btn-delete-row" style="position: absolute; top: 10px; right: 10px;" title="Eliminar foto">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              `;
+
+              const fileInput = card.querySelector('.salon-carousel-file');
+              const previewImg = card.querySelector('.slide-preview-img');
+              const urlInput = card.querySelector('.salon-carousel-url');
+              const delBtn = card.querySelector('.btn-delete-row');
+
+              fileInput.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  previewImg.src = 'assets/loading.gif';
+                  const url = await handleImageUpload(file, 'salones');
+                  if (url) {
+                    previewImg.src = url;
+                    urlInput.value = url;
+                    updateCarouselHidden();
+                  }
+                }
+              };
+
+              delBtn.onclick = () => {
+                card.remove();
+                updateCarouselHidden();
+              };
+
+              carouselContainer.appendChild(card);
+            });
+          }
+
+          function updateCarouselHidden() {
+            if (!carouselContainer || !carouselHidden) return;
+            const urls = [];
+            carouselContainer.querySelectorAll('.salon-carousel-url').forEach(inp => {
+              if (inp.value) urls.push(inp.value);
+            });
+            carouselHidden.value = JSON.stringify(urls);
+          }
+
+          renderSalonCarouselAdmin();
+
+          if (addCarouselBtn) {
+            addCarouselBtn.onclick = () => {
+              let images = [];
+              try { images = JSON.parse(carouselHidden.value); } catch(e){}
+              images.push('assets/wedding_event.png');
+              carouselHidden.value = JSON.stringify(images);
+              renderSalonCarouselAdmin();
+            };
+          }
+        });
       }
 
       // ==========================================================================
