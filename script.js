@@ -1408,10 +1408,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Ejecución de envío a WhatsApp con los datos confirmados y emojis mejorados
+  // Ejecución de envío a WhatsApp con los datos confirmados (formato 100% compatible)
   function executeWhatsAppSend(clientName, rawDate) {
     if (!clientName || !clientName.trim()) {
-      alert('⚠️ Por favor ingresá tu Nombre y Apellido para enviar la cotización.');
+      alert('Por favor ingresá tu Nombre y Apellido para enviar la cotización.');
       openClientModal('whatsapp');
       return;
     }
@@ -1422,12 +1422,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let menuItemsText = '';
     if (selectedMenuItems && selectedMenuItems.size > 0) {
       const categoriesOrder = [
-        { key: 'recepcion', label: 'Recepción & Bocaditos' },
+        { key: 'recepcion', label: 'Recepción y Bocaditos' },
         { key: 'entradas', label: 'Entrada' },
         { key: 'principales', label: 'Plato Principal' },
         { key: 'postres', label: 'Postre' },
         { key: 'mesadulce', label: 'Mesa Dulce' },
-        { key: 'bebidas', label: 'Bebidas & Gaseosas' },
+        { key: 'bebidas', label: 'Bebidas y Gaseosas' },
         { key: 'barratragos', label: 'Barra de Tragos' },
         { key: 'findeevento', label: 'Fin de Evento (Trasnoche)' }
       ];
@@ -1438,44 +1438,45 @@ document.addEventListener('DOMContentLoaded', () => {
           .filter(s => s && (s.category === cat.key || (cat.key === 'barratragos' && (s.key === 'srv_barra' || s.name.toLowerCase().includes('barra')))));
         
         if (items.length > 0) {
-          menuItemsText += `\n\n  📌 *${cat.label}:*`;
+          menuItemsText += `\n\n* ${cat.label}:`;
           items.forEach(srv => {
-            menuItemsText += `\n     • ${srv.name}`;
+            menuItemsText += `\n  - ${srv.name}`;
           });
         }
       });
     } else {
-      menuItemsText = '\n  🔸 Ninguno (Menú a definir)';
+      menuItemsText = '\n  - Ninguno (Menú a definir)';
     }
 
     let addonsText = '';
     if (results.addons.length > 0) {
       results.addons.forEach(item => {
-        addonsText += `\n  🔹 ${item}`;
+        const cleanedName = item.split(' (')[0].trim();
+        addonsText += `\n  - ${cleanedName}`;
       });
     } else {
-      addonsText = '\n  🔹 Ninguno';
+      addonsText = '\n  - Ninguno';
     }
 
-    const warningText = results.guestCount < 40 ? '\n\n⚠️ *Nota:* La cantidad de invitados es menor al mínimo de 40 personas requerido.' : '';
+    const warningText = results.guestCount < 40 ? '\n\n*Nota:* La cantidad de invitados es menor al mínimo de 40 personas requerido.' : '';
 
-    const waMessage = `👋 *¡Hola equipo de La Juntada Eventos!*
+    const waMessage = `Hola equipo de La Juntada Eventos!
 Mi nombre es *${results.clientName}* y estuve armando mi propuesta en el Cotizador Online.
 
-📋 *INFORMACIÓN DEL EVENTO:*
-👤 *Cliente:* ${results.clientName}
-📅 *Fecha:* ${results.eventDate}
-🏛️ *Salón / Locación:* ${results.salonName}
-👥 *Invitados:* ${results.guestCount} personas${warningText}
+INFORMACION DEL EVENTO:
+- Cliente: ${results.clientName}
+- Fecha: ${results.eventDate}
+- Salon / Locacion: ${results.salonName}
+- Invitados: ${results.guestCount} personas${warningText}
 
-🍽️ *MENÚ GASTRONÓMICO ELEGIDO:*${menuItemsText}
+MENU GASTRONOMICO ELEGIDO:${menuItemsText}
 
-✨ *SERVICIOS Y EQUIPAMIENTO OPCIONAL:*${addonsText}
+SERVICIOS Y EQUIPAMIENTO OPCIONAL:${addonsText}
 
-🏷️ *PRESUPUESTO ESTIMADO:*
-💰 *Estimado Por Persona:* ${formatCurrency(results.perPerson)} / pers.
-${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(results.salonCost)}\n` : ''}
-💬 *¿Podrían confirmarme disponibilidad para esta fecha y coordinar los detalles? ¡Muchas gracias!*`;
+PRESUPUESTO ESTIMADO:
+- Estimado Por Persona: ${formatCurrency(results.perPerson)} / pers.
+${results.salonCost > 0 ? `- Alquiler de Salon: ${formatCurrency(results.salonCost)} Aprox.\n` : ''}
+Podrian confirmarme disponibilidad para esta fecha y coordinar los detalles? Muchas gracias!`;
 
     // Enviar a WhatsApp
     const cleanPhone = activeConfigs.contact_phone1.replace(/\s+/g, '');
