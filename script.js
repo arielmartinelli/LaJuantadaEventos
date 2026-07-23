@@ -1145,11 +1145,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (pctAddonsLbl) pctAddonsLbl.textContent = pctAddons + '%';
     }
 
-    // Actualizar VIP benefit badge
-    const vipBadge = document.getElementById('vip-benefit-badge');
-    if (vipBadge) {
-      vipBadge.style.display = guestCount >= 100 ? 'flex' : 'none';
-    }
+
 
     // Actualizar badges de precios en la sección salones
     updateSalonPriceDisplays();
