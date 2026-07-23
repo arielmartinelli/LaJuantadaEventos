@@ -951,10 +951,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const centroWkday = document.getElementById('centro-price-weekday');
     const centroWkend = document.getElementById('centro-price-weekend');
 
-    if (norteWkday) norteWkday.textContent = formatCurrency(parseFloat(activeConfigs.salon_norte_price_weekday) || 150000);
-    if (norteWkend) norteWkend.textContent = formatCurrency(parseFloat(activeConfigs.salon_norte_price_weekend) || 250000);
-    if (centroWkday) centroWkday.textContent = formatCurrency(parseFloat(activeConfigs.salon_centro_price_weekday) || 120000);
-    if (centroWkend) centroWkend.textContent = formatCurrency(parseFloat(activeConfigs.salon_centro_price_weekend) || 200000);
+    if (norteWkday) norteWkday.textContent = formatCurrency(300000);
+    if (norteWkend) norteWkend.textContent = '15% OFF';
+    if (centroWkday) centroWkday.textContent = formatCurrency(300000);
+    if (centroWkend) centroWkend.textContent = '15% OFF';
   }
 
   function calculateBudget(clientNameOverride = '', dateValOverride = '') {
