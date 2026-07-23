@@ -1197,6 +1197,10 @@
           tab.classList.add('active');
           const targetEl = document.getElementById(target);
           if (targetEl) targetEl.classList.add('active');
+
+          if (target === 'tab-backups') {
+            loadBackupsList();
+          }
           
           // Scroll to top of content on change
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2149,11 +2153,18 @@
         let backups = [];
         const rawLocal = localStorage.getItem('lajuntada_site_backups');
         if (rawLocal) {
-          try { backups = JSON.parse(rawLocal); } catch(e){}
+          try {
+            const parsedLocal = JSON.parse(rawLocal);
+            if (Array.isArray(parsedLocal) && parsedLocal.length > 0) {
+              backups = parsedLocal;
+            }
+          } catch(e){}
         }
         if (dbConfigs && dbConfigs.site_backups_json) {
           try {
-            const parsedSupabase = JSON.parse(dbConfigs.site_backups_json);
+            const parsedSupabase = typeof dbConfigs.site_backups_json === 'string'
+              ? JSON.parse(dbConfigs.site_backups_json)
+              : dbConfigs.site_backups_json;
             if (Array.isArray(parsedSupabase) && parsedSupabase.length > 0) {
               backups = parsedSupabase;
             }
@@ -2168,15 +2179,16 @@
             name: 'Copia Inicial de Fábrica (Valores Base)',
             timestamp: now.toISOString(),
             dateStr: now.toLocaleDateString('es-AR') + ' ' + now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
-            configs: { ...DEFAULT_CONFIGS },
-            services: JSON.parse(JSON.stringify(DEFAULT_SERVICES)),
-            carousel: JSON.parse(JSON.stringify(DEFAULT_CAROUSEL)),
-            gallery: JSON.parse(JSON.stringify(DEFAULT_GALLERY))
+            configs: { ...DEFAULT_CONFIGS, ...(dbConfigs || {}) },
+            services: (dbServices && dbServices.length > 0) ? JSON.parse(JSON.stringify(dbServices)) : JSON.parse(JSON.stringify(DEFAULT_SERVICES)),
+            carousel: (dbCarousel && dbCarousel.length > 0) ? JSON.parse(JSON.stringify(dbCarousel)) : JSON.parse(JSON.stringify(DEFAULT_CAROUSEL)),
+            gallery: (dbGallery && dbGallery.length > 0) ? JSON.parse(JSON.stringify(dbGallery)) : JSON.parse(JSON.stringify(DEFAULT_GALLERY))
           };
           backups = [initialBackup];
         }
 
         dbBackups = backups;
+        saveBackupsList();
         renderBackupsDOM();
       }
 
