@@ -1791,28 +1791,55 @@
               <span class="slider-switch"></span>
             </label>
           </div>
-          <button type="button" class="btn-delete-row" ${isSrvLiving ? 'disabled' : ''} style="position: absolute; top: 10px; right: 10px; padding: 4px 8px; font-size: 0.8rem;" onclick="this.closest('.service-card-edit').remove()">
+          <button type="button" class="btn-delete-row" ${isSrvLiving ? 'disabled' : ''} style="position: absolute; top: 10px; right: 10px; padding: 4px 8px; font-size: 0.8rem;">
             <i class="fa-solid fa-trash"></i>
           </button>
         `;
-        
+
+        div.querySelectorAll('input, textarea, select').forEach(input => {
+          input.addEventListener('change', syncCurrentDOMServicesToMemory);
+          input.addEventListener('input', syncCurrentDOMServicesToMemory);
+        });
+
+        div.querySelector('.btn-delete-row').addEventListener('click', () => {
+          const idx = dbServices.findIndex(s => String(s.key) === String(srvKey));
+          if (idx >= 0) dbServices.splice(idx, 1);
+          div.remove();
+        });
+
         return div;
       }
 
       if (btnAddService) {
         btnAddService.addEventListener('click', () => {
+          const filterSelect = document.getElementById('admin-category-filter');
+          const currentFilter = filterSelect ? filterSelect.value : 'adicional';
+          const newCategory = (currentFilter === 'all' || !currentFilter) ? 'adicional' : currentFilter;
+
+          const newService = {
+            key: 'srv_' + Math.random().toString(36).substring(2, 7),
+            name: '',
+            description: '',
+            price: 0,
+            is_per_person: true,
+            is_available: true,
+            category: newCategory,
+            tag: ''
+          };
+
+          dbServices.push(newService);
+
           const grid = document.getElementById('services-grid');
           if (grid) {
-            grid.appendChild(createServiceCard({
-              key: 'srv_nuevo_' + Math.random().toString(36).substring(2, 7),
-              name: '',
-              price: 0,
-              is_per_person: true,
-              is_available: true,
-              category: 'adicional',
-              tag: '',
-              description: ''
-            }));
+            const emptyMsg = grid.querySelector('div');
+            if (emptyMsg && emptyMsg.textContent.includes('No hay elementos')) {
+              grid.innerHTML = '';
+            }
+            const newCard = createServiceCard(newService);
+            grid.appendChild(newCard);
+
+            const nameInput = newCard.querySelector('.srv-input-name');
+            if (nameInput) nameInput.focus();
           }
         });
       }
