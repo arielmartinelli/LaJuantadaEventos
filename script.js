@@ -1434,7 +1434,7 @@ document.addEventListener('DOMContentLoaded', () => {
           .filter(s => s && (s.category === cat.key || (cat.key === 'barratragos' && (s.key === 'srv_barra' || s.name.toLowerCase().includes('barra')))));
         
         if (items.length > 0) {
-          menuItemsText += `\n\n* ${cat.label}:`;
+          menuItemsText += `\n\n*${cat.label}:*`;
           items.forEach(srv => {
             menuItemsText += `\n  - ${srv.name}`;
           });
@@ -1459,17 +1459,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const waMessage = `Hola equipo de La Juntada Eventos!
 Mi nombre es *${results.clientName}* y estuve armando mi propuesta en el Cotizador Online.
 
-INFORMACION DEL EVENTO:
+*INFORMACION DEL EVENTO:*
 - Cliente: ${results.clientName}
 - Fecha: ${results.eventDate}
 - Salon / Locacion: ${results.salonName}
 - Invitados: ${results.guestCount} personas${warningText}
 
-MENU GASTRONOMICO ELEGIDO:${menuItemsText}
+*MENU GASTRONOMICO ELEGIDO:*${menuItemsText}
 
-SERVICIOS Y EQUIPAMIENTO OPCIONAL:${addonsText}
+*SERVICIOS Y EQUIPAMIENTO OPCIONAL:*${addonsText}
 
-PRESUPUESTO ESTIMADO:
+*PRESUPUESTO ESTIMADO:*
 - Estimado Por Persona: ${formatCurrency(results.perPerson)} / pers.
 ${results.salonCost > 0 ? `- Alquiler de Salon: ${formatCurrency(results.salonCost)} Aprox.\n` : ''}
 Podrian confirmarme disponibilidad para esta fecha y coordinar los detalles? Muchas gracias!`;
