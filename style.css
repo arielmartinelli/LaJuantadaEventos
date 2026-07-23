@@ -3056,6 +3056,24 @@ button {
     padding: 14px;
   }
 
+  /* Pestañas del cotizador en móviles con scroll suave */
+  .calc-tabs-header {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+    gap: 8px;
+    scrollbar-width: none;
+  }
+  .calc-tabs-header::-webkit-scrollbar {
+    display: none;
+  }
+  .calc-tab-btn {
+    flex-shrink: 0;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+
   /* Tarjeta Sidebar del Cotizador */
   .sticky-sidebar-card {
     position: relative;
@@ -3094,6 +3112,9 @@ button {
   }
   .total-price {
     font-size: 1.6rem;
+  }
+  .calc-tab-btn span {
+    font-size: 0.8rem;
   }
 }
 

@@ -446,7 +446,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <h4 style="margin-top: 10px;">${srv.name}</h4>
             <p style="flex-grow: 1;">${srv.description}</p>
             ${isAvailable ? `
-              <div style="margin-top: auto; display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--border-light); padding-top: 15px;">
+              <div style="margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--border-light); padding-top: 15px;">
+                <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-orange);">${priceInfo}</span>
                 <button type="button" class="${buttonClass} btn-menu-toggle-quote" data-key="${srv.key}" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 50px; cursor: pointer; border: none; font-weight: 700;">
                   ${buttonText}
                 </button>
@@ -953,26 +954,39 @@ document.addEventListener('DOMContentLoaded', () => {
   function calculateBudget(clientNameOverride = '', dateValOverride = '') {
     if (!guestCountInput) return;
 
-    const guestCount = parseInt(guestCountInput.value) || 80;
+    let guestCount = parseInt(guestCountInput.value) || 40;
     
+    // Detectar si hay salón seleccionado para tope de capacidad
+    const selectedSalonKey = calcSalonSelect ? calcSalonSelect.value : 'none';
+    const isSalonSelected = selectedSalonKey === 'norte' || selectedSalonKey === 'centro';
+
+    if (isSalonSelected && guestCount > 100) {
+      guestCount = 100;
+      guestCountInput.value = 100;
+      if (guestCountNumBox) guestCountNumBox.value = 100;
+      const guestRange = document.getElementById('guest-count');
+      if (guestRange) guestRange.value = 100;
+    }
+
     // Actualizar campo de invitados numérico
     if (guestCountVal) guestCountVal.textContent = guestCount;
     if (guestCountNumBox && document.activeElement !== guestCountNumBox) {
       guestCountNumBox.value = guestCount;
     }
     
-    // Validar mínimos de invitados
+    // Validar avisos de límite de capacidad en salones
     if (minGuestsWarning) {
-      if (guestCount < 50) {
+      if (isSalonSelected && parseInt(guestCountInput.value) >= 100) {
         minGuestsWarning.style.display = 'block';
+        minGuestsWarning.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Capacidad máxima del salón alcanzada (100 personas). Para eventos más grandes, seleccioná "Catering a Domicilio".';
       } else {
         minGuestsWarning.style.display = 'none';
       }
     }
 
-    // Detectar día de la semana para cálculo interno de salón
-    let isWeekend = false;
+    // Detectar día de la semana para descuento del 15% en días laborales (Lunes a Miércoles)
     let formattedDate = '';
+    let dayOfWeek = -1;
     const dateVal = dateValOverride || (calcEventDateInput && calcEventDateInput.value ? calcEventDateInput.value : (modalEventDate ? modalEventDate.value : ''));
 
     if (dateVal) {
@@ -982,28 +996,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const month = parseInt(dateParts[1]) - 1;
         const day = parseInt(dateParts[2]);
         const dateObj = new Date(year, month, day);
-        const dayOfWeek = dateObj.getDay(); // 0 = Domingo, 1 = Lunes, ..., 5 = Viernes, 6 = Sábado
-        
-        isWeekend = (dayOfWeek === 0 || dayOfWeek === 5 || dayOfWeek === 6);
+        dayOfWeek = dateObj.getDay(); // 0 = Domingo, 1 = Lunes, 2 = Martes, 3 = Miércoles, 4 = Jueves, 5 = Viernes, 6 = Sábado
         formattedDate = `${day.toString().padStart(2, '0')}/${(month + 1).toString().padStart(2, '0')}/${year}`;
       }
     }
 
-    // Calcular costo del salón seleccionado
+    // Calcular costo del salón seleccionado: Base $300.000 (hasta 40 personas) + $7.500 p/persona adicional.
+    // 15% OFF en días de semana (Lunes a Miércoles: dayOfWeek 1, 2, 3).
     let salonCost = 0;
-    let salonName = 'Sin Salón (Evento en Quinta Propia / Catering)';
-    const selectedSalonKey = calcSalonSelect ? calcSalonSelect.value : 'none';
+    let salonName = 'Sin Salón (Evento en Quinta Propia / Catering a Domicilio)';
 
-    if (selectedSalonKey === 'norte') {
-      salonName = 'Salón La Juntada Norte (Villa Allende)';
-      const pWeekday = parseFloat(activeConfigs.salon_norte_price_weekday) || 150000;
-      const pWeekend = parseFloat(activeConfigs.salon_norte_price_weekend) || 250000;
-      salonCost = isWeekend ? pWeekend : pWeekday;
-    } else if (selectedSalonKey === 'centro') {
-      salonName = 'Salón La Juntada Centro (Alta Córdoba)';
-      const pWeekday = parseFloat(activeConfigs.salon_centro_price_weekday) || 120000;
-      const pWeekend = parseFloat(activeConfigs.salon_centro_price_weekend) || 200000;
-      salonCost = isWeekend ? pWeekend : pWeekday;
+    if (isSalonSelected) {
+      salonName = selectedSalonKey === 'norte' ? 'Salón La Juntada Norte (Villa Allende)' : 'Salón La Juntada Centro (Alta Córdoba)';
+      const basePrice = 300000;
+      const extraRate = 7500;
+      const extraPax = Math.max(0, guestCount - 40);
+      let baseTotalSalon = basePrice + (extraPax * extraRate);
+
+      // Descuento 15% OFF Lunes a Miércoles (días de semana)
+      const isWeekdayDiscount = (dayOfWeek >= 1 && dayOfWeek <= 3);
+      if (isWeekdayDiscount) {
+        salonCost = Math.round(baseTotalSalon * 0.85);
+        salonName += ' (15% OFF aplicado)';
+      } else {
+        salonCost = baseTotalSalon;
+      }
     }
 
     let menuItemsTotalPerPerson = 0;
@@ -1390,9 +1407,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!results) return;
     
     let menuItemsText = '';
-    if (results.menuItems.length > 0) {
-      results.menuItems.forEach(item => {
-        menuItemsText += `\n  🔸 ${item}`;
+    if (selectedMenuItems && selectedMenuItems.size > 0) {
+      const categoriesOrder = [
+        { key: 'recepcion', label: 'Recepción & Bocaditos' },
+        { key: 'entradas', label: 'Entrada' },
+        { key: 'principales', label: 'Plato Principal' },
+        { key: 'postres', label: 'Postre' },
+        { key: 'mesadulce', label: 'Mesa Dulce' },
+        { key: 'bebidas', label: 'Bebidas & Gaseosas' },
+        { key: 'barratragos', label: 'Barra de Tragos' },
+        { key: 'findeevento', label: 'Fin de Evento (Trasnoche)' }
+      ];
+
+      categoriesOrder.forEach(cat => {
+        const items = Array.from(selectedMenuItems)
+          .map(k => activeServices?.find(s => s.key === k))
+          .filter(s => s && (s.category === cat.key || (cat.key === 'barratragos' && (s.key === 'srv_barra' || s.name.toLowerCase().includes('barra')))));
+        
+        if (items.length > 0) {
+          menuItemsText += `\n\n  📌 *${cat.label}:*`;
+          items.forEach(srv => {
+            menuItemsText += `\n     • ${srv.name}`;
+          });
+        }
       });
     } else {
       menuItemsText = '\n  🔸 Ninguno (Menú a definir)';
@@ -1499,38 +1536,44 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
 
       let currentY = doc.lastAutoTable.finalY + 8;
 
-      // 3. Tabla de Menú Seleccionado
+      // 3. Tabla de Menú Seleccionado (Agrupado por submenús sin precios individuales)
       const menuRows = [];
-      if (results.menuItems && results.menuItems.length > 0) {
-        results.menuItems.forEach(item => {
-          const cleanedName = item.split(' (')[0].trim();
-          const srv = activeServices?.find(s => s.name === cleanedName || s.name === item);
-          let price = srv ? parseFloat(srv.price) || 0 : 0;
-          if (srv && srv.category === 'principales' && price <= 0) {
-            if (srv.key === 'pri_parrillada') price = 35000;
-            else if (srv.key === 'pri_pollo') price = 28000;
-            else price = 25000;
+      if (selectedMenuItems && selectedMenuItems.size > 0) {
+        const categoriesOrder = [
+          { key: 'recepcion', label: 'Recepción & Bocaditos' },
+          { key: 'entradas', label: 'Entrada' },
+          { key: 'principales', label: 'Plato Principal' },
+          { key: 'postres', label: 'Postre' },
+          { key: 'mesadulce', label: 'Mesa Dulce' },
+          { key: 'bebidas', label: 'Bebidas & Gaseosas' },
+          { key: 'barratragos', label: 'Barra de Tragos' },
+          { key: 'findeevento', label: 'Fin de Evento (Trasnoche)' }
+        ];
+
+        categoriesOrder.forEach(cat => {
+          const items = Array.from(selectedMenuItems)
+            .map(k => activeServices?.find(s => s.key === k))
+            .filter(s => s && (s.category === cat.key || (cat.key === 'barratragos' && (s.key === 'srv_barra' || s.name.toLowerCase().includes('barra')))));
+          
+          if (items.length > 0) {
+            const itemsListStr = items.map(s => `• ${s.name}`).join('\n');
+            menuRows.push([cat.label, itemsListStr]);
           }
-          const displayName = srv ? srv.name : cleanedName;
-          const subtotal = price * results.guestCount;
-          menuRows.push([
-            displayName,
-            price > 0 ? `${formatCurrency(price)} x pers.` : 'Incluido en menú',
-            subtotal > 0 ? formatCurrency(subtotal) : 'Incluido'
-          ]);
         });
-      } else {
-        menuRows.push(['Menú base según contratación (Consultar variedad)', '-', 'Incluido']);
+      }
+
+      if (menuRows.length === 0) {
+        menuRows.push(['Menú Gastronómico', 'Menú base según contratación (Consultar variedad)']);
       }
 
       doc.autoTable({
         startY: currentY,
-        head: [['Plato / Opción de Menú', 'Valor Unitario', 'Subtotal Estimado']],
+        head: [['Submenú / Categoría', 'Platos e Ítems Seleccionados']],
         body: menuRows,
         theme: 'grid',
         headStyles: { fillColor: [224, 83, 38], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 9 },
-        bodyStyles: { fontSize: 8.5 },
-        columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right', fontStyle: 'bold' } },
+        bodyStyles: { fontSize: 8.5, cellPadding: 3 },
+        columnStyles: { 0: { fontStyle: 'bold', cellWidth: 50 } },
         margin: { left: 14, right: 14 }
       });
 
