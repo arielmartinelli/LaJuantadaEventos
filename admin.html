@@ -2027,9 +2027,18 @@
             });
           });
 
-          // 2. Recopilar y sincronizar la lista completa de servicios
+          // 2. Recopilar y limpiar la lista completa de servicios
           syncCurrentDOMServicesToMemory();
-          const servicesPayload = JSON.parse(JSON.stringify(dbServices));
+          const servicesPayload = dbServices.map(s => ({
+            key: String(s.key || ''),
+            name: String(s.name || ''),
+            description: String(s.description || ''),
+            price: Number(s.price || 0),
+            is_per_person: Boolean(s.is_per_person),
+            is_available: Boolean(s.is_available),
+            category: String(s.category || 'adicional'),
+            tag: String(s.tag || '')
+          }));
 
           // 3. Recopilar carrusel
           const carouselPayload = [];

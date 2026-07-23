@@ -110,12 +110,23 @@ export default async function handler(req, res) {
 
       // 2. Guardar servicios y eliminar los eliminados
       if (services && Array.isArray(services)) {
+        const cleanedServices = services.map(s => ({
+          key: String(s.key || ''),
+          name: String(s.name || ''),
+          description: String(s.description || ''),
+          price: Number(s.price || 0),
+          is_per_person: Boolean(s.is_per_person),
+          is_available: Boolean(s.is_available),
+          category: String(s.category || 'adicional'),
+          tag: String(s.tag || '')
+        }));
+
         const { error: err } = await authenticatedSupabase
           .from('lajuntada_services')
-          .upsert(services, { onConflict: 'key' });
+          .upsert(cleanedServices, { onConflict: 'key' });
         if (err) throw err;
 
-        const activeKeys = services.map(s => s.key);
+        const activeKeys = cleanedServices.map(s => s.key).filter(k => k);
         if (activeKeys.length > 0) {
           const { error: delErr } = await authenticatedSupabase
             .from('lajuntada_services')
