@@ -991,7 +991,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Detectar día de la semana para descuento del 15% en días laborales (Lunes a Miércoles)
+    // Detectar día de la semana para descuento del 15% en días de semana (Lunes a Jueves)
     let formattedDate = '';
     let dayOfWeek = -1;
     const dateVal = dateValOverride || (calcEventDateInput && calcEventDateInput.value ? calcEventDateInput.value : (modalEventDate ? modalEventDate.value : ''));
@@ -1009,7 +1009,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Calcular costo del salón seleccionado: Base $300.000 (hasta 40 personas) + $7.500 p/persona adicional.
-    // 15% OFF en días de semana (Lunes a Miércoles: dayOfWeek 1, 2, 3).
+    // 15% OFF en días de semana (Lunes a Jueves: dayOfWeek 1, 2, 3, 4).
     let salonCost = 0;
     let salonName = 'Sin Salón (Evento en Quinta Propia / Catering a Domicilio)';
 
@@ -1020,8 +1020,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const extraPax = Math.max(0, guestCount - 40);
       let baseTotalSalon = basePrice + (extraPax * extraRate);
 
-      // Descuento 15% OFF Lunes a Miércoles (días de semana)
-      const isWeekdayDiscount = (dayOfWeek >= 1 && dayOfWeek <= 3);
+      // Descuento 15% OFF Lunes a Jueves
+      const isWeekdayDiscount = (dayOfWeek >= 1 && dayOfWeek <= 4);
       if (isWeekdayDiscount) {
         salonCost = Math.round(baseTotalSalon * 0.85);
         salonName += ' (15% OFF aplicado)';
