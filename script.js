@@ -1064,7 +1064,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (salonCost > 0) {
       dynamicHtml += `
         <div class="summary-item" style="border-top: 1px dashed var(--border-light); padding-top: 8px; margin-top: 8px;">
-          <span><i class="fa-solid fa-building text-orange" style="font-size: 0.8rem; margin-right: 6px;"></i> ${salonName}</span>
+          <span><i class="fa-solid fa-building text-orange" style="font-size: 0.8rem; margin-right: 6px;"></i> ${salonName}: <strong style="color: var(--primary-orange);">${formatCurrency(salonCost)} Aprox.</strong></span>
         </div>`;
     }
 
@@ -1531,7 +1531,7 @@ ${results.salonCost > 0 ? `🏛️ *Alquiler de Salón:* ${formatCurrency(result
       const clientTableRows = [
         ['Nombre del Cliente', results.clientName || 'Cliente'],
         ['Fecha del Evento', results.eventDate || 'A confirmar'],
-        ['Salón Elegido', `${results.salonName} ${results.salonCost > 0 ? '(' + formatCurrency(results.salonCost) + ')' : ''}`],
+        ['Salón Elegido', `${results.salonName} ${results.salonCost > 0 ? '(' + formatCurrency(results.salonCost) + ' Aprox.)' : ''}`],
         ['Cantidad de Invitados', `${results.guestCount} personas`],
         ['Gastronomía Acumulada', `${formatCurrency(results.perPerson)} x pers.`]
       ];
