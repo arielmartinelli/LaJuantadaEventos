@@ -2061,10 +2061,12 @@
       // Log out handler
       if (btnLogout) {
         btnLogout.addEventListener('click', async () => {
-          if (isLocalMode) {
-            sessionStorage.removeItem('lajuntada_logged_in');
-          } else if (supabaseClient) {
-            await supabaseClient.auth.signOut();
+          sessionStorage.removeItem('lajuntada_logged_in');
+          sessionStorage.clear();
+          if (supabaseClient) {
+            try {
+              await supabaseClient.auth.signOut();
+            } catch (err) {}
           }
           currentSession = null;
           showLogin();
