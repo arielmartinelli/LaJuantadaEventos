@@ -357,11 +357,23 @@ document.addEventListener('DOMContentLoaded', () => {
       const whatsappText = encodeURIComponent(`Hola! Quisiera consultar la cotización para el alquiler de: ${srv.name}`);
       const whatsappUrl = `https://wa.me/5493516069743?text=${whatsappText}`;
 
+      const descText = srv.description || 'Infraestructura y equipamiento adicional opcional para tu evento.';
+      const needsToggle = descText.length > 65;
+
       grid.innerHTML += `
         <div class="menu-item-card ${activeClass} ${disabledClass}" id="rental-card-${srv.key}" style="transition: all 0.3s ease; position: relative; height: 100%; display: flex; flex-direction: column;">
           ${tagHtml}
           <h4 style="margin-top: 10px;">${srv.name} <span style="color: var(--primary-orange); font-size: 0.82rem; font-weight: 700;">(A cotizar)</span></h4>
-          <p style="flex-grow: 1;">${srv.description || 'Infraestructura y equipamiento adicional opcional para tu evento.'}</p>
+          
+          <div class="item-desc-container" style="flex-grow: 1; margin-bottom: 10px;">
+            <p class="item-desc-text" id="desc-text-rental-${srv.key}">${descText}</p>
+            ${needsToggle ? `
+              <button type="button" class="btn-toggle-desc" data-target="desc-text-rental-${srv.key}">
+                <span>Ver más</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>
+              </button>
+            ` : ''}
+          </div>
+
           ${isAvailable ? `
             <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--border-light); padding-top: 15px;">
               <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -443,11 +455,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const buttonText = isSelected ? 'Quitar de Cotización' : 'Sumar a Cotización';
         const buttonClass = isSelected ? 'btn-secondary' : 'btn-primary';
         
+        const descText = srv.description || '';
+        const needsToggle = descText.length > 65;
+
         grid.innerHTML += `
           <div class="menu-item-card ${activeClass} ${disabledClass}" id="menu-card-${srv.key}" style="transition: all 0.3s ease; position: relative; height: 100%; display: flex; flex-direction: column;">
             ${tagHtml}
             <h4 style="margin-top: 10px;">${srv.name}</h4>
-            <p style="flex-grow: 1;">${srv.description}</p>
+
+            <div class="item-desc-container" style="flex-grow: 1; margin-bottom: 10px;">
+              <p class="item-desc-text" id="desc-text-menu-${srv.key}">${descText}</p>
+              ${needsToggle ? `
+                <button type="button" class="btn-toggle-desc" data-target="desc-text-menu-${srv.key}">
+                  <span>Ver más</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>
+                </button>
+              ` : ''}
+            </div>
+
             ${isAvailable ? `
               <div style="margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--border-light); padding-top: 15px;">
                 <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-orange);">${priceInfo}</span>
@@ -529,13 +553,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const unitSuffix = getServiceUnitLabel(srv);
         const priceLabel = priceVal > 0 ? `${formatCurrency(priceVal)} ${unitSuffix}` : 'Incluido en Menú Base';
 
+        const descText = srv.description || 'Deliciosa especialidad para tu evento.';
+        const needsToggle = descText.length > 60;
+
         html += `
           <div class="menu-tiempos-card ${isSelected ? 'selected' : ''}" data-key="${srv.key}" style="background: white; border: 2px solid ${isSelected ? 'var(--primary-orange)' : 'var(--border-light)'}; border-radius: 12px; padding: 12px; cursor: pointer; transition: all 0.2s ease; position: relative;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
               <strong style="font-size: 0.88rem; color: var(--charcoal); line-height: 1.3;">${srv.name}</strong>
               <span style="font-size: 0.75rem; font-weight: 800; color: white; background: ${isSelected ? 'var(--primary-orange)' : '#ccc'}; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">${isSelected ? '✓' : '+'}</span>
             </div>
-            <p style="font-size: 0.78rem; color: var(--charcoal-light); margin: 6px 0 6px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${srv.description || 'Deliciosa especialidad para tu evento.'}</p>
+
+            <div class="item-desc-container" style="margin: 6px 0 6px;">
+              <p class="item-desc-text" id="desc-text-cat-${cat.key}-${srv.key}">${descText}</p>
+              ${needsToggle ? `
+                <button type="button" class="btn-toggle-desc" data-target="desc-text-cat-${cat.key}-${srv.key}">
+                  <span>Ver más</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>
+                </button>
+              ` : ''}
+            </div>
+
             <div style="font-size: 0.82rem; font-weight: 800; color: var(--primary-orange);">${priceLabel}</div>
           </div>
         `;
@@ -1782,6 +1818,25 @@ Podrian confirmarme disponibilidad para esta fecha y coordinar los detalles? Muc
         });
       });
     }
+
+    // Delegación global para botones "Ver más" / "Ver menos" en tarjetas del cotizador
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-toggle-desc');
+      if (btn) {
+        e.stopPropagation();
+        e.preventDefault();
+        const targetId = btn.getAttribute('data-target');
+        const descEl = document.getElementById(targetId);
+        if (descEl) {
+          const isExpanded = descEl.classList.toggle('expanded');
+          if (isExpanded) {
+            btn.innerHTML = '<span>Ver menos</span> <i class="fa-solid fa-chevron-up" style="font-size: 0.7rem;"></i>';
+          } else {
+            btn.innerHTML = '<span>Ver más</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>';
+          }
+        }
+      }
+    });
   }
 
   /* ==========================================================================

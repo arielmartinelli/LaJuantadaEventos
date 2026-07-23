@@ -1937,6 +1937,51 @@ button {
   line-height: 1.5;
 }
 
+.item-desc-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.item-desc-text {
+  font-size: 0.88rem;
+  color: var(--charcoal-light);
+  line-height: 1.45;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.item-desc-text.expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
+.btn-toggle-desc {
+  background: transparent;
+  border: none;
+  color: var(--primary-orange);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 0 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+
+.btn-toggle-desc:hover {
+  color: var(--primary-hover);
+}
+
 .menu-tag {
   position: absolute;
   top: 20px;
