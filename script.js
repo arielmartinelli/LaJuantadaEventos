@@ -214,14 +214,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (data.services && data.services.length > 0) {
         activeServices = data.services;
+      } else {
+        activeServices = [...DEFAULT_SERVICES];
       }
-
-      // Fusionar nuevos ítems predeterminados automáticamente
-      DEFAULT_SERVICES.forEach(defItem => {
-        if (!activeServices.some(s => s.key === defItem.key)) {
-          activeServices.push(defItem);
-        }
-      });
 
       // Garantizar precios actualizados en platos principales
       activeServices.forEach(s => {
@@ -249,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function loadLocalFallback() {
-    const localConfigs = localStorage.getItem('lajuntada_configs');
+    const localConfigs = localStorage.getItem('lajuntada_configs') || localStorage.getItem('lajuntada_site_configs');
     if (localConfigs) {
       try {
         activeConfigs = { ...DEFAULT_CONFIGS, ...JSON.parse(localConfigs) };
@@ -271,13 +266,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       activeServices = [...DEFAULT_SERVICES];
     }
-
-    // Fusionar nuevos ítems predeterminados automáticamente
-    DEFAULT_SERVICES.forEach(defItem => {
-      if (!activeServices.some(s => s.key === defItem.key)) {
-        activeServices.push(defItem);
-      }
-    });
 
     // Garantizar precios actualizados en platos principales
     activeServices.forEach(s => {
