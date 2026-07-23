@@ -725,6 +725,30 @@
                   </div>
                 </div>
 
+                <!-- Credenciales de Acceso Administrador -->
+                <div class="admin-box">
+                  <h3><i class="fa-solid fa-user-shield"></i> Seguridad & Credenciales de Acceso</h3>
+                  <p style="font-size: 0.82rem; color: var(--charcoal-muted); margin-bottom: 15px;">
+                    Cambiá tu nombre de usuario y contraseña para ingresar al panel de administración.
+                  </p>
+                  
+                  <div class="admin-form-group">
+                    <label for="db-admin_username">Nombre de Usuario de Administrador</label>
+                    <div class="admin-input-group">
+                      <span class="admin-input-prefix"><i class="fa-solid fa-user-gear"></i></span>
+                      <input type="text" id="db-admin_username" value="leo" required placeholder="Ej. leo" autocomplete="username">
+                    </div>
+                  </div>
+
+                  <div class="admin-form-group">
+                    <label for="db-admin_password">Contraseña de Acceso</label>
+                    <div class="admin-input-group">
+                      <span class="admin-input-prefix"><i class="fa-solid fa-key"></i></span>
+                      <input type="password" id="db-admin_password" value="leo123" required placeholder="••••••••" autocomplete="new-password">
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Parámetros del Cotizador -->
                 <div class="admin-box">
                   <h3><i class="fa-solid fa-sliders"></i> Parámetros del Cotizador & Descuentos</h3>
@@ -1167,24 +1191,44 @@
 
           loginError.style.display = 'none';
 
-          let emails = [];
-          if (username.toLowerCase() === 'leo') {
-            emails = ['lajuntadaeventos@gmail.com', 'leo@lajuntada.com.ar'];
-          } else if (username.includes('@')) {
-            emails = [username];
-          } else {
-            showError("Usuario incorrecto. Ingresa 'leo' o tu correo registrado en Supabase.");
+          // Cargar usuario y contraseña guardados en configuración
+          let savedUser = 'leo';
+          let savedPass = 'leo123';
+
+          if (dbConfigs && dbConfigs.admin_username) savedUser = dbConfigs.admin_username.trim();
+          if (dbConfigs && dbConfigs.admin_password) savedPass = dbConfigs.admin_password.trim();
+
+          const localSiteConfigs = localStorage.getItem('lajuntada_site_configs') || localStorage.getItem('lajuntada_config');
+          if (localSiteConfigs) {
+            try {
+              const parsed = JSON.parse(localSiteConfigs);
+              if (parsed.admin_username) savedUser = parsed.admin_username.trim();
+              if (parsed.admin_password) savedPass = parsed.admin_password.trim();
+            } catch(err){}
+          }
+
+          const isUserMatch = (username.toLowerCase() === savedUser.toLowerCase()) || (username.toLowerCase() === 'leo') || username.includes('@');
+          if (!isUserMatch) {
+            showError(`Usuario incorrecto. Ingresa '${savedUser}' o tu correo registrado en Supabase.`);
+            return;
+          }
+
+          // Validar primero credenciales guardadas
+          if ((username.toLowerCase() === savedUser.toLowerCase() || username.toLowerCase() === 'leo') && password === savedPass) {
+            sessionStorage.setItem('lajuntada_logged_in', 'true');
+            showDashboard();
+            showSaveAlert("Acceso correcto al Panel de Administración.", "success");
             return;
           }
 
           // FALLBACK LOCAL: Si no pudimos conectar con Supabase, validamos localmente
           if (isLocalMode) {
-            if (password === 'leo123') {
+            if (password === savedPass) {
               sessionStorage.setItem('lajuntada_logged_in', 'true');
               showDashboard();
               showSaveAlert("Modo Local Activo: Los cambios se guardarán en este navegador.", "success");
             } else {
-              showError("Contraseña incorrecta para el usuario Leo.");
+              showError(`Contraseña incorrecta para el usuario '${username}'.`);
             }
             return;
           }
@@ -1195,6 +1239,13 @@
           }
 
           try {
+            let emails = [];
+            if (username.toLowerCase() === savedUser.toLowerCase() || username.toLowerCase() === 'leo') {
+              emails = ['lajuntadaeventos@gmail.com', 'leo@lajuntada.com.ar'];
+            } else {
+              emails = [username];
+            }
+
             let authResult = null;
             
             // Intentar autenticación probando los correos correspondientes secuencialmente
@@ -1207,7 +1258,7 @@
                 authResult = res;
                 break;
               } else {
-                authResult = res; // Guardar el último error
+                authResult = res;
               }
             }
 
@@ -1218,7 +1269,7 @@
               if (error.message.includes("Email not confirmed")) {
                 errMsg = "Acceso bloqueado: Confirmación de Email pendiente en Supabase. Por favor, desactiva 'Confirm Email' en Supabase Auth o confirma el usuario en el panel.";
               } else if (error.message.includes("Invalid login credentials")) {
-                errMsg = "Credenciales incorrectas: El usuario o la contraseña no coinciden con los registrados en tu base de datos de Supabase.";
+                errMsg = "Credenciales incorrectas: El usuario o la contraseña no coinciden con los registrados.";
               }
               showError(errMsg);
               console.error(error);

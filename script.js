@@ -29,7 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
     salon_norte_extra_pax_price: '7500',
     salon_centro_base_price: '300000',
     salon_centro_extra_pax_price: '7500',
-    salon_weekday_discount_percent: '15'
+    salon_weekday_discount_percent: '15',
+    admin_username: 'leo',
+    admin_password: 'leo123'
   };
 
   const DEFAULT_SERVICES = [
