@@ -3000,11 +3000,62 @@ button {
   font-size: 0.88rem;
 }
 
-@media (max-width: 768px) {
-  /* Contenedor principal del Cotizador en móviles */
+/* Base desktop rule for cotizador main grid */
+.calc-main-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+@media (max-width: 992px) {
+  /* Contenedor principal del Cotizador en tablets y móviles */
+  .calc-main-grid,
   #calculadora .calc-main-grid {
     grid-template-columns: 1fr !important;
     gap: 24px !important;
+  }
+
+  /* Tarjeta Sidebar del Cotizador */
+  .sticky-sidebar-card {
+    position: relative;
+    top: 0;
+    padding: 20px;
+    border-radius: 18px;
+    box-shadow: var(--shadow-md);
+  }
+}
+
+@media (max-width: 768px) {
+  /* Pestañas del cotizador en móviles con scroll horizontal suave */
+  .calc-tabs-header {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+    gap: 8px;
+    scrollbar-width: none;
+  }
+  .calc-tabs-header::-webkit-scrollbar {
+    display: none;
+  }
+  .calc-tab-btn {
+    flex-shrink: 0;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    border-radius: 12px;
+  }
+
+  /* Gauge bar y tarjeta medidora en móviles */
+  .gauge-bar-card {
+    padding: 16px 14px;
+    border-radius: 16px;
+  }
+  .gauge-legend-grid {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 0.8rem;
   }
 
   /* Botones de Selección Rápida de Personas en 4 Columnas perfectas */
@@ -3012,12 +3063,13 @@ button {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 6px;
+    width: 100%;
   }
   .quick-pax-btn {
     width: 100%;
     text-align: center;
-    padding: 8px 4px;
-    font-size: 0.8rem;
+    padding: 8px 2px;
+    font-size: 0.78rem;
   }
 
   /* Tarjetas de Selección de Salón en 1 columna amplia */
@@ -3025,20 +3077,45 @@ button {
     grid-template-columns: 1fr;
     gap: 12px;
   }
+  .salon-opt-card {
+    padding: 16px;
+    border-radius: 14px;
+  }
 
-  /* Menú de Tiempos interno dentro del Cotizador */
+  /* Menú de Tiempos interno dentro del Cotizador en 2 columnas chicas */
   #calc-menu-tiempos-container {
-    max-height: 480px;
+    max-height: 420px;
     padding-right: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  #calc-menu-tiempos-container > div > div {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+    gap: 8px !important;
+  }
+  .menu-tiempos-card {
+    padding: 10px !important;
+    border-radius: 10px !important;
+  }
+  .menu-tiempos-card strong {
+    font-size: 0.82rem !important;
+  }
+  .menu-tiempos-card p {
+    font-size: 0.72rem !important;
+  }
+
+  /* Servicios opcionales tildables */
+  .checkbox-options-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
   }
   
   /* Modal de Datos del Cliente adaptable a teclados virtuales */
   #modal-client-data .modal-content {
-    width: 92%;
+    width: 94%;
     max-width: 440px;
     max-height: 90vh;
     overflow-y: auto;
-    padding: 24px 20px;
+    padding: 20px 16px;
     border-radius: 20px;
   }
 
@@ -3056,31 +3133,12 @@ button {
     padding: 14px;
   }
 
-  /* Pestañas del cotizador en móviles con scroll suave */
-  .calc-tabs-header {
-    display: flex;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 8px;
-    gap: 8px;
-    scrollbar-width: none;
-  }
-  .calc-tabs-header::-webkit-scrollbar {
-    display: none;
-  }
-  .calc-tab-btn {
-    flex-shrink: 0;
-    padding: 10px 14px;
-    font-size: 0.85rem;
-  }
-
-  /* Tarjeta Sidebar del Cotizador */
-  .sticky-sidebar-card {
-    position: relative;
-    top: 0;
-    padding: 20px;
-    border-radius: 18px;
-    box-shadow: var(--shadow-md);
+  /* Botones de Navegación del Cotizador (Anterior/Siguiente) */
+  .btn-tab-next, .btn-tab-prev, .btn-tab-finish {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
+    font-size: 0.88rem;
   }
 
   /* Botones de Enviar WhatsApp y PDF en móviles */
@@ -3101,20 +3159,16 @@ button {
     padding: 25px 0;
   }
   .calc-form {
-    padding: 16px 12px;
+    padding: 12px 8px;
   }
   .calc-header h2 {
     font-size: 1.2rem;
-  }
-  .gauge-legend-grid {
-    gap: 8px;
-    font-size: 0.78rem;
   }
   .total-price {
     font-size: 1.6rem;
   }
   .calc-tab-btn span {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
   }
 }
 
