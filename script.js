@@ -517,9 +517,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       items.forEach(srv => {
         const isSelected = selectedMenuItems.has(srv.key);
-        const cost = parseFloat(srv.price) || 0;
+        let priceVal = parseFloat(srv.price) || 0;
+        if (srv.category === 'principales' && priceVal <= 0) {
+          if (srv.key === 'pri_parrillada') priceVal = 35000;
+          else if (srv.key === 'pri_pollo') priceVal = 28000;
+          else priceVal = 25000;
+        }
         const unitSuffix = getServiceUnitLabel(srv);
-        const priceLabel = cost > 0 ? `${formatCurrency(cost)} ${unitSuffix}` : 'Incluido';
+        const priceLabel = priceVal > 0 ? `${formatCurrency(priceVal)} ${unitSuffix}` : 'Incluido en Menú Base';
 
         html += `
           <div class="menu-tiempos-card ${isSelected ? 'selected' : ''}" data-key="${srv.key}" style="background: white; border: 2px solid ${isSelected ? 'var(--primary-orange)' : 'var(--border-light)'}; border-radius: 12px; padding: 12px; cursor: pointer; transition: all 0.2s ease; position: relative;">
@@ -527,7 +532,8 @@ document.addEventListener('DOMContentLoaded', () => {
               <strong style="font-size: 0.88rem; color: var(--charcoal); line-height: 1.3;">${srv.name}</strong>
               <span style="font-size: 0.75rem; font-weight: 800; color: white; background: ${isSelected ? 'var(--primary-orange)' : '#ccc'}; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">${isSelected ? '✓' : '+'}</span>
             </div>
-            <p style="font-size: 0.78rem; color: var(--charcoal-light); margin: 6px 0 0; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${srv.description || 'Deliciosa especialidad para tu evento.'}</p>
+            <p style="font-size: 0.78rem; color: var(--charcoal-light); margin: 6px 0 6px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${srv.description || 'Deliciosa especialidad para tu evento.'}</p>
+            <div style="font-size: 0.82rem; font-weight: 800; color: var(--primary-orange);">${priceLabel}</div>
           </div>
         `;
       });
