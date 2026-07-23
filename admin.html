@@ -193,13 +193,52 @@
     }
 
     .admin-header-bar {
+      position: sticky;
+      top: 0;
+      z-index: 500;
+      background-color: #faf6f0;
+      padding: 15px 0;
+      border-bottom: 2px solid var(--border-light, #ebdcd5);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 2px solid var(--border-light, #ebdcd5);
-      padding-bottom: 15px;
       flex-wrap: wrap;
       gap: 15px;
+      margin-bottom: 10px;
+    }
+
+    .floating-save-alert {
+      position: fixed;
+      top: 25px;
+      right: 25px;
+      z-index: 99999;
+      max-width: 480px;
+      width: calc(100% - 50px);
+      pointer-events: none;
+    }
+
+    .floating-save-alert .admin-alert {
+      pointer-events: auto;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+      border-radius: 14px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      backdrop-filter: blur(8px);
+      animation: toastBounceIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes toastBounceIn {
+      from { opacity: 0; transform: translateY(-20px) scale(0.92); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @media (max-width: 576px) {
+      .floating-save-alert {
+        top: 15px;
+        right: 15px;
+        left: 15px;
+        width: auto;
+        max-width: 100%;
+      }
     }
 
     .admin-header-bar h2 {
@@ -646,12 +685,21 @@
 
         <!-- Main Content Area -->
         <main class="admin-main-content">
+          <!-- Sticky Header Bar con Botón Guardar Siempre Visible -->
           <div class="admin-header-bar">
             <h2><i class="fa-solid fa-sliders"></i> Panel de Control</h2>
-            <div id="save-alert-wrapper" style="width: 100%; max-width: 450px;">
-              <!-- Save Alert injected here dynamically -->
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <button type="button" class="admin-btn-export btn-export-trigger" style="padding: 10px 16px; font-size: 0.88rem;">
+                <i class="fa-solid fa-file-arrow-down"></i> Exportar (JSON)
+              </button>
+              <button type="submit" class="admin-btn-save" form="admin-config-form" style="padding: 10px 22px; font-size: 0.92rem; box-shadow: 0 4px 15px rgba(224, 83, 38, 0.4);">
+                <i class="fa-solid fa-floppy-disk"></i> Guardar Todos los Cambios
+              </button>
             </div>
           </div>
+
+          <!-- Contenedor Flotante Toast para Alertas Siempre Visibles sin desplazarse -->
+          <div id="save-alert-wrapper" class="floating-save-alert"></div>
 
           <form id="admin-config-form" style="display: flex; flex-direction: column; gap: 20px;">
             
@@ -1943,9 +1991,12 @@
         if (!saveAlertWrapper) return;
         saveAlertWrapper.style.display = 'block';
         
-        const icon = type === 'success' ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-solid fa-triangle-exclamation"></i>';
+        const icon = type === 'success' 
+          ? '<i class="fa-solid fa-circle-check" style="font-size: 1.25rem; color: #155724;"></i>' 
+          : '<i class="fa-solid fa-triangle-exclamation" style="font-size: 1.25rem; color: #721c24;"></i>';
+        
         saveAlertWrapper.innerHTML = `
-          <div class="admin-alert ${type}" style="display: flex; margin-bottom: 0; padding: 10px 15px; font-size: 0.85rem;">
+          <div class="admin-alert ${type}" style="display: flex; align-items: center; gap: 12px; margin-bottom: 0; padding: 14px 18px; font-size: 0.92rem; font-weight: 700;">
             ${icon} <span>${msg}</span>
           </div>
         `;
@@ -1971,9 +2022,9 @@
         });
       }
 
-      // Export JSON config handler
-      if (btnExport) {
-        btnExport.addEventListener('click', () => {
+      // Export JSON config handler (soporta botón superior e inferior)
+      document.querySelectorAll('#btn-export-json, .btn-export-trigger').forEach(btn => {
+        btn.addEventListener('click', () => {
           const exportData = {
             configs: dbConfigs,
             services: dbServices,
@@ -1989,7 +2040,7 @@
           downloadAnchor.click();
           downloadAnchor.remove();
         });
-      }
+      });
 
       // Start initialization
       await initializeAdminPortal();
