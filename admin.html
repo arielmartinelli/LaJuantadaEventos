@@ -1634,16 +1634,16 @@
           const price = parseFloat(row.querySelector('.srv-input-price').value) || 0;
           const typeVal = row.querySelector('.srv-input-type').value;
           const isPerPerson = typeVal === 'per_person';
-          const unitType = typeVal === 'per_kilo' ? 'kilo' : (typeVal === 'per_unit' ? 'unit' : (typeVal === 'per_person' ? 'person' : 'fixed'));
           const isAvailable = row.querySelector('.srv-input-available').checked;
           const category = row.querySelector('.srv-input-category').value;
           const tag = row.querySelector('.srv-input-tag').value.trim();
 
           const existingIdx = dbServices.findIndex(s => String(s.key) === key);
-          const serviceObj = { key, name, description, price, is_per_person: isPerPerson, unit_type: unitType, is_available: isAvailable, category, tag };
+          const serviceObj = { key, name, description, price, is_per_person: isPerPerson, is_available: isAvailable, category, tag };
 
           if (existingIdx >= 0) {
-            dbServices[existingIdx] = { ...dbServices[existingIdx], ...serviceObj };
+            delete dbServices[existingIdx].unit_type;
+            dbServices[existingIdx] = { ...serviceObj };
           } else {
             dbServices.push(serviceObj);
           }
@@ -1766,10 +1766,8 @@
             <div class="admin-form-group" style="margin-bottom: 0;">
               <label style="font-size: 0.75rem;">Cobro / Unidad</label>
               <select class="srv-input-type" ${isSrvLiving ? 'disabled' : ''} style="width: 100%; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 8px; font-family: inherit; font-size: 0.85rem;">
-                <option value="per_person" ${srv && srv.unit_type === 'kilo' ? '' : (srv && srv.unit_type === 'unit' ? '' : (srv && !srv.is_per_person ? '' : 'selected'))}>Por persona (/ pers.)</option>
-                <option value="fixed" ${srv && !srv.is_per_person && (!srv.unit_type || srv.unit_type === 'fixed') ? 'selected' : ''}>Monto Fijo</option>
-                <option value="per_kilo" ${srv && srv.unit_type === 'kilo' ? 'selected' : ''}>Por Kilo (/ kilo)</option>
-                <option value="per_unit" ${srv && srv.unit_type === 'unit' ? 'selected' : ''}>Por Unidad (/ unid.)</option>
+                <option value="per_person" ${srv && srv.is_per_person ? 'selected' : ''}>Por persona (/ pers.)</option>
+                <option value="fixed" ${srv && !srv.is_per_person ? 'selected' : ''}>Monto Fijo</option>
               </select>
             </div>
           </div>
@@ -1797,7 +1795,6 @@
               name: '',
               price: 0,
               is_per_person: true,
-              unit_type: 'person',
               is_available: true,
               category: 'adicional',
               tag: '',

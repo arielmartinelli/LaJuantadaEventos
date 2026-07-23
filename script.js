@@ -298,9 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getServiceUnitLabel(srv) {
     if (!srv) return '/ pers.';
-    if (srv.unit_type === 'kilo') return '/ kilo';
-    if (srv.unit_type === 'unit') return '/ unid.';
-    if (srv.unit_type === 'fixed' || !srv.is_per_person) return 'fijo';
+    if (!srv.is_per_person) return 'fijo';
     return '/ pers.';
   }
 
