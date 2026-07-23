@@ -24,28 +24,13 @@
     /* Specific overrides for Admin Portal Styles */
     .admin-wrapper {
       min-height: 100vh;
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px 20px;
+      padding: 20px;
       background: linear-gradient(135deg, #1d1715 0%, #3a312e 100%);
-    }
-
-    @media (max-width: 576px) {
-      .admin-wrapper {
-        padding: 10px;
-      }
-    }
-
-    .login-card {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: var(--radius-lg, 24px);
-      padding: 40px;
-      width: 100%;
-      max-width: 420px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(235, 220, 213, 0.2);
-      text-align: center;
+      overflow: hidden;
     }
 
     @media (max-width: 576px) {
@@ -58,7 +43,9 @@
     /* Premium Dashboard Grid Layout */
     .admin-container {
       width: 100%;
-      max-width: 1200px;
+      max-width: 1240px;
+      height: calc(100vh - 40px);
+      max-height: 900px;
       background: var(--bg-white, #ffffff);
       border-radius: var(--radius-lg, 24px);
       box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
@@ -69,31 +56,49 @@
 
     .admin-dashboard-layout {
       display: flex;
-      min-height: 720px;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
     }
 
     @media (max-width: 992px) {
+      .admin-wrapper {
+        height: auto;
+        min-height: 100vh;
+        padding: 10px;
+        overflow: auto;
+      }
+      .admin-container {
+        height: auto;
+        max-height: none;
+        border-radius: 16px;
+      }
       .admin-dashboard-layout {
         flex-direction: column;
+        height: auto;
       }
     }
 
     /* Sidebar Navigation Menu */
     .admin-sidebar {
       width: 270px;
+      height: 100%;
+      flex-shrink: 0;
       background-color: var(--charcoal, #1d1715);
       color: white;
-      padding: 35px 24px;
+      padding: 30px 20px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       border-right: 1px solid rgba(255, 255, 255, 0.05);
+      overflow-y: auto;
     }
 
     @media (max-width: 992px) {
       .admin-sidebar {
         width: 100%;
-        padding: 20px 15px;
+        height: auto;
+        padding: 15px;
         border-right: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       }
@@ -179,32 +184,61 @@
     /* Main Content Styling */
     .admin-main-content {
       flex: 1;
-      padding: 40px;
+      height: 100%;
+      padding: 30px;
       background-color: #faf6f0;
       display: flex;
       flex-direction: column;
-      gap: 30px;
+      overflow: hidden;
     }
 
-    @media (max-width: 576px) {
+    @media (max-width: 992px) {
       .admin-main-content {
+        height: auto;
+        overflow: visible;
         padding: 20px 15px;
       }
     }
 
     .admin-header-bar {
-      position: sticky;
-      top: 0;
-      z-index: 500;
-      background-color: #faf6f0;
-      padding: 15px 0;
+      flex-shrink: 0;
+      background-color: transparent;
+      padding: 0 0 15px 0;
       border-bottom: 2px solid var(--border-light, #ebdcd5);
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 15px;
-      margin-bottom: 10px;
+      margin-bottom: 0;
+    }
+
+    #admin-config-form {
+      flex: 1;
+      overflow-y: auto;
+      padding-top: 20px;
+      padding-right: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      /* Scrollbar estilizado */
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary-orange, #e05326) transparent;
+    }
+
+    #admin-config-form::-webkit-scrollbar {
+      width: 6px;
+    }
+    #admin-config-form::-webkit-scrollbar-thumb {
+      background-color: var(--primary-orange, #e05326);
+      border-radius: 10px;
+    }
+
+    @media (max-width: 992px) {
+      #admin-config-form {
+        overflow-y: visible;
+      }
     }
 
     .floating-save-alert {
