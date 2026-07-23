@@ -3026,7 +3026,20 @@ button {
   }
 }
 
+.menu-tiempos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
 @media (max-width: 768px) {
+  /* Reducir padding de tarjetas blancas internas en pestañas del cotizador */
+  .calc-tab-pane > div {
+    padding: 16px 12px !important;
+    border-radius: 16px !important;
+    margin-bottom: 16px !important;
+  }
+
   /* Pestañas del cotizador en móviles con scroll horizontal suave */
   .calc-tabs-header {
     display: flex;
@@ -3048,8 +3061,9 @@ button {
 
   /* Gauge bar y tarjeta medidora en móviles */
   .gauge-bar-card {
-    padding: 16px 14px;
+    padding: 14px 12px;
     border-radius: 16px;
+    margin-bottom: 20px;
   }
   .gauge-legend-grid {
     flex-direction: column;
@@ -3078,17 +3092,17 @@ button {
     gap: 12px;
   }
   .salon-opt-card {
-    padding: 16px;
+    padding: 14px;
     border-radius: 14px;
   }
 
-  /* Menú de Tiempos interno dentro del Cotizador en 2 columnas chicas */
+  /* Menú de Tiempos interno dentro del Cotizador en 1 o 2 columnas prolijas */
   #calc-menu-tiempos-container {
     max-height: 420px;
     padding-right: 4px;
     -webkit-overflow-scrolling: touch;
   }
-  #calc-menu-tiempos-container > div > div {
+  .menu-tiempos-grid {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
     gap: 8px !important;
   }

@@ -512,7 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <span><i class="fa-solid fa-utensils text-orange"></i> ${cat.label}</span>
             <span style="font-size: 0.75rem; color: var(--charcoal-muted); font-weight: 600;">${items.length} opción(es)</span>
           </h4>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+          <div class="menu-tiempos-grid">
       `;
 
       items.forEach(srv => {
