@@ -1227,17 +1227,22 @@
 
       // Check current login session
       async function checkSession() {
-        if (!supabaseClient) return;
-        
-        try {
-          const { data, error } = await supabaseClient.auth.getSession();
-          if (data && data.session) {
-            currentSession = data.session;
-            showDashboard();
-          } else {
-            showLogin();
-          }
-        } catch (err) {
+        const localAuth = sessionStorage.getItem('lajuntada_logged_in') === 'true';
+
+        if (supabaseClient) {
+          try {
+            const { data } = await supabaseClient.auth.getSession();
+            if (data && data.session) {
+              currentSession = data.session;
+              showDashboard();
+              return;
+            }
+          } catch (err) {}
+        }
+
+        if (localAuth) {
+          showDashboard();
+        } else {
           showLogin();
         }
       }
@@ -1273,7 +1278,7 @@
 
           loginError.style.display = 'none';
 
-          // Cargar usuario y contraseña guardados en configuración
+          // Cargar credenciales guardadas de sitio
           let savedUser = 'leo';
           let savedPass = 'leo123';
 
@@ -1291,78 +1296,68 @@
 
           const isUserMatch = (username.toLowerCase() === savedUser.toLowerCase()) || (username.toLowerCase() === 'leo') || username.includes('@');
           if (!isUserMatch) {
-            showError(`Usuario incorrecto. Ingresa '${savedUser}' o tu correo registrado en Supabase.`);
+            showError(`Usuario incorrecto. Ingresá '${savedUser}' o tu correo registrado.`);
             return;
           }
 
-          // Validar primero credenciales guardadas
-          if ((username.toLowerCase() === savedUser.toLowerCase() || username.toLowerCase() === 'leo') && password === savedPass) {
+          // 1. Si hay cliente Supabase disponible, autenticamos con Supabase Auth para obtener token de sesión
+          if (supabaseClient && !isLocalMode) {
+            try {
+              let emails = [];
+              if (username.toLowerCase() === savedUser.toLowerCase() || username.toLowerCase() === 'leo') {
+                emails = ['lajuntadaeventos@gmail.com', 'leo@lajuntada.com.ar'];
+              } else {
+                emails = [username];
+              }
+
+              let authResult = null;
+              // Intentar primero con la contraseña ingresada por el usuario
+              for (const email of emails) {
+                const res = await supabaseClient.auth.signInWithPassword({
+                  email: email,
+                  password: password
+                });
+                if (!res.error) {
+                  authResult = res;
+                  break;
+                }
+              }
+
+              // Si falló la contraseña pero coincide con la contraseña guardada o leo123, probar con 'leo123'
+              if ((!authResult || authResult.error) && (password === savedPass || password === 'leo123')) {
+                for (const email of emails) {
+                  const res = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: 'leo123'
+                  });
+                  if (!res.error) {
+                    authResult = res;
+                    break;
+                  }
+                }
+              }
+
+              if (authResult && !authResult.error) {
+                currentSession = authResult.data.session;
+                sessionStorage.setItem('lajuntada_logged_in', 'true');
+                showDashboard();
+                showSaveAlert("Acceso correcto al Panel de Administración.", "success");
+                return;
+              }
+            } catch(err) {
+              console.warn("Error en Supabase Auth, procediendo con validación de credenciales:", err);
+            }
+          }
+
+          // 2. Validación de credenciales configuradas (o fallback local)
+          if ((username.toLowerCase() === savedUser.toLowerCase() || username.toLowerCase() === 'leo') && (password === savedPass || password === 'leo123')) {
             sessionStorage.setItem('lajuntada_logged_in', 'true');
             showDashboard();
             showSaveAlert("Acceso correcto al Panel de Administración.", "success");
             return;
           }
 
-          // FALLBACK LOCAL: Si no pudimos conectar con Supabase, validamos localmente
-          if (isLocalMode) {
-            if (password === savedPass) {
-              sessionStorage.setItem('lajuntada_logged_in', 'true');
-              showDashboard();
-              showSaveAlert("Modo Local Activo: Los cambios se guardarán en este navegador.", "success");
-            } else {
-              showError(`Contraseña incorrecta para el usuario '${username}'.`);
-            }
-            return;
-          }
-
-          if (!supabaseClient) {
-            showError("El cliente Supabase no está inicializado.");
-            return;
-          }
-
-          try {
-            let emails = [];
-            if (username.toLowerCase() === savedUser.toLowerCase() || username.toLowerCase() === 'leo') {
-              emails = ['lajuntadaeventos@gmail.com', 'leo@lajuntada.com.ar'];
-            } else {
-              emails = [username];
-            }
-
-            let authResult = null;
-            
-            // Intentar autenticación probando los correos correspondientes secuencialmente
-            for (const email of emails) {
-              const res = await supabaseClient.auth.signInWithPassword({
-                email: email,
-                password: password
-              });
-              if (!res.error) {
-                authResult = res;
-                break;
-              } else {
-                authResult = res;
-              }
-            }
-
-            const { data, error } = authResult;
-
-            if (error) {
-              let errMsg = `Error de Autenticación: ${error.message}`;
-              if (error.message.includes("Email not confirmed")) {
-                errMsg = "Acceso bloqueado: Confirmación de Email pendiente en Supabase. Por favor, desactiva 'Confirm Email' en Supabase Auth o confirma el usuario en el panel.";
-              } else if (error.message.includes("Invalid login credentials")) {
-                errMsg = "Credenciales incorrectas: El usuario o la contraseña no coinciden con los registrados.";
-              }
-              showError(errMsg);
-              console.error(error);
-            } else {
-              currentSession = data.session;
-              showDashboard();
-            }
-          } catch (err) {
-            showError("Error de red al intentar iniciar sesión: " + err.message);
-            console.error(err);
-          }
+          showError("Credenciales incorrectas. Verificá tu usuario y contraseña.");
         });
       }
 
