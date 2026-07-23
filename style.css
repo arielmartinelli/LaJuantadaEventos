@@ -3000,6 +3000,14 @@ button {
   font-size: 0.88rem;
 }
 
+/* Base desktop rules for cotizador tab text */
+.tab-text-mobile {
+  display: none;
+}
+.tab-text-desktop {
+  display: inline;
+}
+
 /* Base desktop rule for cotizador main grid */
 .calc-main-grid {
   display: grid;
@@ -3008,163 +3016,195 @@ button {
   align-items: start;
 }
 
+.menu-tiempos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
 @media (max-width: 992px) {
   /* Contenedor principal del Cotizador en tablets y móviles */
   .calc-main-grid,
   #calculadora .calc-main-grid {
     grid-template-columns: 1fr !important;
-    gap: 24px !important;
+    gap: 20px !important;
   }
 
   /* Tarjeta Sidebar del Cotizador */
   .sticky-sidebar-card {
     position: relative;
     top: 0;
-    padding: 20px;
+    padding: 20px 16px;
     border-radius: 18px;
     box-shadow: var(--shadow-md);
   }
 }
 
-.menu-tiempos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px;
-}
-
 @media (max-width: 768px) {
-  /* Reducir padding de tarjetas blancas internas en pestañas del cotizador */
+  /* Alternar visibilidad de texto corto de pasos en pestañas */
+  .tab-text-desktop {
+    display: none !important;
+  }
+  .tab-text-mobile {
+    display: inline !important;
+  }
+
+  /* Agrandar títulos y textos generales en vista móvil */
+  .calculator-section .section-title {
+    font-size: 1.55rem !important;
+    line-height: 1.3 !important;
+  }
+  .calculator-section p {
+    font-size: 0.95rem !important;
+  }
+  
+  /* Tarjetas de pestañas y contenedores */
   .calc-tab-pane > div {
-    padding: 16px 12px !important;
-    border-radius: 16px !important;
+    padding: 18px 14px !important;
+    border-radius: 18px !important;
     margin-bottom: 16px !important;
   }
-
-  /* Pestañas del cotizador en móviles con scroll horizontal suave */
-  .calc-tabs-header {
-    display: flex;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 8px;
-    gap: 8px;
-    scrollbar-width: none;
+  .calc-tab-pane h3 {
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
   }
-  .calc-tabs-header::-webkit-scrollbar {
-    display: none;
+
+  /* Navegador de Pestañas por Pasos en 3 columnas iguales */
+  .calc-tabs-header {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+    margin-bottom: 18px !important;
+    padding-bottom: 0 !important;
+    border-bottom: none !important;
   }
   .calc-tab-btn {
-    flex-shrink: 0;
-    padding: 10px 14px;
-    font-size: 0.85rem;
-    border-radius: 12px;
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 10px 4px !important;
+    font-size: 0.85rem !important;
+    font-weight: 800 !important;
+    border-radius: 12px !important;
+    text-align: center !important;
+    gap: 5px !important;
   }
 
-  /* Gauge bar y tarjeta medidora en móviles */
-  .gauge-bar-card {
-    padding: 14px 12px;
-    border-radius: 16px;
-    margin-bottom: 20px;
+  /* Tarjeta de Cantidad de Invitados (Paso 1) */
+  .guest-num-box {
+    width: 90px !important;
+    font-size: 1.25rem !important;
+    font-weight: 900 !important;
+    padding: 6px !important;
+    border-radius: 10px !important;
   }
-  .gauge-legend-grid {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    font-size: 0.8rem;
-  }
-
-  /* Botones de Selección Rápida de Personas en 4 Columnas perfectas */
   .quick-pax-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-    width: 100%;
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin-top: 14px !important;
   }
   .quick-pax-btn {
-    width: 100%;
-    text-align: center;
-    padding: 8px 2px;
-    font-size: 0.78rem;
+    width: 100% !important;
+    text-align: center !important;
+    padding: 10px 2px !important;
+    font-size: 0.85rem !important;
+    font-weight: 800 !important;
+    border-radius: 10px !important;
   }
 
-  /* Tarjetas de Selección de Salón en 1 columna amplia */
+  /* Tarjetas de Selección de Salón */
   .salon-options-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
   }
   .salon-opt-card {
-    padding: 14px;
-    border-radius: 14px;
+    padding: 16px !important;
+    border-radius: 16px !important;
+  }
+  .salon-opt-card h4 {
+    font-size: 1.1rem !important;
+  }
+  .salon-opt-card p {
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
   }
 
-  /* Menú de Tiempos interno dentro del Cotizador en 1 o 2 columnas prolijas */
+  /* Menú de Tiempos interno dentro del Cotizador */
   #calc-menu-tiempos-container {
-    max-height: 420px;
+    max-height: 460px;
     padding-right: 4px;
     -webkit-overflow-scrolling: touch;
   }
   .menu-tiempos-grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
-    gap: 8px !important;
-  }
-  .menu-tiempos-card {
-    padding: 10px !important;
-    border-radius: 10px !important;
-  }
-  .menu-tiempos-card strong {
-    font-size: 0.82rem !important;
-  }
-  .menu-tiempos-card p {
-    font-size: 0.72rem !important;
-  }
-
-  /* Servicios opcionales tildables */
-  .checkbox-options-grid {
     grid-template-columns: 1fr !important;
     gap: 10px !important;
   }
-  
-  /* Modal de Datos del Cliente adaptable a teclados virtuales */
-  #modal-client-data .modal-content {
-    width: 94%;
-    max-width: 440px;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 20px 16px;
-    border-radius: 20px;
+  .menu-tiempos-card {
+    padding: 14px !important;
+    border-radius: 12px !important;
+  }
+  .menu-tiempos-card strong {
+    font-size: 0.95rem !important;
+  }
+  .menu-tiempos-card p {
+    font-size: 0.85rem !important;
+    -webkit-line-clamp: 3 !important;
+  }
+  .menu-tiempos-card div {
+    font-size: 0.9rem !important;
   }
 
-  /* Hero Section: Botones y títulos optimizados */
-  .hero-buttons {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  /* Servicios Opcionales en Pestaña 3 */
+  .checkbox-options-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
   }
-  .hero-buttons .btn-primary, 
-  .hero-buttons .btn-secondary {
-    width: 100%;
-    justify-content: center;
-    padding: 14px;
+  .custom-checkbox-container {
+    padding: 12px !important;
+    font-size: 0.92rem !important;
   }
 
-  /* Botones de Navegación del Cotizador (Anterior/Siguiente) */
+  /* Gauge bar medidor de presupuesto */
+  .gauge-bar-card {
+    padding: 16px 14px !important;
+    border-radius: 16px !important;
+    margin-bottom: 20px !important;
+  }
+  .gauge-legend-grid {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Botones de Navegación del Cotizador (Anterior/Siguiente/Finalizar) */
   .btn-tab-next, .btn-tab-prev, .btn-tab-finish {
-    width: 100%;
-    justify-content: center;
-    padding: 12px 16px;
-    font-size: 0.88rem;
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 14px 18px !important;
+    font-size: 0.95rem !important;
+    border-radius: 50px !important;
   }
 
-  /* Botones de Enviar WhatsApp y PDF en móviles */
+  /* Botones de Enviar WhatsApp y PDF */
   .btn-whatsapp-send,
   #btn-calc-pdf {
-    width: 100%;
-    padding: 14px 18px;
-    font-size: 0.95rem;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100% !important;
+    padding: 14px 18px !important;
+    font-size: 1rem !important;
+    border-radius: 50px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Modal del Cliente */
+  #modal-client-data .modal-content {
+    width: 95% !important;
+    max-width: 440px !important;
+    padding: 24px 18px !important;
+    border-radius: 20px !important;
   }
 }
 
@@ -3173,16 +3213,14 @@ button {
     padding: 25px 0;
   }
   .calc-form {
-    padding: 12px 8px;
+    padding: 10px 4px;
   }
-  .calc-header h2 {
-    font-size: 1.2rem;
+  .calc-tab-btn {
+    padding: 8px 2px !important;
+    font-size: 0.78rem !important;
   }
-  .total-price {
-    font-size: 1.6rem;
-  }
-  .calc-tab-btn span {
-    font-size: 0.78rem;
+  .calc-tab-btn i {
+    display: none !important;
   }
 }
 
