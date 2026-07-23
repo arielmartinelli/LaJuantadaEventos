@@ -1066,8 +1066,8 @@
                     </p>
                   </div>
                   <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button type="button" id="btn-create-named-backup" style="padding: 10px 20px; font-size: 0.88rem; border-radius: 50px; font-weight: 700; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; background: var(--primary-orange); color: white; box-shadow: 0 4px 12px rgba(224, 83, 38, 0.3);">
-                      <i class="fa-solid fa-plus"></i> Crear Nueva Copia con Nombre
+                    <button type="button" id="btn-create-named-backup" style="padding: 10px 22px; font-size: 0.9rem; border-radius: 50px; font-weight: 800; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; background: var(--primary-orange); color: white; box-shadow: 0 4px 14px rgba(224, 83, 38, 0.35);">
+                      <i class="fa-solid fa-plus-circle" style="font-size: 1rem;"></i> Agregar Copia de Seguridad
                     </button>
                     <button type="button" id="btn-restore-factory-defaults" style="padding: 10px 18px; font-size: 0.85rem; border-radius: 50px; font-weight: 700; border: 1px solid #f5c6cb; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; background: #fff1f0; color: #df3838;">
                       <i class="fa-solid fa-rotate-left"></i> Restablecer a Valores de Fábrica
@@ -2264,12 +2264,14 @@
 
       function createNamedBackup(customName = '') {
         const now = new Date();
-        const dateStr = now.toLocaleDateString('es-AR') + ' ' + now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+        const dateStr = now.toLocaleDateString('es-AR') + ' - ' + now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) + ' hs';
         
         if (!customName) {
-          customName = prompt("Ingresá un nombre para identificar esta copia de seguridad:", `Copia ${dateStr}`);
-          if (!customName) return;
+          customName = prompt("Ingresá un nombre identificatorio para la copia de seguridad:", `Copia de Seguridad - ${dateStr}`);
+          if (!customName || !customName.trim()) return;
         }
+
+        syncCurrentDOMServicesToMemory();
 
         const currentConfigsPayload = {};
         const inputs = adminConfigForm.querySelectorAll('[id^="db-"]');
@@ -2293,7 +2295,7 @@
         saveBackupsList();
         renderBackupsDOM();
 
-        showSaveAlert(`¡Copia de seguridad "${backupItem.name}" creada con éxito!`, "success");
+        showSaveAlert(`¡Copia de seguridad "${backupItem.name}" agregada con fecha ${dateStr}!`, "success");
       }
 
       function restoreBackupByIndex(idx) {
