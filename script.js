@@ -955,6 +955,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!guestCountInput) return;
 
     let guestCount = parseInt(guestCountInput.value) || 40;
+    if (guestCount < 40) {
+      guestCount = 40;
+      guestCountInput.value = 40;
+      if (guestCountNumBox) guestCountNumBox.value = 40;
+      const guestRange = document.getElementById('guest-count');
+      if (guestRange) guestRange.value = 40;
+    }
     
     // Detectar si hay salón seleccionado para tope de capacidad
     const selectedSalonKey = calcSalonSelect ? calcSalonSelect.value : 'none';
@@ -1360,13 +1367,14 @@ document.addEventListener('DOMContentLoaded', () => {
     guestCountNumBox.addEventListener('input', () => {
       let val = parseInt(guestCountNumBox.value);
       if (!isNaN(val)) {
+        if (val < 40) val = 40;
         guestCountInput.value = val;
         calculateBudget();
       }
     });
     guestCountNumBox.addEventListener('change', () => {
       let val = parseInt(guestCountNumBox.value);
-      if (isNaN(val) || val < 15) val = 15;
+      if (isNaN(val) || val < 40) val = 40;
       guestCountNumBox.value = val;
       guestCountInput.value = val;
       calculateBudget();
