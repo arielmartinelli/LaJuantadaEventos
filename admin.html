@@ -2248,6 +2248,7 @@
             const configsPayload = [];
             inputs.forEach(input => {
               const configKey = input.id.replace('db-', '');
+              if (configKey === 'site_backups_json') return; // Excluir backups pesados de las configuraciones
               let value = '';
               if (input.type === 'checkbox') {
                 value = input.checked ? 'true' : 'false';
@@ -2333,17 +2334,21 @@
 
             dbBackups = dbBackups.filter(item => !item.id.startsWith('auto_backup_') || (Date.now() - new Date(item.timestamp).getTime()) < 86400000);
             dbBackups.unshift(autoBackupItem);
-            if (dbBackups.length > 15) dbBackups = dbBackups.slice(0, 15);
-            saveBackupsList();
+            if (dbBackups.length > 5) dbBackups = dbBackups.slice(0, 5);
+            try { saveBackupsList(); } catch(e){}
 
-            // Guardado en memoria local del navegador (cache backup)
-            const configObj = {};
-            configsPayload.forEach(item => { configObj[item.key] = item.value; });
-            localStorage.setItem('lajuntada_config', JSON.stringify(configObj));
-            localStorage.setItem('lajuntada_site_configs', JSON.stringify(configObj));
-            localStorage.setItem('lajuntada_services_list', JSON.stringify(servicesPayload));
-            localStorage.setItem('lajuntada_carousel_list', JSON.stringify(carouselPayload));
-            localStorage.setItem('lajuntada_gallery_list', JSON.stringify(galleryPayload));
+            // Guardado seguro en memoria local del navegador (cache backup) sin bloquear
+            try {
+              const configObj = {};
+              configsPayload.forEach(item => { configObj[item.key] = item.value; });
+              localStorage.setItem('lajuntada_config', JSON.stringify(configObj));
+              localStorage.setItem('lajuntada_site_configs', JSON.stringify(configObj));
+              localStorage.setItem('lajuntada_services_list', JSON.stringify(servicesPayload));
+              localStorage.setItem('lajuntada_carousel_list', JSON.stringify(carouselPayload));
+              localStorage.setItem('lajuntada_gallery_list', JSON.stringify(galleryPayload));
+            } catch (localErr) {
+              console.warn("Memoria local del navegador llena, continuando guardado en Supabase:", localErr);
+            }
 
             // GUARDADO EN SUPABASE VIA SERVERLESS HANDLER (/api/config)
             const headers = { 'Content-Type': 'application/json' };
