@@ -1591,7 +1591,8 @@
 
             images.forEach((imgUrl, idx) => {
               const card = document.createElement('div');
-              card.className = 'slide-edit-card';
+              card.className = 'salon-slide-card';
+              card.style.position = 'relative';
               card.innerHTML = `
                 <img src="${imgUrl}" class="slide-preview-img" alt="Vista previa">
                 <div class="slide-edit-inputs">
@@ -2239,102 +2240,112 @@
             isLocalMode = true;
           }
 
-          showSaveAlert("Guardando todos los cambios...", "success");
-
-          // 1. Recopilar configs normales
-          const inputs = adminConfigForm.querySelectorAll('[id^="db-"]');
-          const configsPayload = [];
-          inputs.forEach(input => {
-            const configKey = input.id.replace('db-', '');
-            let value = '';
-            if (input.type === 'checkbox') {
-              value = input.checked ? 'true' : 'false';
-            } else {
-              value = input.value.trim();
-            }
-            configsPayload.push({
-              key: configKey,
-              value: value
-            });
-          });
-
-          // 2. Recopilar y limpiar la lista completa de servicios
-          syncCurrentDOMServicesToMemory();
-          const servicesPayload = dbServices.map(s => ({
-            key: String(s.key || ''),
-            name: String(s.name || ''),
-            description: String(s.description || ''),
-            price: Number(s.price || 0),
-            is_per_person: Boolean(s.is_per_person),
-            is_available: Boolean(s.is_available),
-            category: String(s.category || 'adicional'),
-            tag: String(s.tag || '')
-          }));
-
-          // 3. Recopilar carrusel
-          const carouselPayload = [];
-          const carouselCards = document.querySelectorAll('.slide-edit-card');
-          carouselCards.forEach(card => {
-            const id = card.dataset.id || undefined;
-            const title = card.querySelector('.slide-input-title').value.trim();
-            const description = card.querySelector('.slide-input-desc').value.trim();
-            const imageUrl = card.querySelector('.slide-input-url').value;
-            
-            if (imageUrl) {
-              const item = { title, description, image_url: imageUrl };
-              if (id) item.id = id;
-              carouselPayload.push(item);
-            }
-          });
-
-          // 4. Recopilar galería
-          const galleryPayload = [];
-          const galleryCards = document.querySelectorAll('.gallery-edit-card');
-          galleryCards.forEach(card => {
-            const id = card.dataset.id || undefined;
-            const title = card.querySelector('.gallery-input-title').value.trim();
-            const category = card.querySelector('.gallery-input-category').value;
-            const imageUrl = card.querySelector('.gallery-input-url').value;
-            
-            if (imageUrl) {
-              const item = { title, category, image_url: imageUrl };
-              if (id) item.id = id;
-              galleryPayload.push(item);
-            }
-          });
-
-          // Guardar copia de seguridad automática al guardar cambios
-          const autoBackupName = `Auto-guardado ${new Date().toLocaleDateString('es-AR')} ${new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}`;
-          const currentConfigsObj = {};
-          configsPayload.forEach(item => { currentConfigsObj[item.key] = item.value; });
-
-          const autoBackupItem = {
-            id: 'auto_backup_' + Date.now(),
-            name: autoBackupName,
-            timestamp: new Date().toISOString(),
-            dateStr: new Date().toLocaleDateString('es-AR') + ' ' + new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
-            configs: currentConfigsObj,
-            services: JSON.parse(JSON.stringify(servicesPayload)),
-            carousel: JSON.parse(JSON.stringify(carouselPayload)),
-            gallery: JSON.parse(JSON.stringify(galleryPayload))
-          };
-
-          dbBackups = dbBackups.filter(item => !item.id.startsWith('auto_backup_') || (Date.now() - new Date(item.timestamp).getTime()) < 86400000);
-          dbBackups.unshift(autoBackupItem);
-          if (dbBackups.length > 15) dbBackups = dbBackups.slice(0, 15);
-          saveBackupsList();
-
-          // Guardado en memoria local del navegador (cache backup)
-          const configObj = {};
-          configsPayload.forEach(item => { configObj[item.key] = item.value; });
-          localStorage.setItem('lajuntada_config', JSON.stringify(configObj));
-          localStorage.setItem('lajuntada_site_configs', JSON.stringify(configObj));
-          localStorage.setItem('lajuntada_services_list', JSON.stringify(servicesPayload));
-          localStorage.setItem('lajuntada_carousel_list', JSON.stringify(carouselPayload));
-          localStorage.setItem('lajuntada_gallery_list', JSON.stringify(galleryPayload));
-
-          // GUARDADO EN SUPABASE VIA SERVERLESS HANDLER (/api/config)
           try {
+            showSaveAlert("Guardando todos los cambios...", "success");
+
+            // 1. Recopilar configs normales
+            const inputs = adminConfigForm.querySelectorAll('[id^="db-"]');
+            const configsPayload = [];
+            inputs.forEach(input => {
+              const configKey = input.id.replace('db-', '');
+              let value = '';
+              if (input.type === 'checkbox') {
+                value = input.checked ? 'true' : 'false';
+              } else {
+                value = input.value ? input.value.trim() : '';
+              }
+              configsPayload.push({
+                key: configKey,
+                value: value
+              });
+            });
+
+            // 2. Recopilar y limpiar la lista completa de servicios
+            syncCurrentDOMServicesToMemory();
+            const servicesPayload = dbServices.map(s => ({
+              key: String(s.key || ''),
+              name: String(s.name || ''),
+              description: String(s.description || ''),
+              price: Number(s.price || 0),
+              is_per_person: Boolean(s.is_per_person),
+              is_available: Boolean(s.is_available),
+              category: String(s.category || 'adicional'),
+              tag: String(s.tag || '')
+            }));
+
+            // 3. Recopilar carrusel (solo del contenedor de carrusel principal #carousel-list)
+            const carouselPayload = [];
+            const carouselContainer = document.getElementById('carousel-list');
+            const carouselCards = carouselContainer ? carouselContainer.querySelectorAll('.slide-edit-card') : [];
+            carouselCards.forEach(card => {
+              const id = card.dataset.id || undefined;
+              const titleEl = card.querySelector('.slide-input-title');
+              const descEl = card.querySelector('.slide-input-desc');
+              const urlEl = card.querySelector('.slide-input-url');
+              
+              const title = titleEl ? titleEl.value.trim() : '';
+              const description = descEl ? descEl.value.trim() : '';
+              const imageUrl = urlEl ? urlEl.value : '';
+              
+              if (imageUrl) {
+                const item = { title, description, image_url: imageUrl };
+                if (id) item.id = id;
+                carouselPayload.push(item);
+              }
+            });
+
+            // 4. Recopilar galería
+            const galleryPayload = [];
+            const galleryContainer = document.getElementById('gallery-list');
+            const galleryCards = galleryContainer ? galleryContainer.querySelectorAll('.gallery-edit-card') : [];
+            galleryCards.forEach(card => {
+              const id = card.dataset.id || undefined;
+              const titleEl = card.querySelector('.gallery-input-title');
+              const catEl = card.querySelector('.gallery-input-category');
+              const urlEl = card.querySelector('.gallery-input-url');
+
+              const title = titleEl ? titleEl.value.trim() : '';
+              const category = catEl ? catEl.value : 'casamiento';
+              const imageUrl = urlEl ? urlEl.value : '';
+              
+              if (imageUrl) {
+                const item = { title, category, image_url: imageUrl };
+                if (id) item.id = id;
+                galleryPayload.push(item);
+              }
+            });
+
+            // Guardar copia de seguridad automática al guardar cambios
+            const autoBackupName = `Auto-guardado ${new Date().toLocaleDateString('es-AR')} ${new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}`;
+            const currentConfigsObj = {};
+            configsPayload.forEach(item => { currentConfigsObj[item.key] = item.value; });
+
+            const autoBackupItem = {
+              id: 'auto_backup_' + Date.now(),
+              name: autoBackupName,
+              timestamp: new Date().toISOString(),
+              dateStr: new Date().toLocaleDateString('es-AR') + ' ' + new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
+              configs: currentConfigsObj,
+              services: JSON.parse(JSON.stringify(servicesPayload)),
+              carousel: JSON.parse(JSON.stringify(carouselPayload)),
+              gallery: JSON.parse(JSON.stringify(galleryPayload))
+            };
+
+            dbBackups = dbBackups.filter(item => !item.id.startsWith('auto_backup_') || (Date.now() - new Date(item.timestamp).getTime()) < 86400000);
+            dbBackups.unshift(autoBackupItem);
+            if (dbBackups.length > 15) dbBackups = dbBackups.slice(0, 15);
+            saveBackupsList();
+
+            // Guardado en memoria local del navegador (cache backup)
+            const configObj = {};
+            configsPayload.forEach(item => { configObj[item.key] = item.value; });
+            localStorage.setItem('lajuntada_config', JSON.stringify(configObj));
+            localStorage.setItem('lajuntada_site_configs', JSON.stringify(configObj));
+            localStorage.setItem('lajuntada_services_list', JSON.stringify(servicesPayload));
+            localStorage.setItem('lajuntada_carousel_list', JSON.stringify(carouselPayload));
+            localStorage.setItem('lajuntada_gallery_list', JSON.stringify(galleryPayload));
+
+            // GUARDADO EN SUPABASE VIA SERVERLESS HANDLER (/api/config)
             const headers = { 'Content-Type': 'application/json' };
             if (currentSession && currentSession.access_token) {
               headers['Authorization'] = `Bearer ${currentSession.access_token}`;
@@ -2364,7 +2375,7 @@
               dbGallery = galleryPayload;
             }
           } catch (err) {
-            showSaveAlert("Guardado localmente. (Error de red al conectar con el servidor)", "warning");
+            showSaveAlert("Error durante el guardado: " + err.message, "warning");
             console.error(err);
           }
         });
