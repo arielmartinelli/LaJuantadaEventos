@@ -1789,17 +1789,12 @@
         const fileExt = file.name.split('.').pop();
         const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
         
-        if (isLocalMode) {
+        if (isLocalMode || !supabaseClient) {
           return new Promise((resolve) => {
             const reader = new FileReader();
             reader.onloadend = () => resolve(reader.result);
             reader.readAsDataURL(file);
           });
-        }
-
-        if (!supabaseClient) {
-          alert("Cliente de Supabase no cargado.");
-          return null;
         }
 
         try {
@@ -1808,9 +1803,12 @@
             .upload(fileName, file);
 
           if (error) {
-            console.error("Error al subir a Supabase Storage:", error);
-            alert("Error al subir la imagen a Supabase Storage: " + error.message);
-            return null;
+            console.warn("Aviso de Supabase Storage (usando respaldo automático de imagen):", error.message);
+            return new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onloadend = () => resolve(reader.result);
+              reader.readAsDataURL(file);
+            });
           }
 
           const { data: { publicUrl } } = supabaseClient.storage
@@ -1819,9 +1817,12 @@
 
           return publicUrl;
         } catch (err) {
-          console.error("Fallo de red en Storage:", err);
-          alert("Error de red al subir la imagen: " + err.message);
-          return null;
+          console.warn("Fallo en Storage (usando respaldo automático):", err);
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(file);
+          });
         }
       }
 
