@@ -71,7 +71,20 @@ export default async function handler(req, res) {
   // METODO POST: Guardar cambios completos en lote
   if (req.method === 'POST') {
     try {
-      const targetSupabase = createClient(supabaseUrl, process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey);
+      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      const authHeader = req.headers.authorization;
+      
+      let targetSupabase;
+      if (serviceRoleKey) {
+        targetSupabase = createClient(supabaseUrl, serviceRoleKey);
+      } else if (authHeader) {
+        const token = authHeader.replace('Bearer ', '');
+        targetSupabase = createClient(supabaseUrl, supabaseAnonKey, {
+          global: { headers: { Authorization: `Bearer ${token}` } }
+        });
+      } else {
+        targetSupabase = createClient(supabaseUrl, supabaseAnonKey);
+      }
 
       const { configs, services, carousel, gallery } = req.body;
 
@@ -80,7 +93,10 @@ export default async function handler(req, res) {
         const { error: err } = await targetSupabase
           .from('lajuntada_config')
           .upsert(configs, { onConflict: 'key' });
-        if (err) console.error("Error al guardar configs en Supabase:", err);
+        if (err) {
+          console.error("Error al guardar configs en Supabase:", err);
+          throw new Error("Error guardando configuraciones: " + err.message);
+        }
       }
 
       // 2. Guardar servicios y eliminar los eliminados
@@ -99,7 +115,10 @@ export default async function handler(req, res) {
         const { error: err } = await targetSupabase
           .from('lajuntada_services')
           .upsert(cleanedServices, { onConflict: 'key' });
-        if (err) console.error("Error al guardar servicios en Supabase:", err);
+        if (err) {
+          console.error("Error al guardar servicios en Supabase:", err);
+          throw new Error("Error guardando servicios: " + err.message);
+        }
 
         const activeKeys = cleanedServices.map(s => s.key).filter(k => k);
         if (activeKeys.length > 0) {
@@ -107,7 +126,9 @@ export default async function handler(req, res) {
             .from('lajuntada_services')
             .delete()
             .not('key', 'in', `(${activeKeys.join(',')})`);
-          if (delErr) console.error("Error eliminando servicios obsoletos:", delErr);
+          if (delErr) {
+            console.error("Error eliminando servicios obsoletos:", delErr);
+          }
         }
       }
 
@@ -116,7 +137,10 @@ export default async function handler(req, res) {
         const { error: err } = await targetSupabase
           .from('lajuntada_carousel')
           .upsert(carousel);
-        if (err) console.error("Error al guardar carrusel en Supabase:", err);
+        if (err) {
+          console.error("Error al guardar carrusel en Supabase:", err);
+          throw new Error("Error guardando carrusel: " + err.message);
+        }
 
         const activeIds = carousel.filter(c => c.id).map(c => c.id);
         if (activeIds.length > 0) {
@@ -125,12 +149,6 @@ export default async function handler(req, res) {
             .delete()
             .not('id', 'in', `(${activeIds.join(',')})`);
           if (delErr) console.error("Error eliminando carrusel obsoleto:", delErr);
-        } else {
-          const { error: delErr } = await targetSupabase
-            .from('lajuntada_carousel')
-            .delete()
-            .neq('image_url', '');
-          if (delErr) console.error("Error limpiando carrusel vacio:", delErr);
         }
       }
 
@@ -139,7 +157,10 @@ export default async function handler(req, res) {
         const { error: err } = await targetSupabase
           .from('lajuntada_gallery')
           .upsert(gallery);
-        if (err) console.error("Error al guardar galeria en Supabase:", err);
+        if (err) {
+          console.error("Error al guardar galeria en Supabase:", err);
+          throw new Error("Error guardando galería: " + err.message);
+        }
 
         const activeIds = gallery.filter(g => g.id).map(g => g.id);
         if (activeIds.length > 0) {
@@ -148,12 +169,6 @@ export default async function handler(req, res) {
             .delete()
             .not('id', 'in', `(${activeIds.join(',')})`);
           if (delErr) console.error("Error eliminando galeria obsoleta:", delErr);
-        } else {
-          const { error: delErr } = await targetSupabase
-            .from('lajuntada_gallery')
-            .delete()
-            .neq('image_url', '');
-          if (delErr) console.error("Error limpiando galeria vacia:", delErr);
         }
       }
 
