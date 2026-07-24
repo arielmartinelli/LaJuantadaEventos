@@ -1328,6 +1328,8 @@ document.addEventListener('DOMContentLoaded', () => {
       salonCost,
       guestCount,
       perPerson: pricePerPerson,
+      specialDietPax,
+      specialDietCostTotal,
       grandTotal,
       addons: selectedAddonsList,
       menuItems: selectedMenuOptionsList,
@@ -1587,7 +1589,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const categoriesOrder = [
         { key: 'recepcion', label: 'Recepción y Bocaditos' },
         { key: 'entradas', label: 'Entrada' },
-        { key: 'principales', label: 'Plato Principal' },
+        { key: 'principales', label: 'Plato Principal General' },
         { key: 'postres', label: 'Postre' },
         { key: 'mesadulce', label: 'Mesa Dulce' },
         { key: 'bebidas', label: 'Bebidas y Gaseosas' },
@@ -1609,6 +1611,12 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     } else {
       menuItemsText = '\n  - Ninguno (Menú a definir)';
+    }
+
+    if (results.specialDietPax > 0) {
+      const dietSrv = activeServices?.find(s => s.key === 'pri_dietas' || s.key.startsWith('pri_dietas'));
+      const dietName = dietSrv ? dietSrv.name : 'Menú Dietas Especiales';
+      menuItemsText += `\n\n*MENÚ ESPECIAL EXTRA (Diferenciado):*\n  - ${dietName}: ${results.specialDietPax} persona(s) (${formatCurrency(results.specialDietCostTotal)})`;
     }
 
     let addonsText = '';
@@ -1697,8 +1705,12 @@ Podrian confirmarme disponibilidad para esta fecha y coordinar los detalles? Muc
         ['Fecha del Evento', results.eventDate || 'A confirmar'],
         ['Salón Elegido', `${results.salonName} ${results.salonCost > 0 ? '(' + formatCurrency(results.salonCost) + ' Aprox.)' : ''}`],
         ['Cantidad de Invitados', `${results.guestCount} personas`],
-        ['Gastronomía Acumulada', `${formatCurrency(results.perPerson)} x pers.`]
+        ['Gastronomía General', `${formatCurrency(results.perPerson)} x pers.`]
       ];
+
+      if (results.specialDietPax > 0) {
+        clientTableRows.push(['Menú Especial Extra', `${results.specialDietPax} pers. (${formatCurrency(results.specialDietCostTotal)})`]);
+      }
 
       doc.autoTable({
         startY: 32,
@@ -1719,7 +1731,7 @@ Podrian confirmarme disponibilidad para esta fecha y coordinar los detalles? Muc
         const categoriesOrder = [
           { key: 'recepcion', label: 'Recepción & Bocaditos' },
           { key: 'entradas', label: 'Entrada' },
-          { key: 'principales', label: 'Plato Principal' },
+          { key: 'principales', label: 'Plato Principal General' },
           { key: 'postres', label: 'Postre' },
           { key: 'mesadulce', label: 'Mesa Dulce' },
           { key: 'bebidas', label: 'Bebidas & Gaseosas' },
@@ -1737,6 +1749,12 @@ Podrian confirmarme disponibilidad para esta fecha y coordinar los detalles? Muc
             menuRows.push([cat.label, itemsListStr]);
           }
         });
+      }
+
+      if (results.specialDietPax > 0) {
+        const dietSrv = activeServices?.find(s => s.key === 'pri_dietas' || s.key.startsWith('pri_dietas'));
+        const dietName = dietSrv ? dietSrv.name : 'Menú Dietas Especiales (Vegetariano / Vegano / Celíaco)';
+        menuRows.push(['Menú Especial Extra', `• ${results.specialDietPax} porción(es) ${dietName}\n  Subtotal: ${formatCurrency(results.specialDietCostTotal)}`]);
       }
 
       if (menuRows.length === 0) {
