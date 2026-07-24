@@ -1265,16 +1265,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 5. Menú Dietas Especiales por personas individuales
     let specialDietCostTotal = 0;
+    let dietPrice = 25000;
     if (specialDietPax > 0) {
       const dietSrv = activeServices.find(s => s.key === 'pri_dietas' || s.key.startsWith('pri_dietas'));
-      let dietPrice = dietSrv ? (parseFloat(dietSrv.price) || 25000) : 25000;
+      dietPrice = dietSrv ? (parseFloat(dietSrv.price) || 25000) : 25000;
       if (dietPrice <= 0) dietPrice = 25000;
       specialDietCostTotal = specialDietPax * dietPrice;
 
-      selectedMenuOptionsList.push(`Menú Dietas Especiales (${specialDietPax} pers.) - ${formatCurrency(specialDietCostTotal)}`);
+      selectedMenuOptionsList.push(`Menú Dietas Especiales (${specialDietPax} pers. x ${formatCurrency(dietPrice)})`);
       dynamicHtml += `
         <div class="summary-item" style="border-top: 1px dashed var(--border-light); padding-top: 6px; margin-top: 6px;">
-          <span><i class="fa-solid fa-leaf text-orange" style="font-size: 0.8rem; margin-right: 6px;"></i> ${specialDietPax} Menú(s) Dieta Especial (${formatCurrency(specialDietCostTotal)})</span>
+          <span><i class="fa-solid fa-leaf text-orange" style="font-size: 0.8rem; margin-right: 6px;"></i> ${specialDietPax} Menú(s) Dieta Especial (${formatCurrency(dietPrice)} / pers.)</span>
         </div>`;
     }
 
@@ -1329,6 +1330,7 @@ document.addEventListener('DOMContentLoaded', () => {
       guestCount,
       perPerson: pricePerPerson,
       specialDietPax,
+      specialDietPrice: dietPrice,
       specialDietCostTotal,
       grandTotal,
       addons: selectedAddonsList,
@@ -1616,7 +1618,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (results.specialDietPax > 0) {
       const dietSrv = activeServices?.find(s => s.key === 'pri_dietas' || s.key.startsWith('pri_dietas'));
       const dietName = dietSrv ? dietSrv.name : 'Menú Dietas Especiales';
-      menuItemsText += `\n\n*MENÚ ESPECIAL EXTRA (Diferenciado):*\n  - ${dietName}: ${results.specialDietPax} persona(s) (${formatCurrency(results.specialDietCostTotal)})`;
+      menuItemsText += `\n\n*MENÚ ESPECIAL EXTRA (Diferenciado):*\n  - ${dietName}: ${results.specialDietPax} persona(s) (${formatCurrency(results.specialDietPrice)} / pers.)`;
     }
 
     let addonsText = '';
@@ -1709,7 +1711,7 @@ Podrian confirmarme disponibilidad para esta fecha y coordinar los detalles? Muc
       ];
 
       if (results.specialDietPax > 0) {
-        clientTableRows.push(['Menú Especial Extra', `${results.specialDietPax} pers. (${formatCurrency(results.specialDietCostTotal)})`]);
+        clientTableRows.push(['Menú Especial Extra', `${results.specialDietPax} pers. (${formatCurrency(results.specialDietPrice)} / pers.)`]);
       }
 
       doc.autoTable({
@@ -1754,7 +1756,7 @@ Podrian confirmarme disponibilidad para esta fecha y coordinar los detalles? Muc
       if (results.specialDietPax > 0) {
         const dietSrv = activeServices?.find(s => s.key === 'pri_dietas' || s.key.startsWith('pri_dietas'));
         const dietName = dietSrv ? dietSrv.name : 'Menú Dietas Especiales (Vegetariano / Vegano / Celíaco)';
-        menuRows.push(['Menú Especial Extra', `• ${results.specialDietPax} porción(es) ${dietName}\n  Subtotal: ${formatCurrency(results.specialDietCostTotal)}`]);
+        menuRows.push(['Menú Especial Extra', `• ${results.specialDietPax} porción(es) ${dietName} (${formatCurrency(results.specialDietPrice)} / pers.)`]);
       }
 
       if (menuRows.length === 0) {
