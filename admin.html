@@ -2397,6 +2397,12 @@
               console.warn("Memoria local del navegador llena, continuando guardado en Supabase:", localErr);
             }
 
+            // GUARDADO EN SUPABASE VIA SERVERLESS HANDLER (/api/config)
+            const headers = { 'Content-Type': 'application/json' };
+            if (currentSession && currentSession.access_token) {
+              headers['Authorization'] = `Bearer ${currentSession.access_token}`;
+            }
+
             const response = await fetch('/api/config', {
               method: 'POST',
               headers: headers,
