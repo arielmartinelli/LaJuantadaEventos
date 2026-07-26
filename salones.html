@@ -880,7 +880,8 @@
          ========================================================================== */
       let norteReservedDates = [];
       let centroReservedDates = [];
-      let currentCalDate = new Date();
+      let norteCalDate = new Date();
+      let centroCalDate = new Date();
 
       async function loadSalonDates() {
         let configs = {};
@@ -936,8 +937,8 @@
         renderDynamicAmenities('amenities-norte', configs.salon_norte_equipamiento);
         renderDynamicAmenities('amenities-centro', configs.salon_centro_equipamiento);
 
-        renderSalonCalendar('calendar-norte', norteReservedDates);
-        renderSalonCalendar('calendar-centro', centroReservedDates);
+        renderSalonCalendar('calendar-norte', norteReservedDates, norteCalDate);
+        renderSalonCalendar('calendar-centro', centroReservedDates, centroCalDate);
       }
 
       function renderDynamicCarousel(carouselId, rawData) {
@@ -991,12 +992,13 @@
         container.innerHTML = html;
       }
 
-      function renderSalonCalendar(containerId, reservedDates) {
+      function renderSalonCalendar(containerId, reservedDates, calDateObj) {
         const container = document.getElementById(containerId);
         if (!container) return;
 
-        const year = currentCalDate.getFullYear();
-        const month = currentCalDate.getMonth();
+        const calDate = calDateObj || new Date();
+        const year = calDate.getFullYear();
+        const month = calDate.getMonth();
 
         const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
         
@@ -1013,7 +1015,7 @@
           const formattedDay = String(day).padStart(2, '0');
           const dateStr = `${year}-${formattedMonth}-${formattedDay}`;
 
-          const isReserved = reservedDates.includes(dateStr);
+          const isReserved = Array.isArray(reservedDates) && reservedDates.includes(dateStr);
           const cellClass = isReserved ? 'reserved' : 'available';
           const titleText = isReserved ? 'Reservado' : 'Disponible';
 
@@ -1036,16 +1038,14 @@
 
         container.querySelector('.btn-cal-prev').addEventListener('click', (e) => {
           e.preventDefault();
-          currentCalDate.setMonth(currentCalDate.getMonth() - 1);
-          renderSalonCalendar('calendar-norte', norteReservedDates);
-          renderSalonCalendar('calendar-centro', centroReservedDates);
+          calDate.setMonth(calDate.getMonth() - 1);
+          renderSalonCalendar(containerId, reservedDates, calDate);
         });
 
         container.querySelector('.btn-cal-next').addEventListener('click', (e) => {
           e.preventDefault();
-          currentCalDate.setMonth(currentCalDate.getMonth() + 1);
-          renderSalonCalendar('calendar-norte', norteReservedDates);
-          renderSalonCalendar('calendar-centro', centroReservedDates);
+          calDate.setMonth(calDate.getMonth() + 1);
+          renderSalonCalendar(containerId, reservedDates, calDate);
         });
       }
 
