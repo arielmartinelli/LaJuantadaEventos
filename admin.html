@@ -2397,11 +2397,16 @@
               console.warn("Memoria local del navegador llena, continuando guardado en Supabase:", localErr);
             }
 
-            // GUARDADO EN SUPABASE VIA SERVERLESS HANDLER (/api/config)
-            const headers = { 'Content-Type': 'application/json' };
-            if (currentSession && currentSession.access_token) {
-              headers['Authorization'] = `Bearer ${currentSession.access_token}`;
-            }
+            const response = await fetch('/api/config', {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify({
+                configs: configsPayload,
+                services: servicesPayload,
+                carousel: carouselPayload,
+                gallery: galleryPayload
+              })
+            });
 
             const responseText = await response.text();
             let resData = {};
@@ -2409,7 +2414,7 @@
               resData = JSON.parse(responseText);
             } catch (jsonErr) {
               if (response.status === 413 || responseText.includes('Request Entity Too Large')) {
-                resData = { error: "Las imágenes seleccionadas son demasiado pesadas para la red. Se han comprimido automáticamente; intenta guardar nuevamente." };
+                resData = { error: "Las imágenes seleccionadas son demasiado pesadas para la red." };
               } else {
                 resData = { error: "Respuesta del servidor: " + responseText.substring(0, 120) };
               }
