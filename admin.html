@@ -1032,8 +1032,8 @@
                   <div style="flex: 1; min-width: 240px;">
                     <label style="font-size: 0.8rem; font-weight: 700; margin-bottom: 5px; display: block;">Salón a Gestionar:</label>
                     <select id="admin-cal-salon-select" class="form-control" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-light); font-size: 0.9rem; font-weight: 700; color: var(--charcoal);">
-                      <option value="norte" selected>Salón La Juntada Norte (Villa Allende)</option>
-                      <option value="centro">Salón La Juntada Centro (Alta Córdoba)</option>
+                      <option value="centro" selected>La Juntada Espacio de Encuentro (Mendoza 3150, Alta Córdoba)</option>
+                      <option value="norte">La Juntada Norte (Villa Allende - Pronto a inaugurar)</option>
                     </select>
                   </div>
                   
@@ -1063,22 +1063,39 @@
               <div class="admin-box" style="margin-top: 25px;">
                 <h3><i class="fa-solid fa-camera"></i> Fotos & Equipamiento de Salones</h3>
                 <p style="font-size: 0.85rem; color: var(--charcoal-muted); margin-bottom: 20px;">
-                  Modifica la foto de portada, las imágenes del carrusel y la lista de equipamiento/comodidades para cada salón.
+                  Modifica la foto de portada y las imágenes del carrusel para cada salón.
                 </p>
 
-                <!-- Tabs selector Norte / Centro -->
+                <!-- Tabs selector Centro / Norte -->
                 <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                  <button type="button" class="btn-salon-toggle active" id="btn-toggle-salon-norte" style="padding: 10px 22px; border-radius: 50px; font-weight: 800; border: none; cursor: pointer; background: var(--primary-orange); color: white;">
-                    <i class="fa-solid fa-building"></i> Salón Norte (Villa Allende)
+                  <button type="button" class="btn-salon-toggle active" id="btn-toggle-salon-centro" style="padding: 10px 22px; border-radius: 50px; font-weight: 800; border: none; cursor: pointer; background: var(--primary-orange); color: white;">
+                    <i class="fa-solid fa-building"></i> Espacio de Encuentro (Alta Córdoba)
                   </button>
-                  <button type="button" class="btn-salon-toggle" id="btn-toggle-salon-centro" style="padding: 10px 22px; border-radius: 50px; font-weight: 800; border: 1px solid var(--border-light); cursor: pointer; background: white; color: var(--charcoal);">
-                    <i class="fa-solid fa-building"></i> Salón Centro (Alta Córdoba)
+                  <button type="button" class="btn-salon-toggle" id="btn-toggle-salon-norte" style="padding: 10px 22px; border-radius: 50px; font-weight: 800; border: 1px solid var(--border-light); cursor: pointer; background: white; color: var(--charcoal);">
+                    <i class="fa-solid fa-building"></i> Salón Norte (Villa Allende)
                   </button>
                 </div>
 
-                <!-- Panel Salón Norte Editor -->
-                <div id="salon-editor-norte" class="salon-editor-panel">
-                  <h4 style="color: var(--primary-orange); font-weight: 800; margin-bottom: 15px;">Salón La Juntada Norte</h4>
+                <!-- Panel Salón Centro (Alta Córdoba) Editor -->
+                <div id="salon-editor-centro" class="salon-editor-panel">
+                  <h4 style="color: var(--primary-orange); font-weight: 800; margin-bottom: 15px;">La Juntada Espacio de Encuentro (Mendoza 3150, Alta Córdoba)</h4>
+                  
+                  <div style="margin-bottom: 20px; max-width: 320px;">
+                    <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Foto de Portada del Salón</label>
+                    <img id="preview-centro-cover" src="assets/social_event.png" style="width: 100%; height: 160px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border-light); margin-bottom: 8px;">
+                    <input type="file" id="file-centro-cover" accept="image/*" style="font-size: 0.8rem; width: 100%;">
+                  </div>
+
+                  <h5 style="font-weight: 700; font-size: 0.9rem; margin-bottom: 10px;"><i class="fa-solid fa-images text-orange"></i> Fotos del Carrusel (Espacio de Encuentro)</h5>
+                  <div id="container-centro-carousel" class="admin-cards-grid" style="margin-bottom: 15px;"></div>
+                  <button type="button" class="admin-btn-export" id="btn-add-centro-carousel" style="padding: 8px 16px; font-size: 0.85rem; background-color: var(--primary-orange); border-radius: 50px;">
+                    <i class="fa-solid fa-plus"></i> Añadir Foto al Carrusel de Alta Córdoba
+                  </button>
+                </div>
+
+                <!-- Panel Salón Norte (Villa Allende) Editor -->
+                <div id="salon-editor-norte" class="salon-editor-panel" style="display: none;">
+                  <h4 style="color: var(--primary-orange); font-weight: 800; margin-bottom: 15px;">La Juntada Norte (Villa Allende - Pronto a inaugurar)</h4>
                   
                   <div style="margin-bottom: 20px; max-width: 320px;">
                     <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Foto de Portada del Salón</label>
@@ -1090,23 +1107,6 @@
                   <div id="container-norte-carousel" class="admin-cards-grid" style="margin-bottom: 15px;"></div>
                   <button type="button" class="admin-btn-export" id="btn-add-norte-carousel" style="padding: 8px 16px; font-size: 0.85rem; background-color: var(--primary-orange); border-radius: 50px;">
                     <i class="fa-solid fa-plus"></i> Añadir Foto al Carrusel Norte
-                  </button>
-                </div>
-
-                <!-- Panel Salón Centro Editor -->
-                <div id="salon-editor-centro" class="salon-editor-panel" style="display: none;">
-                  <h4 style="color: var(--primary-orange); font-weight: 800; margin-bottom: 15px;">Salón La Juntada Centro</h4>
-                  
-                  <div style="margin-bottom: 20px; max-width: 320px;">
-                    <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Foto de Portada del Salón</label>
-                    <img id="preview-centro-cover" src="assets/social_event.png" style="width: 100%; height: 160px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border-light); margin-bottom: 8px;">
-                    <input type="file" id="file-centro-cover" accept="image/*" style="font-size: 0.8rem; width: 100%;">
-                  </div>
-
-                  <h5 style="font-weight: 700; font-size: 0.9rem; margin-bottom: 10px;"><i class="fa-solid fa-images text-orange"></i> Fotos del Carrusel (Salón Centro)</h5>
-                  <div id="container-centro-carousel" class="admin-cards-grid" style="margin-bottom: 15px;"></div>
-                  <button type="button" class="admin-btn-export" id="btn-add-centro-carousel" style="padding: 8px 16px; font-size: 0.85rem; background-color: var(--primary-orange); border-radius: 50px;">
-                    <i class="fa-solid fa-plus"></i> Añadir Foto al Carrusel Centro
                   </button>
                 </div>
               </div>
