@@ -306,20 +306,25 @@
 
                 <!-- Botones de acceso rápido pax -->
                 <div class="quick-pax-container">
-                  <span style="font-size: 0.82rem; font-weight: 700; color: var(--charcoal-muted); display: flex; align-items: center;">Accesos rápidos:</span>
-                  <button type="button" class="quick-pax-btn active" data-pax="40">40 pers.</button>
-                  <button type="button" class="quick-pax-btn" data-pax="60">60 pers.</button>
-                  <button type="button" class="quick-pax-btn" data-pax="80">80 pers.</button>
-                  <button type="button" class="quick-pax-btn" data-pax="100">100 pers.</button>
+                <p style="font-size: 0.9rem; color: var(--charcoal-light); margin-bottom: 15px;">Ingresá el número de personas estimado para calcular los costos per cápita exactos.</p>
+                
+                <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                  <div style="flex: 1; min-width: 200px;">
+                    <input type="range" id="guest-count-slider" min="10" max="250" value="50" step="5" class="calc-range-slider" style="width: 100%;">
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px; background: #faf6f0; padding: 8px 16px; border-radius: 12px; border: 1px solid var(--border-light);">
+                    <input type="number" id="guest-count-input" min="10" max="250" value="50" style="width: 60px; font-size: 1.2rem; font-weight: 800; border: none; background: transparent; color: var(--primary-orange); text-align: center;">
+                    <span style="font-weight: 700; font-size: 0.9rem; color: var(--charcoal);">Personas</span>
+                  </div>
                 </div>
               </div>
 
-              <!-- Tarjetas Seleccionables de Salón / Locación -->
-              <div style="background: white; padding: 25px; border-radius: 20px; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm);">
-                <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--charcoal); margin-bottom: 8px;">
+              <!-- Selector de Salón -->
+              <div class="calc-card">
+                <h3 class="calc-card-title">
                   <i class="fa-solid fa-building text-orange"></i> Selección de Locación o Salón
                 </h3>
-                <p style="font-size: 0.9rem; color: var(--charcoal-light); margin-bottom: 18px;">Elegí dónde se realizará tu festejo. Salones con base desde 40 personas (máx. 100 personas) o catering a domicilio sin límite.</p>
+                <p style="font-size: 0.9rem; color: var(--charcoal-light); margin-bottom: 18px;">Elegí dónde se realizará tu festejo. Salones con base desde 30 personas o catering a domicilio sin límite.</p>
 
                 <div class="salon-options-grid">
                   <!-- Opción 1: Catering a Domicilio -->
@@ -338,19 +343,19 @@
                       <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--charcoal); margin: 0 0 6px;">Opción 2: Salón La Juntada Norte</h4>
                       <span class="salon-opt-badge-circle" style="font-size: 0.75rem; font-weight: 800; color: white; background: #ccc; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">+</span>
                     </div>
-                    <p style="font-size: 0.83rem; color: var(--charcoal-light); margin: 0; line-height: 1.4;">Villa Allende (Base 40 pers., máx. 100 pers. | Parque & piscina).</p>
+                    <p style="font-size: 0.83rem; color: var(--charcoal-light); margin: 0; line-height: 1.4;">Villa Allende (De 30 a 90 personas | Patio con pileta y asador techado).</p>
                     <div style="margin-top: 12px; font-size: 0.82rem; color: var(--charcoal-muted);">
                       Base: <strong style="color: var(--primary-orange);">$300.000</strong> | <span style="color: #2e7d32; font-weight: 700;">15% OFF Lun-Jue</span>
                     </div>
                   </div>
 
-                  <!-- Opción 3: Salón La Juntada Centro -->
+                  <!-- Opción 3: Salón La Juntada Centro (Pronto a inaugurar) -->
                   <div class="salon-opt-card" data-salon-opt="centro">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
                       <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--charcoal); margin: 0 0 6px;">Opción 3: Salón La Juntada Centro</h4>
-                      <span class="salon-opt-badge-circle" style="font-size: 0.75rem; font-weight: 800; color: white; background: #ccc; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">+</span>
+                      <span style="font-size: 0.65rem; font-weight: 800; color: #c62828; background: #ffebee; padding: 2px 8px; border-radius: 50px; border: 1px solid #ffcdd2;">Pronto a inaugurar</span>
                     </div>
-                    <p style="font-size: 0.83rem; color: var(--charcoal-light); margin: 0; line-height: 1.4;">Alta Córdoba (Base 40 pers., máx. 100 pers. | Pista climatizada).</p>
+                    <p style="font-size: 0.83rem; color: var(--charcoal-light); margin: 0; line-height: 1.4;">Alta Córdoba (Pronto a inaugurar | Pista climatizada).</p>
                     <div style="margin-top: 12px; font-size: 0.82rem; color: var(--charcoal-muted);">
                       Base: <strong style="color: var(--primary-orange);">$300.000</strong> | <span style="color: #2e7d32; font-weight: 700;">15% OFF Lun-Jue</span>
                     </div>
