@@ -1,6 +1,14 @@
 // api/config.js
 import { createClient } from '@supabase/supabase-js';
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+};
+
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 

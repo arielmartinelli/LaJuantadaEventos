@@ -1834,6 +1834,41 @@
         });
       }
 
+      function compressDataUrl(dataUrl, maxDim = 900, quality = 0.68) {
+        return new Promise((resolve) => {
+          if (!dataUrl || typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/')) {
+            resolve(dataUrl);
+            return;
+          }
+          const img = new Image();
+          img.onload = () => {
+            try {
+              let w = img.width;
+              let h = img.height;
+              if (w > maxDim || h > maxDim) {
+                if (w > h) {
+                  h = Math.round((h * maxDim) / w);
+                  w = maxDim;
+                } else {
+                  w = Math.round((w * maxDim) / h);
+                  h = maxDim;
+                }
+              }
+              const canvas = document.createElement('canvas');
+              canvas.width = w;
+              canvas.height = h;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, w, h);
+              resolve(canvas.toDataURL('image/jpeg', quality));
+            } catch (err) {
+              resolve(dataUrl);
+            }
+          };
+          img.onerror = () => resolve(dataUrl);
+          img.src = dataUrl;
+        });
+      }
+
       async function handleImageUpload(file, folder) {
         if (!file) return null;
         
@@ -1844,7 +1879,10 @@
         if (isLocalMode || !supabaseClient) {
           return new Promise((resolve) => {
             const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result);
+            reader.onloadend = async () => {
+              const lightDataUrl = await compressDataUrl(reader.result, 900, 0.68);
+              resolve(lightDataUrl);
+            };
             reader.readAsDataURL(compressedFile);
           });
         }
@@ -1855,10 +1893,13 @@
             .upload(fileName, compressedFile, { contentType: 'image/jpeg' });
 
           if (error) {
-            console.warn("Aviso de Supabase Storage (usando respaldo de imagen comprimida):", error.message);
+            console.warn("Aviso de Supabase Storage (usando respaldo comprimido ligero):", error.message);
             return new Promise((resolve) => {
               const reader = new FileReader();
-              reader.onloadend = () => resolve(reader.result);
+              reader.onloadend = async () => {
+                const lightDataUrl = await compressDataUrl(reader.result, 900, 0.68);
+                resolve(lightDataUrl);
+              };
               reader.readAsDataURL(compressedFile);
             });
           }
@@ -1872,7 +1913,10 @@
           console.warn("Fallo en Storage (usando respaldo comprimido):", err);
           return new Promise((resolve) => {
             const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result);
+            reader.onloadend = async () => {
+              const lightDataUrl = await compressDataUrl(reader.result, 900, 0.68);
+              resolve(lightDataUrl);
+            };
             reader.readAsDataURL(compressedFile);
           });
         }
