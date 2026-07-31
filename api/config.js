@@ -142,40 +142,60 @@ export default async function handler(req, res) {
 
       // 3. Guardar carrusel y eliminar los eliminados
       if (carousel && Array.isArray(carousel)) {
+        const cleanedCarousel = carousel.map(c => {
+          const item = {
+            title: String(c.title || ''),
+            description: String(c.description || ''),
+            image_url: String(c.image_url || '')
+          };
+          if (c.id) item.id = c.id;
+          return item;
+        });
+
         const { error: err } = await targetSupabase
           .from('lajuntada_carousel')
-          .upsert(carousel);
+          .upsert(cleanedCarousel);
         if (err) {
           console.error("Error al guardar carrusel en Supabase:", err);
           throw new Error("Error guardando carrusel: " + err.message);
         }
 
-        const activeIds = carousel.filter(c => c.id).map(c => c.id);
+        const activeIds = cleanedCarousel.filter(c => c.id).map(c => c.id);
         if (activeIds.length > 0) {
           const { error: delErr } = await targetSupabase
             .from('lajuntada_carousel')
             .delete()
-            .not('id', 'in', `(${activeIds.join(',')})`);
+            .not('id', 'in', `(${activeIds.map(id => `'${id}'`).join(',')})`);
           if (delErr) console.error("Error eliminando carrusel obsoleto:", delErr);
         }
       }
 
       // 4. Guardar galeria y eliminar los eliminados
       if (gallery && Array.isArray(gallery)) {
+        const cleanedGallery = gallery.map(g => {
+          const item = {
+            title: String(g.title || ''),
+            category: String(g.category || 'casamiento'),
+            image_url: String(g.image_url || '')
+          };
+          if (g.id) item.id = g.id;
+          return item;
+        });
+
         const { error: err } = await targetSupabase
           .from('lajuntada_gallery')
-          .upsert(gallery);
+          .upsert(cleanedGallery);
         if (err) {
           console.error("Error al guardar galeria en Supabase:", err);
           throw new Error("Error guardando galería: " + err.message);
         }
 
-        const activeIds = gallery.filter(g => g.id).map(g => g.id);
+        const activeIds = cleanedGallery.filter(g => g.id).map(g => g.id);
         if (activeIds.length > 0) {
           const { error: delErr } = await targetSupabase
             .from('lajuntada_gallery')
             .delete()
-            .not('id', 'in', `(${activeIds.join(',')})`);
+            .not('id', 'in', `(${activeIds.map(id => `'${id}'`).join(',')})`);
           if (delErr) console.error("Error eliminando galeria obsoleta:", delErr);
         }
       }

@@ -1897,54 +1897,33 @@
       async function handleImageUpload(file, folder) {
         if (!file) return null;
         
-        // Optimizar archivos pesados antes de enviar o convertir
-        const compressedFile = await compressImage(file, 1200, 1200, 0.75);
-        const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).substring(2, 9)}.jpg`;
+        // 1. Compresión previa ultra-rápida en cliente
+        const compressedFile = await compressImage(file, 1000, 1000, 0.75);
         
-        if (isLocalMode || !supabaseClient) {
-          return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = async () => {
-              const lightDataUrl = await compressDataUrl(reader.result, 720, 0.60);
-              resolve(lightDataUrl);
-            };
-            reader.readAsDataURL(compressedFile);
-          });
-        }
+        const base64Data = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(compressedFile);
+        });
 
+        // 2. Subida directa vía API Serverless Backend (/api/upload) con permisos Admin
         try {
-          const { data, error } = await supabaseClient.storage
-            .from('lajuntada_images')
-            .upload(fileName, compressedFile, { contentType: 'image/jpeg' });
-
-          if (error) {
-            console.warn("Aviso de Supabase Storage (usando respaldo comprimido ligero):", error.message);
-            return new Promise((resolve) => {
-              const reader = new FileReader();
-              reader.onloadend = async () => {
-                const lightDataUrl = await compressDataUrl(reader.result, 720, 0.60);
-                resolve(lightDataUrl);
-              };
-              reader.readAsDataURL(compressedFile);
-            });
-          }
-
-          const { data: { publicUrl } } = supabaseClient.storage
-            .from('lajuntada_images')
-            .getPublicUrl(fileName);
-
-          return publicUrl;
-        } catch (err) {
-          console.warn("Fallo en Storage (usando respaldo comprimido):", err);
-          return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = async () => {
-              const lightDataUrl = await compressDataUrl(reader.result, 720, 0.60);
-              resolve(lightDataUrl);
-            };
-            reader.readAsDataURL(compressedFile);
+          const resp = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: base64Data, folder })
           });
+          const resData = await resp.json();
+          if (resp.ok && resData.url) {
+            return resData.url;
+          }
+          console.warn("API /api/upload devolvió aviso (usando respaldo optimizado):", resData);
+        } catch (apiErr) {
+          console.warn("No se pudo conectar a /api/upload (usando respaldo optimizado):", apiErr);
         }
+
+        // 3. Respaldo ultra-ligero en base64 si no hay red o backend disponible
+        return await compressDataUrl(base64Data, 600, 0.55);
       }
 
       // ==========================================================================
