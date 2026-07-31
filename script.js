@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     salon_norte_extra_pax_price: '7500',
     salon_norte_cover_image: 'assets/wedding_event.png',
     salon_norte_carousel_images: '["assets/wedding_event.png","assets/hero_bg.png","assets/catering_premium.png"]',
-    salon_norte_equipamiento: '["De 30 a 90 personas","Patio con pileta y asador techado","Amplios baños","Ventiladores","Conectividad Wi-Fi","Heladera y freezer","Vajilla básica","Sonido y luces con audio rítmicas"]',
+    salon_norte_equipamiento: '["De 30 a 90 personas","Patio con pileta y asador techado","Amplios baños","Ventiladores","Conectividad Wi-Fi","Heladera y freezer","Vajilla básica","Luces audio-ritmicas"]',
     salon_centro_base_price: '300000',
     salon_centro_extra_pax_price: '7500',
     salon_centro_cover_image: 'assets/social_event.png',
