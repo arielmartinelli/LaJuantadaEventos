@@ -511,17 +511,17 @@
   <!-- Main Salones List Grid -->
   <main class="salones-container">
 
-    <!-- Salón Norte Preview Card -->
-    <div class="salon-preview-card reveal-left" id="card-norte">
+    <!-- Card 1 (Izquierda): La Juntada Espacio de Encuentro -->
+    <div class="salon-preview-card reveal-left" id="card-encuentro">
       <div class="salon-preview-thumb">
-        <img src="assets/wedding_event.png" alt="Salón La Juntada Norte" id="norte-cover-img">
-        <span class="salon-overlay-tag">Zona Norte</span>
+        <img src="assets/social_event.png" alt="La Juntada Espacio de Encuentro" id="centro-cover-img">
+        <span class="salon-overlay-tag">Alta Córdoba</span>
       </div>
       
       <div class="salon-preview-body" style="text-align: left;">
-        <h3 class="salon-preview-title">Salón La Juntada Norte</h3>
+        <h3 class="salon-preview-title">La Juntada Espacio de Encuentro</h3>
         <p class="salon-preview-location">
-          <i class="fa-solid fa-location-dot text-orange"></i> Villa Allende, Córdoba
+          <i class="fa-solid fa-location-dot text-orange"></i> Mendoza 3145, Alta Córdoba
         </p>
         
         <div class="salon-preview-badges" style="justify-content: flex-start;">
@@ -534,7 +534,100 @@
         <div style="background: rgba(224, 83, 38, 0.06); border: 1px solid rgba(224, 83, 38, 0.2); border-radius: 12px; padding: 12px; margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center;">
           <div>
             <span style="font-size: 0.75rem; font-weight: 700; color: var(--charcoal-light); display: block;">Precio Base</span>
-            <strong style="font-size: 1rem; color: var(--primary-orange); font-weight: 800;" id="norte-price-weekday">$300.000</strong>
+            <strong style="font-size: 1rem; color: var(--primary-orange); font-weight: 800;" id="centro-price-weekday">$300.000</strong>
+          </div>
+          <div style="border-left: 1px solid var(--border-light);">
+            <span style="font-size: 0.75rem; font-weight: 700; color: #2e7d32; display: block;">Lunes a Jueves</span>
+            <strong style="font-size: 1rem; color: #2e7d32; font-weight: 800;" id="centro-price-weekend">15% OFF</strong>
+          </div>
+        </div>
+
+        <button type="button" class="btn-toggle-details btn-primary" data-target="drawer-centro" style="width: 100%; border-radius: 50px; padding: 12px 18px; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; border: none; cursor: pointer;">
+          <span>Ver Información & Disponibilidad</span>
+          <i class="fa-solid fa-chevron-down toggle-icon" style="transition: transform 0.3s ease;"></i>
+        </button>
+
+        <!-- Drawer desplegable independiente -->
+        <div class="salon-details-drawer" id="drawer-centro" style="text-align: left;">
+          <!-- Image Carousel -->
+          <div class="salon-carousel" id="carousel-centro">
+            <div class="salon-carousel-slides">
+              <img src="assets/social_event.png" alt="Espacio de Encuentro - Interior" class="salon-carousel-slide">
+              <img src="assets/birthday_sweet.png" alt="Espacio de Encuentro - Mesas" class="salon-carousel-slide">
+              <img src="assets/birthday_event.png" alt="Espacio de Encuentro - Eventos" class="salon-carousel-slide">
+            </div>
+            <button class="salon-carousel-btn prev" aria-label="Anterior foto"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="salon-carousel-btn next" aria-label="Siguiente foto"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="salon-carousel-dots">
+              <span class="salon-carousel-dot active"></span>
+              <span class="salon-carousel-dot"></span>
+              <span class="salon-carousel-dot"></span>
+            </div>
+          </div>
+
+          <h4 style="font-size: 1rem; font-weight: 800; color: var(--charcoal); margin-bottom: 12px; text-align: left;">
+            <i class="fa-solid fa-circle-info text-orange"></i> Equipamiento & Comodidades
+          </h4>
+
+          <div class="salon-amenities" id="amenities-centro" style="margin-bottom: 20px; text-align: left;">
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-restroom"></i><span>Amplios baños</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-shirt"></i><span>Vestidores</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-wifi"></i><span>Conectividad Wi-Fi</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-snowflake"></i><span>Heladera y freezer</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-utensils"></i><span>Vajilla básica</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-compact-disc"></i><span>Sonido y luces con audio rítmicas</span></div>
+          </div>
+
+          <!-- Calendar Widget -->
+          <div class="salon-calendar-section" style="margin-bottom: 20px; background-color: #faf6f0; border-radius: 12px; padding: 14px; border: 1px solid var(--border-light);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
+              <h4 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--charcoal);">
+                <i class="fa-solid fa-calendar-days text-orange"></i> Fechas Disponibles
+              </h4>
+              <div style="display: flex; gap: 10px; font-size: 0.72rem; font-weight: 700;">
+                <span style="color: #2e7d32; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Libre</span>
+                <span style="color: #d32f2f; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Reservado</span>
+              </div>
+            </div>
+            <div class="salon-calendar-widget" id="calendar-centro"></div>
+          </div>
+
+          <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20consultar%20disponibilidad%20y%20precios%20para%20el%20%2aLa%20Juntada%20Espacio%20de%20Encuentro%2a%20en%20Alta%20C%C3%B3rdoba." target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align: center; justify-content: center; text-decoration: none; display: flex; align-items: center; gap: 8px; border-radius: 50px; padding: 12px;">
+            <i class="fa-brands fa-whatsapp"></i> Consultar Espacio de Encuentro en WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 (Derecha): La Juntada Norte (Pronto a inaugurar) -->
+    <div class="salon-preview-card reveal-right" id="card-norte">
+      <div class="salon-preview-thumb">
+        <img src="assets/wedding_event.png" alt="Salón La Juntada Norte" id="norte-cover-img">
+        <span class="salon-overlay-tag" style="background-color: #d32f2f;">Pronto a inaugurar</span>
+      </div>
+      
+      <div class="salon-preview-body" style="text-align: left;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+          <h3 class="salon-preview-title">La Juntada Norte</h3>
+          <span style="background: #ffebee; color: #c62828; font-size: 0.78rem; font-weight: 800; padding: 4px 12px; border-radius: 50px; border: 1px solid #ffcdd2;">
+            <i class="fa-solid fa-clock"></i> PRONTO A INAUGURAR
+          </span>
+        </div>
+        <p class="salon-preview-location">
+          <i class="fa-solid fa-location-dot text-orange"></i> Villa Allende, Córdoba
+        </p>
+        
+        <div class="salon-preview-badges" style="justify-content: flex-start;">
+          <span class="preview-badge" style="background: #fff3e0; color: #d32f2f; border-color: #ffcdd2; font-weight: 700;"><i class="fa-solid fa-clock text-orange"></i> Pronto a inaugurar</span>
+          <span class="preview-badge"><i class="fa-solid fa-tree text-orange"></i> Zona Norte</span>
+          <span class="preview-badge"><i class="fa-solid fa-building text-orange"></i> Villa Allende</span>
+        </div>
+
+        <!-- Tarifas de Alquiler de Salón por día -->
+        <div style="background: rgba(224, 83, 38, 0.06); border: 1px solid rgba(224, 83, 38, 0.2); border-radius: 12px; padding: 12px; margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center;">
+          <div>
+            <span style="font-size: 0.75rem; font-weight: 700; color: var(--charcoal-light); display: block;">Estado</span>
+            <strong style="font-size: 0.95rem; color: #d32f2f; font-weight: 800;">Próximamente</strong>
           </div>
           <div style="border-left: 1px solid var(--border-light);">
             <span style="font-size: 0.75rem; font-weight: 700; color: #2e7d32; display: block;">Lunes a Jueves</span>
@@ -570,12 +663,9 @@
           </h4>
 
           <div class="salon-amenities" id="amenities-norte" style="margin-bottom: 20px; text-align: left;">
-            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-restroom"></i><span>Amplios baños</span></div>
-            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-shirt"></i><span>Vestidores</span></div>
-            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-wifi"></i><span>Conectividad Wi-Fi</span></div>
-            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-snowflake"></i><span>Heladera y freezer</span></div>
-            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-utensils"></i><span>Vajilla básica</span></div>
-            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-compact-disc"></i><span>Sonido y luces con audio rítmicas</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-clock"></i><span>Pronto a inaugurar</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-tree"></i><span>Parque arbolado y piscina</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-square-parking"></i><span>Estacionamiento cerrado</span></div>
           </div>
 
           <!-- Calendar Widget -->
@@ -594,99 +684,6 @@
 
           <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20consultar%20disponibilidad%20y%20precios%20para%20el%20%2aSal%C3%B3n%20La%20Juntada%20Norte%2a%20en%20Villa%20Allende." target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align: center; justify-content: center; text-decoration: none; display: flex; align-items: center; gap: 8px; border-radius: 50px; padding: 12px;">
             <i class="fa-brands fa-whatsapp"></i> Consultar Salón Norte en WhatsApp
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Salón Centro Preview Card -->
-    <div class="salon-preview-card reveal-right" id="card-centro">
-      <div class="salon-preview-thumb">
-        <img src="assets/social_event.png" alt="Salón La Juntada Centro" id="centro-cover-img">
-        <span class="salon-overlay-tag" style="background-color: #d32f2f;">Pronto a inaugurar</span>
-      </div>
-      
-      <div class="salon-preview-body" style="text-align: left;">
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
-          <h3 class="salon-preview-title">Salón La Juntada Centro</h3>
-          <span style="background: #ffebee; color: #c62828; font-size: 0.78rem; font-weight: 800; padding: 4px 12px; border-radius: 50px; border: 1px solid #ffcdd2;">
-            <i class="fa-solid fa-clock"></i> PRONTO A INAUGURAR
-          </span>
-        </div>
-        <p class="salon-preview-location">
-          <i class="fa-solid fa-location-dot text-orange"></i> Mendoza 3147, Alta Córdoba
-        </p>
-        
-        <div class="salon-preview-badges" style="justify-content: flex-start;">
-          <span class="preview-badge" style="background: #fff3e0; color: #d32f2f; border-color: #ffcdd2; font-weight: 700;"><i class="fa-solid fa-clock text-orange"></i> Pronto a inaugurar</span>
-          <span class="preview-badge"><i class="fa-solid fa-snowflake text-orange"></i> Climatizado</span>
-          <span class="preview-badge"><i class="fa-solid fa-compact-disc text-orange"></i> Pista & DJ</span>
-        </div>
-
-        <!-- Tarifas de Alquiler de Salón por día -->
-        <div style="background: rgba(224, 83, 38, 0.06); border: 1px solid rgba(224, 83, 38, 0.2); border-radius: 12px; padding: 12px; margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center;">
-          <div>
-            <span style="font-size: 0.75rem; font-weight: 700; color: var(--charcoal-light); display: block;">Estado</span>
-            <strong style="font-size: 0.95rem; color: #d32f2f; font-weight: 800;">Próximamente</strong>
-          </div>
-          <div style="border-left: 1px solid var(--border-light);">
-            <span style="font-size: 0.75rem; font-weight: 700; color: #2e7d32; display: block;">Lunes a Jueves</span>
-            <strong style="font-size: 1rem; color: #2e7d32; font-weight: 800;" id="centro-price-weekend">15% OFF</strong>
-          </div>
-        </div>
-
-        <button type="button" class="btn-toggle-details btn-primary" data-target="drawer-centro" style="width: 100%; border-radius: 50px; padding: 12px 18px; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; border: none; cursor: pointer;">
-          <span>Ver Información & Disponibilidad</span>
-          <i class="fa-solid fa-chevron-down toggle-icon" style="transition: transform 0.3s ease;"></i>
-        </button>
-
-        <!-- Drawer desplegable independiente -->
-        <div class="salon-details-drawer" id="drawer-centro" style="text-align: left;">
-          <!-- Image Carousel -->
-          <div class="salon-carousel" id="carousel-centro">
-            <div class="salon-carousel-slides">
-              <img src="assets/social_event.png" alt="Salón Centro - Interior" class="salon-carousel-slide">
-              <img src="assets/birthday_sweet.png" alt="Salón Centro - Mesas de postres" class="salon-carousel-slide">
-              <img src="assets/birthday_event.png" alt="Salón Centro - Iluminación y pista" class="salon-carousel-slide">
-            </div>
-            <button class="salon-carousel-btn prev" aria-label="Anterior foto"><i class="fa-solid fa-chevron-left"></i></button>
-            <button class="salon-carousel-btn next" aria-label="Siguiente foto"><i class="fa-solid fa-chevron-right"></i></button>
-            <div class="salon-carousel-dots">
-              <span class="salon-carousel-dot active"></span>
-              <span class="salon-carousel-dot"></span>
-              <span class="salon-carousel-dot"></span>
-            </div>
-          </div>
-
-          <h4 style="font-size: 1rem; font-weight: 800; color: var(--charcoal); margin-bottom: 12px; text-align: left;">
-            <i class="fa-solid fa-circle-info text-orange"></i> Equipamiento & Comodidades
-          </h4>
-
-          <div class="salon-amenities" id="amenities-centro" style="margin-bottom: 20px; text-align: left;">
-            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-clock"></i><span>Pronto a inaugurar</span></div>
-            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-building-user"></i><span>Ubicación céntrica accesible</span></div>
-            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-snowflake"></i><span>Ambiente climatizado</span></div>
-            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-compact-disc"></i><span>Equipamiento de DJ e audio</span></div>
-            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-lightbulb"></i><span>Iluminación perimetral led</span></div>
-            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-shield-halved"></i><span>Seguridad médica integrada</span></div>
-          </div>
-
-          <!-- Calendar Widget -->
-          <div class="salon-calendar-section" style="margin-bottom: 20px; background-color: #faf6f0; border-radius: 12px; padding: 14px; border: 1px solid var(--border-light);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
-              <h4 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--charcoal);">
-                <i class="fa-solid fa-calendar-days text-orange"></i> Fechas Disponibles
-              </h4>
-              <div style="display: flex; gap: 10px; font-size: 0.72rem; font-weight: 700;">
-                <span style="color: #2e7d32; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Libre</span>
-                <span style="color: #d32f2f; display: flex; align-items: center; gap: 4px;"><i class="fa-solid fa-circle" style="font-size: 0.55rem;"></i> Reservado</span>
-              </div>
-            </div>
-            <div class="salon-calendar-widget" id="calendar-centro"></div>
-          </div>
-
-          <a href="https://wa.me/5493516069743?text=Hola!%20Me%20interesa%20consultar%20disponibilidad%20y%20precios%20para%20el%20%2aSal%C3%B3n%20La%20Juntada%20Centro%2a%20en%20Alta%20C%C3%B3rdoba." target="_blank" rel="noopener noreferrer" class="btn-primary" style="text-align: center; justify-content: center; text-decoration: none; display: flex; align-items: center; gap: 8px; border-radius: 50px; padding: 12px;">
-            <i class="fa-brands fa-whatsapp"></i> Consultar Salón Centro en WhatsApp
           </a>
         </div>
       </div>
@@ -726,7 +723,7 @@
     <div class="footer-bottom" style="background-color: #120e0d; padding: 25px 0; font-size: 0.85rem; opacity: 0.8;">
       <div class="container footer-bottom-inner" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
         <p>&copy; 2026 La Juntada Eventos. Todos los derechos reservados.</p>
-        <p>Alta Córdoba, Mendoza 3147. Tel: 351 606 9743 | 351 216 0141</p>
+        <p>Alta Córdoba, Mendoza 3145. Tel: 351 606 9743 | 351 216 0141</p>
       </div>
     </div>
   </footer>

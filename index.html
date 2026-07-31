@@ -299,13 +299,6 @@
                   </div>
                 </div>
 
-                <input type="range" id="guest-count" class="form-range" min="40" max="300" step="5" value="40">
-                <div id="min-guests-warning" class="min-warning-msg" style="display: none; color: var(--primary-orange); font-size: 0.85rem; font-weight: 700; margin-top: 6px;">
-                  <i class="fa-solid fa-triangle-exclamation"></i> Capacidad máxima del salón: 100 personas. Para eventos mayores, elegí "Catering a Domicilio".
-                </div>
-
-                <!-- Botones de acceso rápido pax -->
-                <div class="quick-pax-container">
                 <p style="font-size: 0.9rem; color: var(--charcoal-light); margin-bottom: 15px;">Ingresá el número de personas estimado para calcular los costos per cápita exactos.</p>
                 
                 <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
@@ -317,6 +310,11 @@
                     <span style="font-weight: 700; font-size: 0.9rem; color: var(--charcoal);">Personas</span>
                   </div>
                 </div>
+
+                <input type="range" id="guest-count" class="form-range" min="40" max="300" step="5" value="40">
+                <div id="min-guests-warning" class="min-warning-msg" style="display: none; color: var(--primary-orange); font-size: 0.85rem; font-weight: 700; margin-top: 6px;">
+                  <i class="fa-solid fa-triangle-exclamation"></i> Capacidad máxima del salón: 100 personas. Para eventos mayores, elegí "Catering a Domicilio".
+                </div>
               </div>
 
               <!-- Selector de Salón -->
@@ -324,7 +322,7 @@
                 <h3 class="calc-card-title">
                   <i class="fa-solid fa-building text-orange"></i> Selección de Locación o Salón
                 </h3>
-                <p style="font-size: 0.9rem; color: var(--charcoal-light); margin-bottom: 18px;">Elegí dónde se realizará tu festejo. Salones con base desde 30 personas o catering a domicilio sin límite.</p>
+                <p style="font-size: 0.9rem; color: var(--charcoal-light); margin-bottom: 18px;">Elegí dónde se realizará tu festejo. Salón con base desde 30 personas o catering a domicilio sin límite.</p>
 
                 <div class="salon-options-grid">
                   <!-- Opción 1: Catering a Domicilio -->
@@ -337,25 +335,25 @@
                     <div style="margin-top: 12px; font-weight: 800; font-size: 0.95rem; color: var(--primary-orange);">$0 (Sin costo de salón)</div>
                   </div>
 
-                  <!-- Opción 2: Salón La Juntada Norte -->
-                  <div class="salon-opt-card" data-salon-opt="norte">
+                  <!-- Opción 2: La Juntada Espacio de Encuentro -->
+                  <div class="salon-opt-card" data-salon-opt="centro">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-                      <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--charcoal); margin: 0 0 6px;">Opción 2: Salón La Juntada Norte</h4>
+                      <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--charcoal); margin: 0 0 6px;">Opción 2: La Juntada Espacio de Encuentro</h4>
                       <span class="salon-opt-badge-circle" style="font-size: 0.75rem; font-weight: 800; color: white; background: #ccc; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">+</span>
                     </div>
-                    <p style="font-size: 0.83rem; color: var(--charcoal-light); margin: 0; line-height: 1.4;">Villa Allende (De 30 a 90 personas | Patio con pileta y asador techado).</p>
+                    <p style="font-size: 0.83rem; color: var(--charcoal-light); margin: 0; line-height: 1.4;">Mendoza 3145, Alta Córdoba (De 30 a 90 personas | Patio con pileta y asador techado).</p>
                     <div style="margin-top: 12px; font-size: 0.82rem; color: var(--charcoal-muted);">
                       Base: <strong style="color: var(--primary-orange);">$300.000</strong> | <span style="color: #2e7d32; font-weight: 700;">15% OFF Lun-Jue</span>
                     </div>
                   </div>
 
-                  <!-- Opción 3: Salón La Juntada Centro (Pronto a inaugurar) -->
-                  <div class="salon-opt-card" data-salon-opt="centro">
+                  <!-- Opción 3: Salón La Juntada Norte (Pronto a inaugurar) -->
+                  <div class="salon-opt-card" data-salon-opt="norte">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-                      <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--charcoal); margin: 0 0 6px;">Opción 3: Salón La Juntada Centro</h4>
+                      <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--charcoal); margin: 0 0 6px;">Opción 3: La Juntada Norte</h4>
                       <span style="font-size: 0.65rem; font-weight: 800; color: #c62828; background: #ffebee; padding: 2px 8px; border-radius: 50px; border: 1px solid #ffcdd2;">Pronto a inaugurar</span>
                     </div>
-                    <p style="font-size: 0.83rem; color: var(--charcoal-light); margin: 0; line-height: 1.4;">Alta Córdoba (Pronto a inaugurar | Pista climatizada).</p>
+                    <p style="font-size: 0.83rem; color: var(--charcoal-light); margin: 0; line-height: 1.4;">Villa Allende (Pronto a inaugurar | Zona Norte).</p>
                     <div style="margin-top: 12px; font-size: 0.82rem; color: var(--charcoal-muted);">
                       Base: <strong style="color: var(--primary-orange);">$300.000</strong> | <span style="color: #2e7d32; font-weight: 700;">15% OFF Lun-Jue</span>
                     </div>
@@ -643,7 +641,7 @@
             <span class="contact-detail-icon"><i class="fa-solid fa-map-location-dot"></i></span>
             <div>
               <h4>Oficina Comercial</h4>
-              <p>Mendoza 3147, Alta Córdoba, Córdoba</p>
+              <p>Mendoza 3145, Alta Córdoba, Córdoba</p>
               <p style="font-size: 0.8rem; color: rgba(250, 246, 240, 0.5); margin-top: 3px;">
                 Horario: Lunes a Sábados de 9 a 18 hs (avisar con 30 min de anticipación)
               </p>
@@ -760,7 +758,7 @@
     <div class="footer-bottom">
       <div class="container footer-bottom-inner">
         <p>&copy; 2026 La Juntada Eventos. Todos los derechos reservados.</p>
-        <p>Alta Córdoba, Mendoza 3147. Tel: 351 606 9743 | 351 216 0141 | <a href="admin.html" style="text-decoration: underline; opacity: 0.8;">Acceso Admin</a></p>
+        <p>Alta Córdoba, Mendoza 3145. Tel: 351 606 9743 | 351 216 0141 | <a href="admin.html" style="text-decoration: underline; opacity: 0.8;">Acceso Admin</a></p>
       </div>
     </div>
   </footer>
