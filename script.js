@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     srv_living_available: 'true',
     contact_phone1: '3516069743',
     contact_phone2: '3512160141',
-    contact_address: 'Mendoza 3145, Alta Córdoba, Córdoba',
+    contact_address: 'Mendoza 3150, Alta Córdoba, Córdoba',
     contact_email: 'lajuntadaeventos@gmail.com',
     min_guests_qty: '40',
     cash_discount_percent: '10',
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     salon_norte_extra_pax_price: '7500',
     salon_norte_cover_image: 'assets/wedding_event.png',
     salon_norte_carousel_images: '["assets/wedding_event.png","assets/hero_bg.png","assets/catering_premium.png"]',
-    salon_norte_equipamiento: '["De 30 a 90 personas","Patio con pileta y asador techado","Amplios baños","Vestidores","Conectividad Wi-Fi","Heladera y freezer","Vajilla básica","Sonido y luces con audio rítmicas"]',
+    salon_norte_equipamiento: '["De 30 a 90 personas","Patio con pileta y asador techado","Amplios baños","Ventiladores","Conectividad Wi-Fi","Heladera y freezer","Vajilla básica","Sonido y luces con audio rítmicas"]',
     salon_centro_base_price: '300000',
     salon_centro_extra_pax_price: '7500',
     salon_centro_cover_image: 'assets/social_event.png',
@@ -1860,7 +1860,7 @@ Podrian confirmarme disponibilidad para esta fecha y coordinar los detalles? Muc
       doc.setFontSize(8);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(224, 83, 38);
-      doc.text('La Juntada Eventos | Mendoza 3145, Alta Córdoba | Tel: 351 606 9743', 105, 287, { align: 'center' });
+      doc.text('La Juntada Eventos | Mendoza 3150, Alta Córdoba | Tel: 351 606 9743', 105, 287, { align: 'center' });
 
       // Guardar archivo PDF directamente
       const clientCleanName = (results.clientName || 'cliente').toLowerCase().replace(/[^a-z0-9]/g, '_');
