@@ -563,18 +563,13 @@ document.addEventListener('DOMContentLoaded', () => {
       { key: 'postres', label: '4. Postre' },
       { key: 'mesadulce', label: '5. Mesa Dulce' },
       { key: 'bebidas', label: '6. Bebidas & Gaseosas' },
-      { key: 'barratragos', label: '7. Barra de Tragos' },
-      { key: 'findeevento', label: '8. Fin de Evento (Trasnoche)' }
+      { key: 'findeevento', label: '7. Fin de Evento (Trasnoche)' }
     ];
 
     let html = '';
 
     timeCategories.forEach(cat => {
       let items = activeServices.filter(s => s.category === cat.key);
-      if (cat.key === 'barratragos' && items.length === 0) {
-        items = activeServices.filter(s => s.key === 'srv_barra' || s.name.toLowerCase().includes('barra'));
-      }
-
       if (items.length === 0) return;
 
       html += `
@@ -1597,14 +1592,13 @@ document.addEventListener('DOMContentLoaded', () => {
         { key: 'postres', label: 'Postre' },
         { key: 'mesadulce', label: 'Mesa Dulce' },
         { key: 'bebidas', label: 'Bebidas y Gaseosas' },
-        { key: 'barratragos', label: 'Barra de Tragos' },
         { key: 'findeevento', label: 'Fin de Evento (Trasnoche)' }
       ];
 
       categoriesOrder.forEach(cat => {
         const items = Array.from(selectedMenuItems)
           .map(k => activeServices?.find(s => s.key === k))
-          .filter(s => s && (s.category === cat.key || (cat.key === 'barratragos' && (s.key === 'srv_barra' || s.name.toLowerCase().includes('barra')))));
+          .filter(s => s && s.category === cat.key);
         
         if (items.length > 0) {
           menuItemsText += `\n\n*${cat.label}:*`;
@@ -1739,14 +1733,13 @@ Podrian confirmarme disponibilidad para esta fecha y coordinar los detalles? Muc
           { key: 'postres', label: 'Postre' },
           { key: 'mesadulce', label: 'Mesa Dulce' },
           { key: 'bebidas', label: 'Bebidas & Gaseosas' },
-          { key: 'barratragos', label: 'Barra de Tragos' },
           { key: 'findeevento', label: 'Fin de Evento (Trasnoche)' }
         ];
 
         categoriesOrder.forEach(cat => {
           const items = Array.from(selectedMenuItems)
             .map(k => activeServices?.find(s => s.key === k))
-            .filter(s => s && (s.category === cat.key || (cat.key === 'barratragos' && (s.key === 'srv_barra' || s.name.toLowerCase().includes('barra')))));
+            .filter(s => s && s.category === cat.key);
           
           if (items.length > 0) {
             const itemsListStr = items.map(s => `• ${s.name}`).join('\n');
