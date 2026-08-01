@@ -489,7 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="item-desc-container" style="flex-grow: 1; margin-bottom: 10px;">
               <p class="item-desc-text" id="desc-text-menu-${srv.key}">${descText}</p>
               ${needsToggle ? `
-                <button type="button" class="btn-toggle-desc" data-target="desc-text-menu-${srv.key}">
+                <button type="button" class="btn-toggle-desc" onclick="event.stopPropagation();" data-target="desc-text-menu-${srv.key}">
                   <span>Ver más</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>
                 </button>
               ` : ''}
@@ -637,7 +637,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="item-desc-container" style="margin: 6px 0 6px;">
               <p class="item-desc-text" id="desc-text-cat-${cat.key}-${srv.key}">${descText}</p>
               ${needsToggle ? `
-                <button type="button" class="btn-toggle-desc" data-target="desc-text-cat-${cat.key}-${srv.key}">
+                <button type="button" class="btn-toggle-desc" onclick="event.stopPropagation();" data-target="desc-text-cat-${cat.key}-${srv.key}">
                   <span>Ver más</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>
                 </button>
               ` : ''}
@@ -677,7 +677,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Registrar clics
     container.querySelectorAll('.menu-tiempos-card').forEach(card => {
       if (card.getAttribute('data-is-diet') === 'true') {
-        card.addEventListener('click', () => {
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('.btn-toggle-desc') || e.target.closest('.btn-diet-tab2-minus') || e.target.closest('.btn-diet-tab2-plus')) return;
           if (specialDietPax === 0) specialDietPax = 1;
           else specialDietPax = 0;
           renderTab2MenuTiemposDOM();
@@ -687,7 +688,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      card.addEventListener('click', () => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-toggle-desc')) return;
         const key = card.getAttribute('data-key');
         toggleMenuItemInQuote(key);
       });
