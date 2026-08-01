@@ -1956,9 +1956,10 @@ button {
 }
 
 .item-desc-text.expanded {
-  display: block;
-  -webkit-line-clamp: unset;
-  overflow: visible;
+  display: block !important;
+  -webkit-line-clamp: unset !important;
+  overflow: visible !important;
+  max-height: none !important;
 }
 
 .btn-toggle-desc {

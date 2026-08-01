@@ -489,7 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="item-desc-container" style="flex-grow: 1; margin-bottom: 10px;">
               <p class="item-desc-text" id="desc-text-menu-${srv.key}">${descText}</p>
               ${needsToggle ? `
-                <button type="button" class="btn-toggle-desc" onclick="event.stopPropagation();" data-target="desc-text-menu-${srv.key}">
+                <button type="button" class="btn-toggle-desc" onclick="window.toggleDescription(this, 'desc-text-menu-${srv.key}', event);" data-target="desc-text-menu-${srv.key}">
                   <span>Ver más</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>
                 </button>
               ` : ''}
@@ -632,7 +632,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="item-desc-container" style="margin: 6px 0 6px;">
               <p class="item-desc-text" id="desc-text-cat-${cat.key}-${srv.key}">${descText}</p>
               ${needsToggle ? `
-                <button type="button" class="btn-toggle-desc" onclick="event.stopPropagation();" data-target="desc-text-cat-${cat.key}-${srv.key}">
+                <button type="button" class="btn-toggle-desc" onclick="window.toggleDescription(this, 'desc-text-cat-${cat.key}-${srv.key}', event);" data-target="desc-text-cat-${cat.key}-${srv.key}">
                   <span>Ver más</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>
                 </button>
               ` : ''}
@@ -1957,22 +1957,28 @@ Podrian confirmarme disponibilidad para esta fecha y coordinar los detalles? Muc
       });
     }
 
+    window.toggleDescription = function(btn, targetId, evt) {
+      if (evt) {
+        if (evt.stopPropagation) evt.stopPropagation();
+        if (evt.preventDefault) evt.preventDefault();
+      }
+      const descEl = document.getElementById(targetId);
+      if (descEl) {
+        const isExpanded = descEl.classList.toggle('expanded');
+        if (isExpanded) {
+          btn.innerHTML = '<span>Ver menos</span> <i class="fa-solid fa-chevron-up" style="font-size: 0.7rem;"></i>';
+        } else {
+          btn.innerHTML = '<span>Ver más</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>';
+        }
+      }
+    };
+
     // Delegación global para botones "Ver más" / "Ver menos" en tarjetas del cotizador
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('.btn-toggle-desc');
       if (btn) {
-        e.stopPropagation();
-        e.preventDefault();
         const targetId = btn.getAttribute('data-target');
-        const descEl = document.getElementById(targetId);
-        if (descEl) {
-          const isExpanded = descEl.classList.toggle('expanded');
-          if (isExpanded) {
-            btn.innerHTML = '<span>Ver menos</span> <i class="fa-solid fa-chevron-up" style="font-size: 0.7rem;"></i>';
-          } else {
-            btn.innerHTML = '<span>Ver más</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>';
-          }
-        }
+        window.toggleDescription(btn, targetId, e);
       }
     });
   }
