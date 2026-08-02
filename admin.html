@@ -1430,21 +1430,34 @@
           console.error("[auth] getSession() falló:", err);
         }
 
-        // Si no hay sesión activa, intentar refrescarla antes de rendirse.
-        if (!session) {
-          try {
-            const { data } = await supabaseClient.auth.refreshSession();
-            session = (data && data.session) ? data.session : null;
-            if (session) console.warn("[auth] Sesión refrescada correctamente.");
-          } catch (err) {
-            console.warn("[auth] No se pudo refrescar la sesión:", err);
+        // Si el navegador bloquea el almacenamiento del sitio, supabase-js no puede
+        // recuperar la sesión aunque el login haya sido correcto. En ese caso usamos
+        // la que quedó en memoria desde el login, que es igual de válida.
+        if (!session && currentSession) {
+          const expiresAtMs = (currentSession.expires_at || 0) * 1000;
+          const vigente = !expiresAtMs || Date.now() < expiresAtMs - 60000;
+
+          if (vigente) {
+            console.warn("[auth] Sesión no persistida en el navegador; usando la de memoria.");
+            session = currentSession;
+          } else if (currentSession.refresh_token) {
+            try {
+              const { data } = await supabaseClient.auth.refreshSession({
+                refresh_token: currentSession.refresh_token
+              });
+              session = (data && data.session) ? data.session : null;
+              if (session) console.warn("[auth] Sesión vencida y refrescada correctamente.");
+            } catch (err) {
+              console.warn("[auth] No se pudo refrescar la sesión:", err);
+            }
           }
         }
 
-        currentSession = session;
+        // Sólo se actualiza si conseguimos una sesión: nunca descartamos la que ya teníamos.
+        if (session) currentSession = session;
+
         if (!session) {
-          console.error("[auth] Sin sesión activa. Claves de sesión en localStorage:",
-            Object.keys(localStorage).filter(k => k.startsWith('sb-')));
+          console.error("[auth] Sin sesión activa ni en memoria ni en el navegador.");
         }
         return session ? session.access_token : null;
       }
@@ -1555,8 +1568,8 @@
             const persisted = Object.keys(localStorage).filter(k => k.startsWith('sb-'));
             console.log("[auth] Login OK. Claves de sesión persistidas:", persisted);
             if (persisted.length === 0) {
-              showError("Iniciaste sesión, pero el navegador no pudo guardarla. " +
-                "Revisá que no esté bloqueado el almacenamiento del sitio (modo incógnito o bloqueo de cookies).");
+              console.warn("[auth] El navegador no guardó la sesión. El panel funciona igual usando la " +
+                "sesión en memoria, pero al recargar la página vas a tener que iniciar sesión de nuevo.");
             }
 
             showDashboard();
