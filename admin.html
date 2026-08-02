@@ -677,10 +677,10 @@
 
       <form id="login-form">
         <div class="admin-form-group" style="text-align: left;">
-          <label for="username">Usuario o Correo *</label>
+          <label for="username">Correo electrónico *</label>
           <div class="admin-input-group">
             <span class="admin-input-prefix"><i class="fa-solid fa-user"></i></span>
-            <input type="text" id="username" required placeholder="Ej. leo" autocomplete="username">
+            <input type="email" id="username" required placeholder="tucorreo@ejemplo.com" autocomplete="username">
           </div>
         </div>
         <div class="admin-form-group" style="text-align: left; margin-bottom: 25px;">
@@ -835,24 +835,38 @@
                 <div class="admin-box">
                   <h3><i class="fa-solid fa-user-shield"></i> Seguridad & Credenciales de Acceso</h3>
                   <p style="font-size: 0.82rem; color: var(--charcoal-muted); margin-bottom: 15px;">
-                    Cambiá tu nombre de usuario y contraseña para ingresar al panel de administración.
+                    Tu cuenta se administra de forma segura en Supabase Auth. La contraseña nunca se
+                    guarda en la configuración del sitio ni queda visible en el navegador.
                   </p>
-                  
+
                   <div class="admin-form-group">
-                    <label for="db-admin_username">Nombre de Usuario de Administrador</label>
+                    <label>Cuenta con sesión iniciada</label>
                     <div class="admin-input-group">
                       <span class="admin-input-prefix"><i class="fa-solid fa-user-gear"></i></span>
-                      <input type="text" id="db-admin_username" value="leo" required placeholder="Ej. leo" autocomplete="username">
+                      <input type="text" id="account-email" value="" readonly disabled placeholder="—">
                     </div>
                   </div>
 
                   <div class="admin-form-group">
-                    <label for="db-admin_password">Contraseña de Acceso</label>
+                    <label for="new-password">Nueva Contraseña</label>
                     <div class="admin-input-group">
                       <span class="admin-input-prefix"><i class="fa-solid fa-key"></i></span>
-                      <input type="password" id="db-admin_password" value="leo123" required placeholder="••••••••" autocomplete="new-password">
+                      <input type="password" id="new-password" placeholder="Mínimo 8 caracteres" autocomplete="new-password" minlength="8">
                     </div>
                   </div>
+
+                  <div class="admin-form-group">
+                    <label for="new-password-confirm">Repetir Nueva Contraseña</label>
+                    <div class="admin-input-group">
+                      <span class="admin-input-prefix"><i class="fa-solid fa-key"></i></span>
+                      <input type="password" id="new-password-confirm" placeholder="Repetí la contraseña" autocomplete="new-password" minlength="8">
+                    </div>
+                  </div>
+
+                  <button type="button" id="btn-change-password" class="admin-btn-secondary">
+                    <i class="fa-solid fa-rotate"></i> Cambiar contraseña
+                  </button>
+                  <div id="password-change-msg" style="font-size: 0.82rem; margin-top: 10px;"></div>
                 </div>
 
                 <!-- Parámetros del Cotizador -->
@@ -1248,6 +1262,21 @@
       let supabaseClient = null;
       let isLocalMode = false;
 
+      // Claves que nunca deben guardarse en la configuración del sitio ni cachearse
+      // en el navegador. La autenticación vive en Supabase Auth.
+      const SENSITIVE_CONFIG_KEYS = new Set([
+        'admin_password',
+        'admin_username',
+        'admin_pass',
+        'password'
+      ]);
+
+      // El "Modo Local" (sin backend, datos en localStorage) es una herramienta de
+      // desarrollo. En el sitio publicado NO debe existir, porque sería una forma de
+      // entrar al panel sin credenciales reales.
+      const IS_LOCALHOST = ['localhost', '127.0.0.1', '::1', ''].includes(window.location.hostname)
+        || window.location.protocol === 'file:';
+
       // ==========================================================================
       // TAB SYSTEM LOGIC (PC Sidebar / Mobile Header Tabs)
       // ==========================================================================
@@ -1312,9 +1341,17 @@
       }
 
       function enableLocalMode(reason) {
+        // En producción no hay fallback: sin backend no hay panel.
+        if (!IS_LOCALHOST) {
+          showLogin();
+          showError("No se pudo conectar con el servidor. Reintentá en unos minutos.");
+          console.error("Modo Local bloqueado en producción. Motivo original:", reason);
+          return;
+        }
+
         isLocalMode = true;
         console.log(reason + " Las configuraciones se guardarán localmente en este navegador.");
-        
+
         // Load configurations from localStorage
         const localData = localStorage.getItem('lajuntada_config') || localStorage.getItem('lajuntada_site_configs');
         dbConfigs = localData ? JSON.parse(localData) : {};
@@ -1334,7 +1371,7 @@
         renderGalleryList(dbGallery);
         loadBackupsList();
         
-        const localSession = sessionStorage.getItem('lajuntada_logged_in');
+        const localSession = sessionStorage.getItem('lajuntada_dev_mode');
         if (localSession === 'true') {
           showDashboard();
           showSaveAlert("Modo Local Activo: Los cambios se guardarán en este navegador.", "success");
@@ -1343,36 +1380,43 @@
         }
       }
 
-      // Check current login session
+      /**
+       * La única fuente de verdad de la sesión es Supabase Auth.
+       * No se acepta ninguna bandera de sessionStorage/localStorage como prueba de
+       * autenticación: eso permitiría entrar seteando una variable desde la consola.
+       */
       async function checkSession() {
-        const localAuth = sessionStorage.getItem('lajuntada_logged_in') === 'true';
+        // Limpiar restos del esquema anterior de autenticación.
+        sessionStorage.removeItem('lajuntada_logged_in');
 
-        if (supabaseClient) {
-          try {
-            const { data } = await supabaseClient.auth.getSession();
-            if (data && data.session) {
-              currentSession = data.session;
-            } else if (localAuth) {
-              const emails = ['lajuntadaeventos@gmail.com', 'leo@lajuntada.com.ar'];
-              for (const email of emails) {
-                const autoRes = await supabaseClient.auth.signInWithPassword({
-                  email: email,
-                  password: 'leo123'
-                });
-                if (autoRes && autoRes.data && autoRes.data.session) {
-                  currentSession = autoRes.data.session;
-                  break;
-                }
-              }
-            }
-          } catch (err) {}
+        if (!supabaseClient) {
+          showLogin();
+          return;
         }
 
-        if (localAuth || currentSession) {
+        try {
+          const { data } = await supabaseClient.auth.getSession();
+          if (data && data.session) {
+            currentSession = data.session;
+          }
+        } catch (err) {
+          console.warn("No se pudo verificar la sesión:", err);
+        }
+
+        if (currentSession) {
           showDashboard();
         } else {
           showLogin();
         }
+      }
+
+      /** Devuelve un access token fresco, refrescándolo si hace falta. */
+      async function getAccessToken() {
+        if (isLocalMode) return null;
+        if (!supabaseClient) return null;
+        const { data } = await supabaseClient.auth.getSession();
+        currentSession = (data && data.session) ? data.session : null;
+        return currentSession ? currentSession.access_token : null;
       }
 
       function showLogin() {
@@ -1383,6 +1427,13 @@
       function showDashboard() {
         loginSection.style.display = 'none';
         dashboardSection.style.display = 'block';
+
+        const accountEmailEl = document.getElementById('account-email');
+        if (accountEmailEl) {
+          accountEmailEl.value = (currentSession && currentSession.user && currentSession.user.email)
+            ? currentSession.user.email
+            : (isLocalMode ? 'Modo Local (sin cuenta)' : '—');
+        }
 
         fillFormInputs();
         renderServicesTable(dbServices);
@@ -1397,95 +1448,69 @@
         loginError.classList.add('error');
       }
 
-      // Authenticate with Supabase Auth or Local credentials
+      // Autenticación: exclusivamente contra Supabase Auth.
+      // No hay contraseñas en el código ni en la tabla de configuración.
       if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
           e.preventDefault();
-          const username = document.getElementById('username').value.trim();
-          const password = document.getElementById('password').value.trim();
+
+          const submitBtn = loginForm.querySelector('button[type="submit"]');
+          const email = document.getElementById('username').value.trim();
+          const password = document.getElementById('password').value;
 
           loginError.style.display = 'none';
 
-          // Cargar credenciales guardadas de sitio
-          let savedUser = 'leo';
-          let savedPass = 'leo123';
-
-          if (dbConfigs && dbConfigs.admin_username) savedUser = dbConfigs.admin_username.trim();
-          if (dbConfigs && dbConfigs.admin_password) savedPass = dbConfigs.admin_password.trim();
-
-          const localSiteConfigs = localStorage.getItem('lajuntada_site_configs') || localStorage.getItem('lajuntada_config');
-          if (localSiteConfigs) {
-            try {
-              const parsed = JSON.parse(localSiteConfigs);
-              if (parsed.admin_username) savedUser = parsed.admin_username.trim();
-              if (parsed.admin_password) savedPass = parsed.admin_password.trim();
-            } catch(err){}
-          }
-
-          const isUserMatch = (username.toLowerCase() === savedUser.toLowerCase()) || (username.toLowerCase() === 'leo') || username.includes('@');
-          if (!isUserMatch) {
-            showError(`Usuario incorrecto. Ingresá '${savedUser}' o tu correo registrado.`);
+          if (!email || !password) {
+            showError("Ingresá tu correo y contraseña.");
             return;
           }
 
-          // 1. Si hay cliente Supabase disponible, autenticamos con Supabase Auth para obtener token de sesión
-          if (supabaseClient && !isLocalMode) {
-            try {
-              let emails = [];
-              if (username.toLowerCase() === savedUser.toLowerCase() || username.toLowerCase() === 'leo') {
-                emails = ['lajuntadaeventos@gmail.com', 'leo@lajuntada.com.ar'];
-              } else {
-                emails = [username];
-              }
-
-              let authResult = null;
-              // Intentar primero con la contraseña ingresada por el usuario
-              for (const email of emails) {
-                const res = await supabaseClient.auth.signInWithPassword({
-                  email: email,
-                  password: password
-                });
-                if (!res.error) {
-                  authResult = res;
-                  break;
-                }
-              }
-
-              // Si falló la contraseña pero coincide con la contraseña guardada o leo123, probar con 'leo123'
-              if ((!authResult || authResult.error) && (password === savedPass || password === 'leo123')) {
-                for (const email of emails) {
-                  const res = await supabaseClient.auth.signInWithPassword({
-                    email: email,
-                    password: 'leo123'
-                  });
-                  if (!res.error) {
-                    authResult = res;
-                    break;
-                  }
-                }
-              }
-
-              if (authResult && !authResult.error) {
-                currentSession = authResult.data.session;
-                sessionStorage.setItem('lajuntada_logged_in', 'true');
-                showDashboard();
-                showSaveAlert("Acceso correcto al Panel de Administración.", "success");
-                return;
-              }
-            } catch(err) {
-              console.warn("Error en Supabase Auth, procediendo con validación de credenciales:", err);
-            }
+          if (!email.includes('@')) {
+            showError("Ingresá el correo electrónico con el que está registrada tu cuenta.");
+            return;
           }
 
-          // 2. Validación de credenciales configuradas (o fallback local)
-          if ((username.toLowerCase() === savedUser.toLowerCase() || username.toLowerCase() === 'leo') && (password === savedPass || password === 'leo123')) {
-            sessionStorage.setItem('lajuntada_logged_in', 'true');
+          // Modo local de desarrollo: no hay backend contra el cual autenticar.
+          if (isLocalMode && IS_LOCALHOST) {
+            sessionStorage.setItem('lajuntada_dev_mode', 'true');
+            showDashboard();
+            showSaveAlert("Modo Local de desarrollo: los cambios sólo se guardan en este navegador.", "success");
+            return;
+          }
+
+          if (!supabaseClient) {
+            showError("No hay conexión con el servidor de autenticación. Reintentá en unos minutos.");
+            return;
+          }
+
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.dataset.originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = 'Verificando...';
+          }
+
+          try {
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+            if (error || !data || !data.session) {
+              // Mensaje genérico: no revelamos si el correo existe o no.
+              showError("Credenciales incorrectas. Verificá tu correo y contraseña.");
+              return;
+            }
+
+            currentSession = data.session;
             showDashboard();
             showSaveAlert("Acceso correcto al Panel de Administración.", "success");
-            return;
+          } catch (err) {
+            console.error("Error al iniciar sesión:", err);
+            showError("No se pudo completar el inicio de sesión. Reintentá en unos minutos.");
+          } finally {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              if (submitBtn.dataset.originalText) submitBtn.innerHTML = submitBtn.dataset.originalText;
+            }
+            document.getElementById('password').value = '';
           }
-
-          showError("Credenciales incorrectas. Verificá tu usuario y contraseña.");
         });
       }
 
@@ -1908,9 +1933,13 @@
 
         // 2. Subida directa vía API Serverless Backend (/api/upload) con permisos Admin
         try {
+          const uploadHeaders = { 'Content-Type': 'application/json' };
+          const uploadToken = await getAccessToken();
+          if (uploadToken) uploadHeaders['Authorization'] = `Bearer ${uploadToken}`;
+
           const resp = await fetch('/api/upload', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: uploadHeaders,
             body: JSON.stringify({ image: base64Data, folder })
           });
           const resData = await resp.json();
@@ -2321,24 +2350,14 @@
         adminConfigForm.addEventListener('submit', async (e) => {
           e.preventDefault();
 
-          if (!isLocalMode && !currentSession && supabaseClient) {
-            try {
-              const emails = ['lajuntadaeventos@gmail.com', 'leo@lajuntada.com.ar'];
-              for (const email of emails) {
-                const autoRes = await supabaseClient.auth.signInWithPassword({
-                  email: email,
-                  password: 'leo123'
-                });
-                if (autoRes && autoRes.data && autoRes.data.session) {
-                  currentSession = autoRes.data.session;
-                  break;
-                }
-              }
-            } catch (err) {}
-          }
-
-          if (!currentSession) {
-            isLocalMode = true;
+          // Sin sesión válida no se guarda nada en el servidor.
+          if (!isLocalMode) {
+            const token = await getAccessToken();
+            if (!token) {
+              showSaveAlert("Tu sesión expiró. Volvé a iniciar sesión para guardar los cambios.", "error");
+              showLogin();
+              return;
+            }
           }
 
           try {
@@ -2350,6 +2369,7 @@
             inputs.forEach(input => {
               const configKey = input.id.replace('db-', '');
               if (configKey === 'site_backups_json') return; // Excluir backups pesados de las configuraciones
+              if (SENSITIVE_CONFIG_KEYS.has(configKey)) return; // Nunca enviar credenciales como config
               let value = '';
               if (input.type === 'checkbox') {
                 value = input.checked ? 'true' : 'false';
@@ -2438,10 +2458,14 @@
             if (dbBackups.length > 5) dbBackups = dbBackups.slice(0, 5);
             try { saveBackupsList(); } catch(e){}
 
-            // Guardado seguro en memoria local del navegador (cache backup) sin bloquear
+            // Guardado seguro en memoria local del navegador (cache backup) sin bloquear.
+            // Nunca se cachean credenciales en localStorage.
             try {
               const configObj = {};
-              configsPayload.forEach(item => { configObj[item.key] = item.value; });
+              configsPayload.forEach(item => {
+                if (SENSITIVE_CONFIG_KEYS.has(item.key)) return;
+                configObj[item.key] = item.value;
+              });
               localStorage.setItem('lajuntada_config', JSON.stringify(configObj));
               localStorage.setItem('lajuntada_site_configs', JSON.stringify(configObj));
               localStorage.setItem('lajuntada_services_list', JSON.stringify(servicesPayload));
@@ -2456,8 +2480,9 @@
 
             // GUARDADO EN SUPABASE VIA SERVERLESS HANDLER (/api/config)
             const headers = { 'Content-Type': 'application/json' };
-            if (currentSession && currentSession.access_token) {
-              headers['Authorization'] = `Bearer ${currentSession.access_token}`;
+            const accessToken = await getAccessToken();
+            if (accessToken) {
+              headers['Authorization'] = `Bearer ${accessToken}`;
             }
 
             const response = await fetch('/api/config', {
@@ -2483,8 +2508,11 @@
               }
             }
 
-            if (!response.ok) {
-              showSaveAlert("Guardado en este navegador. Nota del servidor: " + (resData.error || response.statusText), "warning");
+            if (response.status === 401 || response.status === 403) {
+              showSaveAlert("Tu sesión expiró o la cuenta no tiene permisos. Volvé a iniciar sesión.", "error");
+              showLogin();
+            } else if (!response.ok) {
+              showSaveAlert("No se pudo guardar en el servidor: " + (resData.error || response.statusText), "warning");
             } else {
               showSaveAlert("¡Todos los cambios y productos se guardaron exitosamente en Supabase (visible en todos los dispositivos)!", "success");
               dbConfigs = {};
@@ -2745,10 +2773,60 @@
         }
       }
 
+      // ==========================================================================
+      // CAMBIO DE CONTRASEÑA (vía Supabase Auth)
+      // ==========================================================================
+      const btnChangePassword = document.getElementById('btn-change-password');
+      if (btnChangePassword) {
+        btnChangePassword.addEventListener('click', async () => {
+          const msgEl = document.getElementById('password-change-msg');
+          const pass = document.getElementById('new-password').value;
+          const confirm = document.getElementById('new-password-confirm').value;
+
+          const setMsg = (text, ok) => {
+            msgEl.textContent = text;
+            msgEl.style.color = ok ? '#15803d' : '#b91c1c';
+          };
+
+          if (isLocalMode) {
+            setMsg("En Modo Local no hay cuenta de Supabase para modificar.", false);
+            return;
+          }
+          if (!supabaseClient || !currentSession) {
+            setMsg("Tu sesión expiró. Volvé a iniciar sesión.", false);
+            return;
+          }
+          if (pass.length < 8) {
+            setMsg("La contraseña debe tener al menos 8 caracteres.", false);
+            return;
+          }
+          if (pass !== confirm) {
+            setMsg("Las contraseñas no coinciden.", false);
+            return;
+          }
+
+          btnChangePassword.disabled = true;
+          try {
+            const { error } = await supabaseClient.auth.updateUser({ password: pass });
+            if (error) {
+              setMsg("No se pudo actualizar: " + error.message, false);
+            } else {
+              setMsg("Contraseña actualizada correctamente.", true);
+              document.getElementById('new-password').value = '';
+              document.getElementById('new-password-confirm').value = '';
+            }
+          } catch (err) {
+            setMsg("Error inesperado al actualizar la contraseña.", false);
+            console.error(err);
+          } finally {
+            btnChangePassword.disabled = false;
+          }
+        });
+      }
+
       // Log out handler
       if (btnLogout) {
         btnLogout.addEventListener('click', async () => {
-          sessionStorage.removeItem('lajuntada_logged_in');
           sessionStorage.clear();
           if (supabaseClient) {
             try {

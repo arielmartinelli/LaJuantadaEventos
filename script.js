@@ -38,9 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     salon_centro_cover_image: 'assets/social_event.png',
     salon_centro_carousel_images: '["assets/social_event.png","assets/birthday_sweet.png","assets/birthday_event.png"]',
     salon_centro_equipamiento: '["Pronto a inaugurar","Ubicación céntrica accesible","Ambiente climatizado","Equipamiento de DJ e audio","Iluminación perimetral led","Seguridad médica integrada"]',
-    salon_weekday_discount_percent: '15',
-    admin_username: 'leo',
-    admin_password: 'leo123'
+    salon_weekday_discount_percent: '15'
   };
 
   const DEFAULT_SERVICES = [
