@@ -152,6 +152,10 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     // Este endpoint es público: sólo debe exponer datos públicos del sitio.
     res.setHeader('Access-Control-Allow-Origin', '*');
+    // Sin caché: los precios y la disponibilidad cambian desde el panel y deben
+    // reflejarse al instante. Además evita que una respuesta vieja siga sirviendo
+    // datos que ya se borraron de la base.
+    res.setHeader('Cache-Control', 'no-store, max-age=0, must-revalidate');
 
     // Si viene un token de admin válido, se incluyen además las claves privadas
     // (backups). Sin token, la respuesta es estrictamente pública.
