@@ -2008,10 +2008,111 @@ Podrian confirmarme disponibilidad para esta fecha y coordinar los detalles? Muc
     });
   }
 
+  /* ==========================================================================
+     FORMULARIO DE CONTACTO → WHATSAPP
+     ========================================================================== */
+  function initContactForm() {
+    const contactForm = document.getElementById('contact-form');
+    if (!contactForm) return;
+
+    const submitBtn = document.getElementById('btn-submit');
+
+    /** Muestra un aviso debajo del formulario (sin alert()). */
+    function showFormMessage(text, tipo) {
+      let box = document.getElementById('contact-form-message');
+      if (!box) {
+        box = document.createElement('div');
+        box.id = 'contact-form-message';
+        box.style.cssText = 'margin-top: 16px; padding: 12px 16px; border-radius: 10px; ' +
+          'font-size: 0.9rem; font-weight: 600; line-height: 1.4;';
+        contactForm.appendChild(box);
+      }
+      const ok = tipo === 'success';
+      box.style.background = ok ? 'rgba(37, 211, 102, 0.12)' : 'rgba(224, 83, 38, 0.10)';
+      box.style.color = ok ? '#15803d' : '#b91c1c';
+      box.style.border = `1px solid ${ok ? 'rgba(37,211,102,0.35)' : 'rgba(224,83,38,0.30)'}`;
+      box.textContent = text;
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    /** Fecha ISO (yyyy-mm-dd) a formato legible sin corrimiento de zona horaria. */
+    function formatDateAR(isoDate) {
+      if (!isoDate) return 'A definir';
+      const partes = isoDate.split('-');
+      if (partes.length !== 3) return isoDate;
+      return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const nombre = document.getElementById('frm-name').value.trim();
+      const telefono = document.getElementById('frm-phone').value.trim();
+      const email = document.getElementById('frm-email').value.trim();
+      const tipoEvento = document.getElementById('frm-event').value;
+      const fecha = document.getElementById('frm-date').value;
+      const invitados = document.getElementById('frm-guests').value;
+      const detalles = document.getElementById('frm-msg').value.trim();
+
+      if (!nombre || !telefono || !email || !tipoEvento || !fecha || !invitados) {
+        showFormMessage('Completá todos los campos marcados con * para poder enviar la consulta.', 'error');
+        return;
+      }
+
+      const mensaje =
+`Hola La Juntada! Les escribo desde la web para consultar por un evento.
+
+*DATOS DE CONTACTO:*
+- Nombre: ${nombre}
+- Telefono: ${telefono}
+- Email: ${email}
+
+*DETALLES DEL EVENTO:*
+- Tipo: ${tipoEvento}
+- Fecha estimada: ${formatDateAR(fecha)}
+- Invitados estimados: ${invitados} personas
+${detalles ? `\n*LO QUE TENGO EN MENTE:*\n${detalles}\n` : ''}
+Quedo atento/a. Muchas gracias!`;
+
+      // El número de destino sale de la configuración del panel, no hardcodeado.
+      const destino = (activeConfigs.contact_phone1 || '3516069743').replace(/\D/g, '');
+      const waUrl = `https://wa.me/549${destino}?text=${encodeURIComponent(mensaje)}`;
+
+      // window.open debe ejecutarse de forma síncrona dentro del handler,
+      // de lo contrario el bloqueador de pop-ups del navegador lo cancela.
+      const ventana = window.open(waUrl, '_blank', 'noopener,noreferrer');
+
+      if (ventana) {
+        showFormMessage('Listo! Te abrimos WhatsApp con la consulta ya escrita. Sólo tenés que apretar enviar.', 'success');
+        contactForm.reset();
+      } else {
+        // Pop-up bloqueado: dejamos un enlace visible para que no se pierda la consulta.
+        showFormMessage('Tu navegador bloqueó la ventana de WhatsApp. Tocá el botón de abajo para continuar.', 'error');
+        const box = document.getElementById('contact-form-message');
+        const enlace = document.createElement('a');
+        enlace.href = waUrl;
+        enlace.target = '_blank';
+        enlace.rel = 'noopener noreferrer';
+        enlace.textContent = 'Abrir WhatsApp con mi consulta';
+        enlace.style.cssText = 'display: inline-block; margin-top: 10px; padding: 10px 18px; ' +
+          'background: #25D366; color: white; border-radius: 50px; text-decoration: none; font-weight: 700;';
+        box.appendChild(document.createElement('br'));
+        box.appendChild(enlace);
+      }
+
+      if (submitBtn) {
+        const original = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fa-brands fa-whatsapp"></i> Abriendo WhatsApp...';
+        setTimeout(() => { submitBtn.innerHTML = original; }, 2500);
+      }
+    });
+  }
+
   // Cargar datos al iniciar y registrar animaciones
   loadDataAndRender().then(() => {
     // Inicializar reveal y componentes después del renderizado dinámico
     initScrollReveal();
     initializeMenuTabs();
+    initContactForm();
   });
 });
