@@ -62,12 +62,20 @@ create policy "lectura publica" on lajuntada_services for select using (true);
 create policy "lectura publica" on lajuntada_carousel for select using (true);
 create policy "lectura publica" on lajuntada_gallery  for select using (true);
 
--- Escritura sólo para usuarios autenticados
-create policy "escritura admin" on lajuntada_config   for all using (auth.role() = 'authenticated');
-create policy "escritura admin" on lajuntada_services for all using (auth.role() = 'authenticated');
-create policy "escritura admin" on lajuntada_carousel for all using (auth.role() = 'authenticated');
-create policy "escritura admin" on lajuntada_gallery  for all using (auth.role() = 'authenticated');
+-- NO se crean políticas de escritura a propósito.
 ```
+
+**Por qué no hay políticas de escritura.** Toda escritura entra por `POST /api/config`,
+que usa la `SUPABASE_SERVICE_ROLE_KEY`. Esa clave ignora RLS por diseño y vive sólo en
+el servidor, así que el único camino para escribir pasa por la validación de
+`ADMIN_EMAILS`.
+
+Una política del tipo `for all using (auth.role() = 'authenticated')` sería un error
+mientras el registro público esté abierto: cualquiera podría registrarse solo, obtener
+un JWT y escribir directo contra la base, esquivando el control de correos.
+
+Si algún día se quita la `SUPABASE_SERVICE_ROLE_KEY` de Vercel, el guardado deja de
+funcionar y hay que revisar esta decisión.
 
 ## 4. Borrar la contraseña vieja de la base
 
@@ -120,7 +128,39 @@ El endpoint ya filtra esas claves, pero conviene que no existan.
 
 ---
 
-## Pendiente (no incluido en este bloque)
+## Dos trampas que costaron horas (1/8/2026)
+
+**El proyecto Supabase equivocado.** El sitio usa el proyecto `zaznlphgbtzrjmufvoeq`.
+Si un `SELECT` sobre `lajuntada_config` responde *relation does not exist*, no es un
+problema de permisos: estás parado en otro proyecto. Verificá que la URL del dashboard
+diga `supabase.com/dashboard/project/zaznlphgbtzrjmufvoeq`.
+
+**La cuota de `localStorage`.** El navegador da unos 5 MB por sitio. El blob
+`lajuntada_site_backups` se la comía entera, y entonces supabase-js no podía guardar la
+sesión —fallaba en silencio, sin error—. El síntoma era un login exitoso que igual
+decía "no hay sesión activa" al guardar. Si vuelve a pasar:
+
+```js
+console.log((JSON.stringify(localStorage).length/1024/1024).toFixed(2) + ' MB');
+localStorage.removeItem('lajuntada_site_backups');
+```
+
+El panel ahora tiene un respaldo: si la sesión no se persiste, usa la que quedó en
+memoria desde el login. Funciona igual, pero hay que volver a entrar en cada recarga.
+
+---
+
+## Pendiente
+
+**Seguridad (recomendado terminar):**
+
+- Activar RLS en las cuatro tablas — ver el punto 3 de este documento.
+- Desactivar el registro público en **Authentication → Providers → Email**.
+- Crear `arielmartinelli2019@gmail.com` como segundo admin en el proyecto correcto.
+  Hoy hay una sola cuenta: si se pierde esa contraseña, no hay forma de entrar salvo
+  recrear el usuario desde Supabase.
+
+**Del relevamiento inicial:**
 
 - Conectar el formulario de contacto de `index.html` (hoy no hace nada al enviar).
 - Comprimir las imágenes de `assets/` (5,5 MB en total, ~1 MB cada PNG).
