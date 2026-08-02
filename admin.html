@@ -1308,6 +1308,7 @@
         try {
           const response = await fetch('/api/config');
           if (!response.ok) {
+            console.error("[init] GET /api/config respondió", response.status, await response.text());
             enableLocalMode("API Vercel no disponible. Entrando en Modo Local.");
             return;
           }
@@ -1316,11 +1317,13 @@
           const { supabaseUrl, supabaseAnonKey, configs, services, carousel, gallery } = data;
 
           if (!supabaseUrl || !supabaseAnonKey) {
+            console.error("[init] /api/config no devolvió supabaseUrl/supabaseAnonKey.");
             enableLocalMode("Variables Supabase faltantes en Vercel. Entrando en Modo Local.");
             return;
           }
 
           supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
+          console.log("[init] Cliente Supabase creado correctamente.");
           dbConfigs = configs || {};
           dbServices = (services && Array.isArray(services) && services.length > 0) ? services : JSON.parse(JSON.stringify(DEFAULT_SERVICES));
           dbCarousel = (carousel && carousel.length > 0) ? carousel : JSON.parse(JSON.stringify(DEFAULT_CAROUSEL));
@@ -1410,13 +1413,39 @@
         }
       }
 
-      /** Devuelve un access token fresco, refrescándolo si hace falta. */
+      /** Devuelve un access token fresco, intentando refrescar la sesión si venció. */
       async function getAccessToken() {
         if (isLocalMode) return null;
-        if (!supabaseClient) return null;
-        const { data } = await supabaseClient.auth.getSession();
-        currentSession = (data && data.session) ? data.session : null;
-        return currentSession ? currentSession.access_token : null;
+        if (!supabaseClient) {
+          console.error("[auth] No hay cliente de Supabase: /api/config no respondió al iniciar.");
+          return null;
+        }
+
+        let session = null;
+        try {
+          const { data } = await supabaseClient.auth.getSession();
+          session = (data && data.session) ? data.session : null;
+        } catch (err) {
+          console.error("[auth] getSession() falló:", err);
+        }
+
+        // Si no hay sesión activa, intentar refrescarla antes de rendirse.
+        if (!session) {
+          try {
+            const { data } = await supabaseClient.auth.refreshSession();
+            session = (data && data.session) ? data.session : null;
+            if (session) console.warn("[auth] Sesión refrescada correctamente.");
+          } catch (err) {
+            console.warn("[auth] No se pudo refrescar la sesión:", err);
+          }
+        }
+
+        currentSession = session;
+        if (!session) {
+          console.error("[auth] Sin sesión activa. Claves de sesión en localStorage:",
+            Object.keys(localStorage).filter(k => k.startsWith('sb-')));
+        }
+        return session ? session.access_token : null;
       }
 
       function showLogin() {
@@ -1499,6 +1528,15 @@
             }
 
             currentSession = data.session;
+
+            // Verificar que la sesión haya quedado persistida en el navegador.
+            const persisted = Object.keys(localStorage).filter(k => k.startsWith('sb-'));
+            console.log("[auth] Login OK. Claves de sesión persistidas:", persisted);
+            if (persisted.length === 0) {
+              showError("Iniciaste sesión, pero el navegador no pudo guardarla. " +
+                "Revisá que no esté bloqueado el almacenamiento del sitio (modo incógnito o bloqueo de cookies).");
+            }
+
             showDashboard();
             showSaveAlert("Acceso correcto al Panel de Administración.", "success");
           } catch (err) {
@@ -2351,11 +2389,15 @@
           e.preventDefault();
 
           // Sin sesión válida no se guarda nada en el servidor.
+          // No cerramos el panel: así no se pierden los cambios sin guardar.
           if (!isLocalMode) {
             const token = await getAccessToken();
             if (!token) {
-              showSaveAlert("Tu sesión expiró. Volvé a iniciar sesión para guardar los cambios.", "error");
-              showLogin();
+              showSaveAlert(
+                "No hay una sesión activa, así que no se pudo guardar. Tus cambios siguen en pantalla: " +
+                "abrí el panel en otra pestaña, iniciá sesión ahí y volvé acá para guardar de nuevo.",
+                "warning"
+              );
               return;
             }
           }
@@ -2509,8 +2551,12 @@
             }
 
             if (response.status === 401 || response.status === 403) {
-              showSaveAlert("Tu sesión expiró o la cuenta no tiene permisos. Volvé a iniciar sesión.", "error");
-              showLogin();
+              console.error("[auth] El servidor rechazó el guardado.", response.status, resData);
+              showSaveAlert(
+                `No se pudo guardar (error ${response.status}): ${resData.error || response.statusText}. ` +
+                "Tus cambios siguen en pantalla.",
+                "warning"
+              );
             } else if (!response.ok) {
               showSaveAlert("No se pudo guardar en el servidor: " + (resData.error || response.statusText), "warning");
             } else {
