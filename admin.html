@@ -1408,6 +1408,7 @@
 
         if (currentSession) {
           showDashboard();
+          refreshAdminOnlyData();
         } else {
           showLogin();
         }
@@ -1446,6 +1447,27 @@
             Object.keys(localStorage).filter(k => k.startsWith('sb-')));
         }
         return session ? session.access_token : null;
+      }
+
+      /**
+       * Vuelve a pedir /api/config ya autenticado. El endpoint público no manda
+       * `site_backups_json` (contiene snapshots con credenciales viejas y pesa
+       * cientos de KB), así que las copias de seguridad se cargan recién acá.
+       */
+      async function refreshAdminOnlyData() {
+        const token = await getAccessToken();
+        if (!token) return;
+        try {
+          const resp = await fetch('/api/config', { headers: { Authorization: `Bearer ${token}` } });
+          if (!resp.ok) return;
+          const data = await resp.json();
+          if (data && data.configs) {
+            dbConfigs = { ...dbConfigs, ...data.configs };
+            loadBackupsList();
+          }
+        } catch (err) {
+          console.warn("[init] No se pudieron cargar los backups del servidor:", err);
+        }
       }
 
       function showLogin() {
@@ -1538,6 +1560,7 @@
             }
 
             showDashboard();
+            refreshAdminOnlyData();
             showSaveAlert("Acceso correcto al Panel de Administración.", "success");
           } catch (err) {
             console.error("Error al iniciar sesión:", err);

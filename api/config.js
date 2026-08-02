@@ -23,6 +23,31 @@ const SENSITIVE_KEYS = new Set([
   'password',
 ]);
 
+/**
+ * Claves que sólo debe recibir un administrador autenticado.
+ * `site_backups_json` guarda snapshots completos de la configuración —incluidas
+ * credenciales viejas— y pesa cientos de KB: no tiene por qué viajar al sitio público.
+ */
+const ADMIN_ONLY_KEYS = new Set(['site_backups_json']);
+
+/**
+ * Los backups históricos guardan JSON anidado (backups dentro de backups), con las
+ * comillas escapadas varias veces. Cualquier credencial vieja quedó enterrada ahí.
+ * Este patrón vacía el valor de esas claves sin importar el nivel de escapado:
+ * "admin_password":"x", \"admin_password\":\"x\", \\\"admin_password\\\":\\\"x\\\", etc.
+ */
+const SECRET_VALUE_PATTERN =
+  /(\\*"(?:admin_password|admin_username|admin_pass|password)\\*"\s*:\s*)(\\*")[^"\\]*(\\*")/g;
+
+function scrubSecrets(value) {
+  if (typeof value !== 'string') return value;
+  if (value.indexOf('admin_password') === -1 && value.indexOf('admin_username') === -1
+      && value.indexOf('admin_pass') === -1) {
+    return value;
+  }
+  return value.replace(SECRET_VALUE_PATTERN, '$1$2$3');
+}
+
 /** Orígenes autorizados a mandar peticiones con credenciales. */
 function resolveAllowedOrigin(req) {
   const configured = (process.env.ALLOWED_ORIGINS || '')
@@ -127,6 +152,15 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     // Este endpoint es público: sólo debe exponer datos públicos del sitio.
     res.setHeader('Access-Control-Allow-Origin', '*');
+
+    // Si viene un token de admin válido, se incluyen además las claves privadas
+    // (backups). Sin token, la respuesta es estrictamente pública.
+    let isAdmin = false;
+    if (req.headers.authorization) {
+      const auth = await authenticate(req);
+      isAdmin = !auth.error;
+    }
+
     try {
       // 1. Cargar configs
       const { data: configData, error: configError } = await supabase
@@ -138,7 +172,9 @@ export default async function handler(req, res) {
       configData.forEach((item) => {
         // Nunca exponer credenciales al navegador.
         if (SENSITIVE_KEYS.has(item.key)) return;
-        configs[item.key] = item.value;
+        // Datos privados: sólo para un admin autenticado.
+        if (ADMIN_ONLY_KEYS.has(item.key) && !isAdmin) return;
+        configs[item.key] = scrubSecrets(item.value);
       });
 
       // 2. Cargar servicios adicionales
