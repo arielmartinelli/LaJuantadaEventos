@@ -296,6 +296,18 @@ button {
   width: 26px;
   height: 18px;
   z-index: 1010;
+  /* Es un <button>: sin este reset arrastra el padding y el borde que le
+     pone el navegador, y las barras quedan corridas dentro de su caja. */
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: content-box;
+  cursor: pointer;
+  flex: 0 0 auto;
+  align-self: center;
 }
 
 .mobile-menu-toggle .bar {
@@ -308,8 +320,11 @@ button {
 /* --- Hero Section --- */
 .hero-section {
   position: relative;
-  height: 100vh;
-  min-height: 650px;
+  /* El alto se calcula restando el bloque de las 4 tarjetas (215px de alto,
+     50px de padding, menos 60px que se superponen al hero). Asi el pliegue
+     termina justo donde terminan las tarjetas, en cualquier pantalla. */
+  height: auto;
+  min-height: calc(100vh - 210px);
   display: flex;
   align-items: center;
   background-image: url('assets/hero_bg.png');
@@ -2257,12 +2272,43 @@ button {
   }
 
   /* El hero deja de ocupar la pantalla entera: asi las 4 tarjetas
-     de servicios asoman apenas carga, sin tener que scrollear. */
+     de servicios entran completas apenas carga, sin scrollear. */
   .hero-section {
+    /* Mismo criterio, con las medidas compactas del movil:
+       2 filas de 105px + 24px de gap + 50px de padding - 30px de superposicion. */
     height: auto;
-    min-height: 58vh;
-    padding-top: 100px;
-    padding-bottom: 70px;
+    min-height: calc(100vh - 255px);
+    padding-top: 92px;
+    padding-bottom: 40px;
+  }
+
+  /* La flecha de "seguir bajando" ya no hace falta: las tarjetas
+     se ven solas y ademas se superponia con ellas. */
+  .scroll-down-indicator {
+    display: none;
+  }
+
+  /* Tarjetas compactas en todo el rango movil. Antes esto valia
+     solo por debajo de 480px y en el resto median mas del doble. */
+  .badge-card {
+    padding: 16px 12px;
+  }
+
+  .badge-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 1.1rem;
+    margin: 0 auto 10px;
+  }
+
+  .badge-card h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0;
+    line-height: 1.25;
+  }
+
+  .badge-card p {
+    display: none;
   }
 
   .hero-title {
