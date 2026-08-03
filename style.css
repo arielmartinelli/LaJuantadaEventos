@@ -561,6 +561,7 @@ button {
 }
 
 .service-desc {
+  flex-grow: 1;
   color: var(--charcoal-light);
   font-size: 0.95rem;
   margin-bottom: 24px;
@@ -587,6 +588,9 @@ button {
 }
 
 .service-btn {
+  /* Empuja el boton al pie de la tarjeta: quedan todos alineados
+     sin importar cuanto texto tenga la descripcion de cada servicio. */
+  margin-top: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3353,6 +3357,7 @@ button {
 .carta-overlay.visible .carta-panel { transform: none; }
 
 .carta-header {
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -3393,15 +3398,22 @@ button {
 }
 
 .carta-tabs {
+  flex: 0 0 auto;          /* nunca se comprime: si no, corta los botones */
   display: flex;
   gap: 8px;
   padding: 14px 26px;
   overflow-x: auto;
+  overflow-y: hidden;      /* evita la barra vertical dentro de las pestañas */
   border-bottom: 1px solid var(--border-light, #eee);
-  scrollbar-width: thin;
+  scrollbar-width: none;   /* se desliza con el dedo o la rueda */
+  -ms-overflow-style: none;
 }
 
+.carta-tabs::-webkit-scrollbar { display: none; }
+
 .carta-tab {
+  flex: 0 0 auto;
+  line-height: 1.2;
   white-space: nowrap;
   padding: 8px 16px;
   border-radius: 50px;
@@ -3425,7 +3437,8 @@ button {
 .carta-body {
   padding: 22px 26px;
   overflow-y: auto;
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .carta-grupo-titulo {
@@ -3502,6 +3515,7 @@ button {
 }
 
 .carta-footer {
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;

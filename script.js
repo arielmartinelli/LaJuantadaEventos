@@ -2219,8 +2219,11 @@ Quedo atento/a. Muchas gracias!`;
       setTimeout(() => { overlay.hidden = true; }, 250);
     }
 
-    document.querySelectorAll('a[href="#menu-carta"], a[href="index.html#menu-carta"]').forEach(a => {
-      a.addEventListener('click', abrir);
+    // Delegacion en document: funciona aunque el enlace se dibuje despues,
+    // y sobrevive a los re-render de las grillas del cotizador.
+    document.addEventListener('click', ev => {
+      const enlace = ev.target.closest('a[href="#menu-carta"], a[href="index.html#menu-carta"]');
+      if (enlace) abrir(ev);
     });
 
     if (btnCerrar) btnCerrar.addEventListener('click', cerrar);
@@ -2236,12 +2239,15 @@ Quedo atento/a. Muchas gracias!`;
     if (window.location.hash === '#menu-carta') abrir();
   }
 
+  // La carta se conecta de entrada: si la carga de datos fallara,
+  // el boton tiene que seguir respondiendo igual.
+  initCartaMenu();
+
   // Cargar datos al iniciar y registrar animaciones
   loadDataAndRender().then(() => {
     // Inicializar reveal y componentes después del renderizado dinámico
     initScrollReveal();
     initializeMenuTabs();
     initContactForm();
-    initCartaMenu();
   });
 });
