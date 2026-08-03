@@ -847,5 +847,31 @@ Ingresá y descubrí todo lo que necesitás para empezar a organizar cada detall
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
+
+  <!-- ==========================================================================
+       CARTA DE MENÚ (ventana flotante)
+       ========================================================================== -->
+  <div class="carta-overlay" id="carta-overlay" role="dialog" aria-modal="true" aria-labelledby="carta-titulo" hidden>
+    <div class="carta-panel">
+      <header class="carta-header">
+        <div>
+          <h2 id="carta-titulo">Nuestra Carta</h2>
+          <p>Todos los pasos del servicio, con sus opciones y precios por persona.</p>
+        </div>
+        <button type="button" class="carta-close" id="carta-close" aria-label="Cerrar la carta">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </header>
+      <nav class="carta-tabs" id="carta-tabs"></nav>
+      <div class="carta-body" id="carta-body"></div>
+      <footer class="carta-footer">
+        <span>Los precios son por persona y orientativos.</span>
+        <a href="#calculadora" class="btn-primary carta-cta">
+          <i class="fa-solid fa-calculator"></i> Armar mi presupuesto
+        </a>
+      </footer>
+    </div>
+  </div>
+
 </body>
 </html>

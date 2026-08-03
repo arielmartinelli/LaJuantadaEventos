@@ -92,12 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
     { key: 'beb_vinos', name: 'Vinos & Espumante', description: 'Vinos Otro Loco Más y Copa de brindis con Espumante DU Renaissance.', price: 3800, is_per_person: true, is_available: true, category: 'bebidas', tag: 'Vinos' },
 
     // Opcionales
-    { key: 'srv_tableware', name: 'Alquiler de Vajilla y Manteleria', description: 'Vajilla de loza, cubiertos, cristalería y mantelería a tono.', price: 2500, is_per_person: true, is_available: true, category: 'adicional', tag: 'Opcional' },
-    { key: 'srv_living', name: 'Alquiler de Juego de Living (10 pers.)', description: 'Juegos de living de ecocuero blanco con mesa ratona (precio por juego).', price: 18000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Living' },
-    { key: 'srv_sound', name: 'DJ, Sonido Basico y Luces', description: 'Cabina de DJ, parlantes activos, luces roboticas e iluminacion de pista.', price: 90000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
-    { key: 'srv_gazebo', name: 'Gazebo Estructural (6x3m)', description: 'Gazebo estructural cerrado con guirnaldas de luces led decorativas.', price: 45000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
-    { key: 'srv_screen', name: 'Pantalla 120" y Proyector HD', description: 'Pantalla gigante y proyector de alta luminosidad para videos.', price: 35000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
-    { key: 'srv_photo', name: 'Fotografia Digital Profesional', description: 'Cobertura completa del evento con entrega digital de fotografias.', price: 80000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Servicio' }
+    { key: 'srv_sound', name: 'DJ + Sonido + Iluminacion', description: 'Cabina de DJ profesional, sistema de sonido e iluminacion de pista para toda la duracion del evento.', price: 90000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
+    { key: 'srv_graves', name: 'Refuerzo de Graves', description: 'Subwoofers adicionales para reforzar los graves. Recomendado para eventos de mas de 100 personas.', price: 0, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
+    { key: 'srv_ilum_deco', name: 'Iluminacion Decorativa', description: 'Iluminacion ambiental y decorativa para realzar el salon: guirnaldas, apliques y luces calidas.', price: 0, is_per_person: false, is_available: true, category: 'adicional', tag: 'Ambientacion' },
+    { key: 'srv_screen', name: 'Proyector y Pantalla 120\'\'', description: 'Proyector de alta luminosidad con pantalla de 120 pulgadas para videos y presentaciones.', price: 35000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
+    { key: 'srv_led', name: 'Pantallas LED (hasta 3 x 6 metros)', description: 'Pantallas LED de alta definicion, configurables hasta 3 x 6 metros segun el espacio.', price: 0, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
+    { key: 'srv_escenario', name: 'Escenario', description: 'Estructura de escenario modular para shows en vivo, discursos o presentaciones.', price: 0, is_per_person: false, is_available: true, category: 'adicional', tag: 'Estructura' },
+    { key: 'srv_photo', name: 'Fotografia', description: 'Cobertura fotografica profesional del evento con entrega digital de las imagenes.', price: 80000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Servicio' },
+    { key: 'srv_gazebo', name: 'Gazebos', description: 'Gazebos estructurales cerrados con guirnaldas de luces led decorativas.', price: 45000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Estructura' },
+    { key: 'srv_tableware', name: 'Vajilla y Manteleria', description: 'Vajilla de loza, cubiertos, cristaleria y manteleria a tono con la ambientacion.', price: 2500, is_per_person: true, is_available: true, category: 'adicional', tag: 'Opcional' }
   ];
 
   const DEFAULT_CAROUSEL = [
@@ -2108,11 +2111,132 @@ Quedo atento/a. Muchas gracias!`;
     });
   }
 
+
+  /* ==========================================================================
+     CARTA DE MENÚ (ventana flotante)
+     ========================================================================== */
+  const CARTA_CATEGORIAS = [
+    { key: 'recepcion',   label: 'Recepción & Bocaditos' },
+    { key: 'entradas',    label: 'Entradas' },
+    { key: 'principales', label: 'Platos Principales' },
+    { key: 'postres',     label: 'Postres' },
+    { key: 'mesadulce',   label: 'Mesa Dulce' },
+    { key: 'bebidas',     label: 'Bebidas & Barras' },
+    { key: 'findeevento', label: 'Fin de Evento' }
+  ];
+
+  /** Evita que un texto cargado desde el panel pueda inyectar HTML. */
+  function escaparHTML(txt) {
+    return String(txt == null ? '' : txt)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function obtenerFotosMenu() {
+    try {
+      return activeConfigs.menu_images_json ? JSON.parse(activeConfigs.menu_images_json) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function initCartaMenu() {
+    const overlay = document.getElementById('carta-overlay');
+    if (!overlay) return;
+
+    const cuerpo = document.getElementById('carta-body');
+    const tabs = document.getElementById('carta-tabs');
+    const btnCerrar = document.getElementById('carta-close');
+
+    function construir() {
+      const fotos = obtenerFotosMenu();
+      const conItems = CARTA_CATEGORIAS
+        .map(cat => ({ ...cat, items: activeServices.filter(s => s.category === cat.key && s.is_available !== false) }))
+        .filter(cat => cat.items.length > 0);
+
+      if (conItems.length === 0) {
+        cuerpo.innerHTML = '<p style="text-align:center; color: var(--charcoal-light); padding: 30px 0;">La carta se está actualizando. Escribinos y te la pasamos al instante.</p>';
+        tabs.innerHTML = '';
+        return;
+      }
+
+      tabs.innerHTML = conItems.map((cat, i) =>
+        `<button type="button" class="carta-tab${i === 0 ? ' active' : ''}" data-cat="${cat.key}">${escaparHTML(cat.label)}</button>`
+      ).join('');
+
+      cuerpo.innerHTML = conItems.map(cat => `
+        <section class="carta-grupo" id="carta-grupo-${cat.key}">
+          <h3 class="carta-grupo-titulo">${escaparHTML(cat.label)}</h3>
+          <div class="carta-grid">
+            ${cat.items.map(srv => {
+              const foto = fotos[srv.key];
+              const precio = Number(srv.price) > 0
+                ? `<div class="carta-item-precio">${formatCurrency(srv.price)} ${srv.is_per_person ? '/ pers.' : ''}</div>`
+                : '';
+              return `
+                <article class="carta-item">
+                  ${foto
+                    ? `<img class="carta-item-foto" src="${escaparHTML(foto)}" alt="${escaparHTML(srv.name)}" loading="lazy" decoding="async">`
+                    : `<div class="carta-item-sinfoto"><i class="fa-solid fa-utensils"></i></div>`}
+                  <div class="carta-item-cuerpo">
+                    <h4 class="carta-item-nombre">${escaparHTML(srv.name)}</h4>
+                    <p class="carta-item-desc">${escaparHTML(srv.description || '')}</p>
+                    ${precio}
+                  </div>
+                </article>`;
+            }).join('')}
+          </div>
+        </section>
+      `).join('');
+
+      tabs.querySelectorAll('.carta-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabs.querySelectorAll('.carta-tab').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const destino = document.getElementById(`carta-grupo-${btn.getAttribute('data-cat')}`);
+          if (destino) cuerpo.scrollTo({ top: destino.offsetTop - cuerpo.offsetTop - 10, behavior: 'smooth' });
+        });
+      });
+    }
+
+    function abrir(e) {
+      if (e) e.preventDefault();
+      construir();
+      overlay.hidden = false;
+      document.body.classList.add('carta-abierta');
+      requestAnimationFrame(() => overlay.classList.add('visible'));
+      if (btnCerrar) btnCerrar.focus();
+    }
+
+    function cerrar() {
+      overlay.classList.remove('visible');
+      document.body.classList.remove('carta-abierta');
+      setTimeout(() => { overlay.hidden = true; }, 250);
+    }
+
+    document.querySelectorAll('a[href="#menu-carta"], a[href="index.html#menu-carta"]').forEach(a => {
+      a.addEventListener('click', abrir);
+    });
+
+    if (btnCerrar) btnCerrar.addEventListener('click', cerrar);
+    overlay.addEventListener('click', ev => { if (ev.target === overlay) cerrar(); });
+    document.addEventListener('keydown', ev => {
+      if (ev.key === 'Escape' && !overlay.hidden) cerrar();
+    });
+    // El botón del pie de la carta lleva al cotizador: se cierra antes de bajar
+    const cta = overlay.querySelector('.carta-cta');
+    if (cta) cta.addEventListener('click', cerrar);
+
+    // Si alguien entra directo con la dirección terminada en #menu-carta
+    if (window.location.hash === '#menu-carta') abrir();
+  }
+
   // Cargar datos al iniciar y registrar animaciones
   loadDataAndRender().then(() => {
     // Inicializar reveal y componentes después del renderizado dinámico
     initScrollReveal();
     initializeMenuTabs();
     initContactForm();
+    initCartaMenu();
   });
 });

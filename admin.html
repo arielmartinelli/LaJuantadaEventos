@@ -1199,6 +1199,9 @@
       let dbServices = [];
       let dbCarousel = [];
       let dbGallery = [];
+      // Fotos de la carta: se guardan como un mapa en la configuracion
+      // (clave del plato -> url), asi no hace falta tocar el esquema de la base.
+      let menuImages = {};
 
       const DEFAULT_SERVICES = [
         // Recepción
@@ -1239,12 +1242,15 @@
         { key: 'beb_sin_alcohol', name: 'Bebidas Sin Alcohol (Libre)', description: 'Línea Pepsi, agua saborizada y agua mineral con y sin gas.', price: 2500, is_per_person: true, is_available: true, category: 'bebidas', tag: 'Sin Alcohol' },
         { key: 'beb_cervezas', name: 'Cervezas (Libre)', description: 'Canilla libre de cervezas Quilmes o Brahma frías durante el servicio.', price: 3500, is_per_person: true, is_available: true, category: 'bebidas', tag: 'Con Alcohol' },
         { key: 'beb_vinos', name: 'Vinos & Espumante', description: 'Vinos Otro Loco Más y Copa de brindis con Espumante DU Renaissance.', price: 3800, is_per_person: true, is_available: true, category: 'bebidas', tag: 'Vinos' },
-        { key: 'srv_tableware', name: 'Alquiler de Vajilla y Manteleria', description: 'Vajilla de loza, cubiertos, cristalería y mantelería a tono.', price: 2500, is_per_person: true, is_available: true, category: 'adicional', tag: 'Opcional' },
-        { key: 'srv_living', name: 'Alquiler de Juego de Living (10 pers.)', description: 'Juegos de living de ecocuero blanco con mesa ratona (precio por juego).', price: 18000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Living' },
-        { key: 'srv_sound', name: 'DJ, Sonido Basico y Luces', description: 'Cabina de DJ, parlantes activos, luces roboticas e iluminacion de pista.', price: 90000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
-        { key: 'srv_gazebo', name: 'Gazebo Estructural (6x3m)', description: 'Gazebo estructural cerrado con guirnaldas de luces led decorativas.', price: 45000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
-        { key: 'srv_screen', name: 'Pantalla 120" y Proyector HD', description: 'Pantalla gigante y proyector de alta luminosidad para videos.', price: 35000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
-        { key: 'srv_photo', name: 'Fotografia Digital Profesional', description: 'Cobertura completa del evento con entrega digital de fotografias.', price: 80000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Servicio' }
+        { key: 'srv_sound', name: 'DJ + Sonido + Iluminacion', description: 'Cabina de DJ profesional, sistema de sonido e iluminacion de pista para toda la duracion del evento.', price: 90000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
+        { key: 'srv_graves', name: 'Refuerzo de Graves', description: 'Subwoofers adicionales para reforzar los graves. Recomendado para eventos de mas de 100 personas.', price: 0, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
+        { key: 'srv_ilum_deco', name: 'Iluminacion Decorativa', description: 'Iluminacion ambiental y decorativa para realzar el salon: guirnaldas, apliques y luces calidas.', price: 0, is_per_person: false, is_available: true, category: 'adicional', tag: 'Ambientacion' },
+        { key: 'srv_screen', name: 'Proyector y Pantalla 120\'\'', description: 'Proyector de alta luminosidad con pantalla de 120 pulgadas para videos y presentaciones.', price: 35000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
+        { key: 'srv_led', name: 'Pantallas LED (hasta 3 x 6 metros)', description: 'Pantallas LED de alta definicion, configurables hasta 3 x 6 metros segun el espacio.', price: 0, is_per_person: false, is_available: true, category: 'adicional', tag: 'Equipamiento' },
+        { key: 'srv_escenario', name: 'Escenario', description: 'Estructura de escenario modular para shows en vivo, discursos o presentaciones.', price: 0, is_per_person: false, is_available: true, category: 'adicional', tag: 'Estructura' },
+        { key: 'srv_photo', name: 'Fotografia', description: 'Cobertura fotografica profesional del evento con entrega digital de las imagenes.', price: 80000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Servicio' },
+        { key: 'srv_gazebo', name: 'Gazebos', description: 'Gazebos estructurales cerrados con guirnaldas de luces led decorativas.', price: 45000, is_per_person: false, is_available: true, category: 'adicional', tag: 'Estructura' },
+        { key: 'srv_tableware', name: 'Vajilla y Manteleria', description: 'Vajilla de loza, cubiertos, cristaleria y manteleria a tono con la ambientacion.', price: 2500, is_per_person: true, is_available: true, category: 'adicional', tag: 'Opcional' }
       ];
 
       const DEFAULT_CAROUSEL = [
@@ -1325,6 +1331,8 @@
           supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
           console.log("[init] Cliente Supabase creado correctamente.");
           dbConfigs = configs || {};
+          try { menuImages = dbConfigs.menu_images_json ? JSON.parse(dbConfigs.menu_images_json) : {}; }
+          catch (e) { menuImages = {}; }
           dbServices = (services && Array.isArray(services) && services.length > 0) ? services : JSON.parse(JSON.stringify(DEFAULT_SERVICES));
           dbCarousel = (carousel && carousel.length > 0) ? carousel : JSON.parse(JSON.stringify(DEFAULT_CAROUSEL));
           dbGallery = (gallery && gallery.length > 0) ? gallery : JSON.parse(JSON.stringify(DEFAULT_GALLERY));
@@ -2109,6 +2117,34 @@
         });
       }
 
+      /** Conecta el selector de archivo de una ficha con la subida a Supabase. */
+      function initServiceImageUpload(card) {
+        const file = card.querySelector('.srv-input-file');
+        const hidden = card.querySelector('.srv-input-image');
+        const preview = card.querySelector('.srv-img-preview');
+        const status = card.querySelector('.srv-img-status');
+        if (!file || !hidden) return;
+
+        file.addEventListener('change', async () => {
+          const f = file.files && file.files[0];
+          if (!f) return;
+          status.textContent = 'Subiendo...';
+          try {
+            const url = await handleImageUpload(f, 'menu');
+            if (url) {
+              hidden.value = url;
+              if (preview) { preview.src = url; preview.style.opacity = '1'; }
+              status.textContent = 'Foto lista. Acordate de guardar.';
+            } else {
+              status.textContent = 'No se pudo subir la foto.';
+            }
+          } catch (err) {
+            console.error('Error al subir la foto del plato:', err);
+            status.textContent = 'Error al subir la foto.';
+          }
+        });
+      }
+
       function createServiceCard(srv) {
         const div = document.createElement('div');
         div.className = 'service-card-edit';
@@ -2125,6 +2161,7 @@
         const isKeyReadOnly = (srvKey.startsWith('srv_') || srvKey.startsWith('rec_') || srvKey.startsWith('ent_') || srvKey.startsWith('pri_') || srvKey.startsWith('pos_') || srvKey.startsWith('beb_') || srvKey.startsWith('fin_')) ? 'readonly' : '';
         
         const descVal = (srv && srv.description) ? srv.description : '';
+        const srvImage = (menuImages && menuImages[srvKey]) ? menuImages[srvKey] : '';
         const tagVal = (srv && srv.tag) ? srv.tag : '';
         const categoryVal = (srv && srv.category) ? srv.category : 'adicional';
         
@@ -2157,6 +2194,18 @@
           <div class="admin-form-group" style="margin-bottom: 0;">
             <label style="font-size: 0.75rem;">Descripción</label>
             <textarea class="srv-input-desc" required style="width: 100%; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 8px; font-family: inherit; font-size: 0.85rem;" rows="2" placeholder="Breve descripción del servicio o plato">${descVal}</textarea>
+          </div>
+          <div class="admin-form-group" style="margin-bottom: 0;">
+            <label style="font-size: 0.75rem;">Foto del plato (opcional, se ve en la Carta)</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <img class="srv-img-preview" src="${srvImage || 'assets/catering_premium.png'}" alt=""
+                style="width: 62px; height: 62px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border-light); background: #f5f5f5; ${srvImage ? '' : 'opacity: 0.35;'}">
+              <div style="flex: 1;">
+                <input type="file" class="srv-input-file" accept="image/*" style="font-size: 0.75rem; width: 100%;">
+                <input type="hidden" class="srv-input-image" value="${srvImage}">
+                <span class="srv-img-status" style="font-size: 0.7rem; color: var(--charcoal-muted);"></span>
+              </div>
+            </div>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <div class="admin-form-group" style="margin-bottom: 0;">
@@ -2205,6 +2254,8 @@
           if (idx >= 0) dbServices.splice(idx, 1);
           div.remove();
         });
+
+        initServiceImageUpload(div);
 
         return div;
       }
@@ -2459,6 +2510,18 @@
                 value: value
               });
             });
+
+            // 2a. Fotos de la carta: se arma el mapa clave->url desde las fichas
+            const imagenesMenu = {};
+            document.querySelectorAll('.service-card-edit').forEach(card => {
+              const k = card.querySelector('.srv-input-key');
+              const img = card.querySelector('.srv-input-image');
+              if (k && img && k.value.trim() && img.value.trim()) {
+                imagenesMenu[k.value.trim()] = img.value.trim();
+              }
+            });
+            menuImages = imagenesMenu;
+            configsPayload.push({ key: 'menu_images_json', value: JSON.stringify(imagenesMenu) });
 
             // 2. Recopilar y limpiar la lista completa de servicios
             syncCurrentDOMServicesToMemory();

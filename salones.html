@@ -542,7 +542,7 @@
         <!-- Tarifas de Alquiler de Salón por día -->
         <div style="background: rgba(224, 83, 38, 0.06); border: 1px solid rgba(224, 83, 38, 0.2); border-radius: 12px; padding: 12px; margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center;">
           <div>
-            <span style="font-size: 0.75rem; font-weight: 700; color: var(--charcoal-light); display: block;">Precio Base</span>
+            <span style="font-size: 0.75rem; font-weight: 700; color: var(--charcoal-light); display: block;">Precio a partir de</span>
             <strong style="font-size: 1rem; color: var(--primary-orange); font-weight: 800;" id="centro-price-weekday">$300.000</strong>
           </div>
           <div style="border-left: 1px solid var(--border-light);">
@@ -550,6 +550,27 @@
             <strong style="font-size: 1rem; color: #2e7d32; font-weight: 800;" id="centro-price-weekend">15% OFF</strong>
           </div>
         </div>
+        <!-- Cotizador rapido por cantidad de personas -->
+        <div class="salon-quoter" data-salon="centro" style="background: #fff; border: 1px solid var(--border-light); border-radius: 12px; padding: 14px; margin-top: 10px;">
+          <span style="font-size: 0.8rem; font-weight: 800; color: var(--charcoal); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 10px;">
+            <i class="fa-solid fa-calculator text-orange"></i> Cotización
+          </span>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end;">
+            <div>
+              <label for="quoter-pax-centro" style="font-size: 0.75rem; font-weight: 700; color: var(--charcoal-light); display: block; margin-bottom: 4px;">Personas</label>
+              <input type="number" id="quoter-pax-centro" class="quoter-pax" min="1" step="1" value="40" placeholder="Ej. 80"
+                style="width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 0.95rem; font-weight: 700; color: var(--charcoal);">
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--charcoal-light); display: block; margin-bottom: 4px;">Valor estimado</span>
+              <strong class="quoter-result" id="quoter-result-centro" style="font-size: 1.15rem; color: var(--primary-orange); font-weight: 800;">$0</strong>
+            </div>
+          </div>
+          <p style="font-size: 0.7rem; color: var(--charcoal-light); margin: 8px 0 0; line-height: 1.35;">
+            Valor orientativo del alquiler del salón. No incluye catering ni servicios adicionales.
+          </p>
+        </div>
+
 
         <button type="button" class="btn-toggle-details btn-primary" data-target="drawer-centro" style="width: 100%; border-radius: 50px; padding: 12px 18px; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; border: none; cursor: pointer;">
           <span>Ver Información & Disponibilidad</span>
@@ -643,6 +664,27 @@
             <strong style="font-size: 1rem; color: #2e7d32; font-weight: 800;" id="norte-price-weekend">15% OFF</strong>
           </div>
         </div>
+        <!-- Cotizador rapido por cantidad de personas -->
+        <div class="salon-quoter" data-salon="norte" style="background: #fff; border: 1px solid var(--border-light); border-radius: 12px; padding: 14px; margin-top: 10px;">
+          <span style="font-size: 0.8rem; font-weight: 800; color: var(--charcoal); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 10px;">
+            <i class="fa-solid fa-calculator text-orange"></i> Cotización
+          </span>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end;">
+            <div>
+              <label for="quoter-pax-norte" style="font-size: 0.75rem; font-weight: 700; color: var(--charcoal-light); display: block; margin-bottom: 4px;">Personas</label>
+              <input type="number" id="quoter-pax-norte" class="quoter-pax" min="1" step="1" value="40" placeholder="Ej. 80"
+                style="width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 0.95rem; font-weight: 700; color: var(--charcoal);">
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--charcoal-light); display: block; margin-bottom: 4px;">Valor estimado</span>
+              <strong class="quoter-result" id="quoter-result-norte" style="font-size: 1.15rem; color: var(--primary-orange); font-weight: 800;">$0</strong>
+            </div>
+          </div>
+          <p style="font-size: 0.7rem; color: var(--charcoal-light); margin: 8px 0 0; line-height: 1.35;">
+            Valor orientativo del alquiler del salón. No incluye catering ni servicios adicionales.
+          </p>
+        </div>
+
 
         <button type="button" class="btn-toggle-details btn-primary" data-target="drawer-norte" style="width: 100%; border-radius: 50px; padding: 12px 18px; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; border: none; cursor: pointer;">
           <span>Ver Información & Disponibilidad</span>
@@ -940,6 +982,35 @@
         if (norteWkend) norteWkend.textContent = `${discountPercent}% OFF`;
         if (centroWkday) centroWkday.textContent = `$${centroBase.toLocaleString('es-AR')}`;
         if (centroWkend) centroWkend.textContent = `${discountPercent}% OFF`;
+
+        // Cotizador rapido por cantidad de personas.
+        // Usa la misma formula que el presupuestador del inicio para que no haya
+        // dos numeros distintos para el mismo salon:
+        //   base cubre hasta 40 invitados, desde ahi suma por persona adicional.
+        const MIN_PAX_INCLUIDOS = parseFloat(configs.min_guests_qty) || 40;
+        const tarifas = {
+          norte:  { base: norteBase,  extra: parseFloat(configs.salon_norte_extra_pax_price)  || 7500 },
+          centro: { base: centroBase, extra: parseFloat(configs.salon_centro_extra_pax_price) || 7500 }
+        };
+
+        document.querySelectorAll('.salon-quoter').forEach(box => {
+          const salon = box.getAttribute('data-salon');
+          const input = box.querySelector('.quoter-pax');
+          const salida = box.querySelector('.quoter-result');
+          if (!input || !salida || !tarifas[salon]) return;
+
+          const calcular = () => {
+            const pax = parseInt(input.value, 10);
+            if (!pax || pax < 1) { salida.textContent = '$0'; return; }
+            const { base, extra } = tarifas[salon];
+            const adicionales = Math.max(0, pax - MIN_PAX_INCLUIDOS);
+            const total = Math.round(base + adicionales * extra);
+            salida.textContent = '$' + total.toLocaleString('es-AR');
+          };
+
+          input.addEventListener('input', calcular);
+          calcular();
+        });
 
         // Fotos de portada dinámicas
         const norteCover = document.getElementById('norte-cover-img');
