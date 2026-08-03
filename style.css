@@ -2288,6 +2288,30 @@ button {
     display: none;
   }
 
+  /* Boton flotante de WhatsApp.
+     - El alto se mide en px y no en rem, asi no lo agranda el tamaño
+       base que subimos para el celular.
+     - safe-area-inset evita que quede debajo de la barra de gestos
+       en los iPhone con notch.
+     - El globito se oculta: en tactil no hay hover real y quedaba
+       trabado en pantalla despues de tocar el boton. */
+  .whatsapp-floating {
+    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    right: 18px;
+    width: 54px;
+    height: 54px;
+    font-size: 27px;
+  }
+
+  .whatsapp-tooltip,
+  .whatsapp-floating:hover .whatsapp-tooltip {
+    display: none;
+  }
+
+  .whatsapp-floating:hover {
+    transform: none;
+  }
+
   /* Tarjetas compactas en todo el rango movil. Antes esto valia
      solo por debajo de 480px y en el resto median mas del doble. */
   .badge-card {
@@ -2621,16 +2645,6 @@ button {
   }
   .contact-form-block {
     padding: 20px;
-  }
-  .whatsapp-floating {
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    font-size: 1.8rem;
-  }
-  .whatsapp-floating:hover .whatsapp-tooltip {
-    display: none;
   }
 
   /* Extra mobile settings for Menu & FAQ (Phone) */
