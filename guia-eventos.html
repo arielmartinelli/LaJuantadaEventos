@@ -24,7 +24,7 @@
   <meta http-equiv="Expires" content="0">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="icon" type="image/png" href="assets/logo.png">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -280,11 +280,7 @@
   <header class="main-header scrolled" id="header">
     <div class="container header-container">
       <a href="index.html" class="logo-link" id="nav-logo" aria-label="La Juntada Inicio">
-        <svg class="nav-logo-svg" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg">
-          <text x="10" y="65" class="logo-title">La Juntada</text>
-          <text x="140" y="105" class="logo-sub1">Le agrega sabor</text>
-          <text x="175" y="135" class="logo-sub2">a tus encuentros!</text>
-        </svg>
+        <img src="assets/logo.png" alt="La Juntada - Le agrega sabor a tus encuentros" class="nav-logo-img">
       </a>
       
       <button class="mobile-menu-toggle" id="menu-toggle" aria-expanded="false" aria-label="Abrir menú">
@@ -322,11 +318,11 @@
       </p>
 
       <div class="guia-nav-tabs">
-        <button type="button" class="guia-tab-btn active" id="btn-tab-15" data-section="sec-15">
-          <i class="fa-solid fa-crown"></i> Fiestas de 15 & Cumpleaños
-        </button>
-        <button type="button" class="guia-tab-btn" id="btn-tab-bodas" data-section="sec-bodas">
+        <button type="button" class="guia-tab-btn active" id="btn-tab-bodas" data-section="sec-bodas">
           <i class="fa-solid fa-gem"></i> Casamientos & Bodas
+        </button>
+        <button type="button" class="guia-tab-btn" id="btn-tab-15" data-section="sec-15">
+          <i class="fa-solid fa-crown"></i> Fiestas de 15 & Cumpleaños
         </button>
       </div>
     </div>
@@ -338,7 +334,7 @@
     <!-- ==========================================================================
          SECCIÓN 1: 👑 FIESTAS DE 15 & CUMPLEAÑOS
          ========================================================================== -->
-    <div class="guia-section-content active" id="sec-15">
+    <div class="guia-section-content" id="sec-15">
 
       <!-- Tarjeta 1: Concepto Teen Planner -->
       <div class="guia-card">
@@ -542,7 +538,7 @@
     <!-- ==========================================================================
          SECCIÓN 2: 💍 CASAMIENTOS & BODAS
          ========================================================================== -->
-    <div class="guia-section-content" id="sec-bodas">
+    <div class="guia-section-content active" id="sec-bodas">
 
       <!-- Tarjeta 1: Registro Civil & Trámites en Córdoba -->
       <div class="guia-card">
@@ -677,9 +673,9 @@
           <a href="index.html#calculadora" class="btn-primary" style="padding: 14px 30px; border-radius: 50px; font-weight: 800; font-size: 1rem; text-decoration: none; display: inline-flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-calculator"></i> <span>Ir al Cotizador Online</span>
           </a>
-          <button type="button" class="btn-secondary" onclick="window.print()" style="padding: 14px 28px; border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; color: white; border-color: white;">
+          <a href="assets/docs/guia-casamientos-la-juntada.pdf" download="Guia-Casamientos-La-Juntada.pdf" class="btn-secondary" style="padding: 14px 28px; border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; color: white; border-color: white; text-decoration: none;">
             <i class="fa-solid fa-file-pdf"></i> <span>Descargar Guía PDF</span>
-          </button>
+          </a>
         </div>
       </div>
 
@@ -711,7 +707,7 @@
 
       <div class="footer-services-list">
         <h3>Nuestros Salones</h3>
-        <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px;"><strong>La Juntada Norte:</strong> Villa Allende (hasta 40 pers. con parque).</p>
+        <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px;"><strong>La Juntada Norte:</strong>  (hasta 40 pers. con parque).</p>
         <p style="font-size: 0.9rem; opacity: 0.7;"><strong>La Juntada Centro:</strong> Alta Córdoba (hasta 40 pers. climatizado).</p>
       </div>
     </div>

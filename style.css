@@ -204,6 +204,15 @@ button {
   height: 100%;
 }
 
+/* Logo en imagen (reemplaza al SVG con texto) */
+.nav-logo-img {
+  height: 100%;
+  width: auto;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
 .logo-title {
   font-family: var(--font-cursive);
   fill: var(--primary-orange);
