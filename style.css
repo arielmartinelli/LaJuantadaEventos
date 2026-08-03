@@ -2256,11 +2256,20 @@ button {
     transform: translateY(-8px) rotate(-45deg);
   }
 
+  /* El hero deja de ocupar la pantalla entera: asi las 4 tarjetas
+     de servicios asoman apenas carga, sin tener que scrollear. */
+  .hero-section {
+    height: auto;
+    min-height: 58vh;
+    padding-top: 100px;
+    padding-bottom: 70px;
+  }
+
   .hero-title {
-    font-size: 2.2rem;
+    font-size: 2.75rem;
   }
   .hero-title .highlight {
-    font-size: 2.6rem;
+    font-size: 3.15rem;
   }
   .hero-description {
     font-size: 1rem;
