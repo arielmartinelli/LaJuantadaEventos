@@ -341,7 +341,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!grid) return;
     grid.innerHTML = '';
     
-    const items = activeServices.filter(srv => srv.category === 'adicional' || !srv.category);
+    // srv_living, srv_drinks y srv_bar tienen su propio control dentro del cotizador,
+    // asi que no se repiten en esta grilla.
+    const CLAVES_DEL_COTIZADOR = ['srv_living', 'srv_drinks', 'srv_bar'];
+    const items = activeServices.filter(srv =>
+      (srv.category === 'adicional' || !srv.category) && !CLAVES_DEL_COTIZADOR.includes(srv.key)
+    );
     items.forEach(srv => {
       const isAvailable = srv.is_available;
       const disabledClass = isAvailable ? '' : 'disabled';
