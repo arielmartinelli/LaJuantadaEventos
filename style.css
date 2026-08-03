@@ -2184,6 +2184,12 @@ button {
 }
 
 @media (max-width: 768px) {
+  /* Texto un poco mas grande en celular: casi todos los tamaños son rem,
+     asi que mover la base escala titulos, parrafos y botones a la vez. */
+  html {
+    font-size: 17.5px;
+  }
+
   .admin-text-mobile {
     display: inline;
   }
@@ -2435,6 +2441,10 @@ button {
 }
 
 @media (max-width: 480px) {
+  html {
+    font-size: 17px;
+  }
+
   .grid-badges {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
