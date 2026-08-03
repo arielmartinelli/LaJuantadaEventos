@@ -1851,10 +1851,15 @@ Podrian confirmarme disponibilidad para esta fecha y coordinar los detalles? Muc
         '• Los precios informados tienen validez por 15 días corridos a partir de la fecha de generación.'
       ];
       
+      // Ancho util de la hoja A4 (210mm) descontando los margenes laterales.
+      // splitTextToSize corta el texto donde corresponde, asi que si mañana se
+      // cambia la redaccion sigue entrando sin salirse de la hoja.
+      const anchoUtil = 210 - 14 - 14;
       let lineY = currentY + 4;
       textLines.forEach(line => {
-        doc.text(line, 14, lineY);
-        lineY += 4;
+        const renglones = doc.splitTextToSize(line, anchoUtil);
+        doc.text(renglones, 14, lineY);
+        lineY += 4 * renglones.length;
       });
 
       // Pie de página final
