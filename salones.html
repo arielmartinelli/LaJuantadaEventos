@@ -535,6 +535,8 @@
         
         <div class="salon-preview-badges" style="justify-content: flex-start;">
           <span class="preview-badge"><i class="fa-solid fa-users text-orange"></i> De 30 a 90 personas</span>
+          <span class="preview-badge"><i class="fa-solid fa-sun text-orange"></i> Eventos de Día</span>
+          <span class="preview-badge"><i class="fa-solid fa-moon text-orange"></i> Eventos de Noche</span>
           <span class="preview-badge"><i class="fa-solid fa-water text-orange"></i> Patio con pileta</span>
           <span class="preview-badge"><i class="fa-solid fa-fire-burner text-orange"></i> Asador techado</span>
         </div>
@@ -568,7 +570,8 @@
           </div>
           <p style="font-size: 0.7rem; color: var(--charcoal-light); margin: 8px 0 0; line-height: 1.35;">
             Valor orientativo del alquiler del salón. No incluye catering ni servicios adicionales.<br>
-            15% OFF de lunes a jueves sin contar feriados y vispera de feriados
+            15% OFF de lunes a jueves sin contar feriados y vispera de feriados<br>
+            Uso exclusivo por 8 horas
           </p>
         </div>
 
@@ -607,6 +610,12 @@
             <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-snowflake"></i><span>Heladera y freezer</span></div>
             <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-utensils"></i><span>Vajilla básica</span></div>
             <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-lightbulb"></i><span>Luces audio-ritmicas</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-chair"></i><span>Mesas y sillas</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-couch"></i><span>Juegos de living</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-cookie-bite"></i><span>Candy bar</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-icons"></i><span>Patio con Luces kermes</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-volume-high"></i><span>Sonido</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-video"></i><span>Proyector</span></div>
           </div>
 
           <!-- Calendar Widget -->
@@ -650,6 +659,8 @@
         
         <div class="salon-preview-badges" style="justify-content: flex-start;">
           <span class="preview-badge"><i class="fa-solid fa-users text-orange"></i> De 30 a 90 personas</span>
+          <span class="preview-badge"><i class="fa-solid fa-sun text-orange"></i> Eventos de Día</span>
+          <span class="preview-badge"><i class="fa-solid fa-moon text-orange"></i> Eventos de Noche</span>
           <span class="preview-badge"><i class="fa-solid fa-tree text-orange"></i> 150m² patio parquizado</span>
           <span class="preview-badge"><i class="fa-solid fa-fire text-orange"></i> Fogonero</span>
         </div>
@@ -683,7 +694,8 @@
           </div>
           <p style="font-size: 0.7rem; color: var(--charcoal-light); margin: 8px 0 0; line-height: 1.35;">
             Valor orientativo del alquiler del salón. No incluye catering ni servicios adicionales.<br>
-            15% OFF de lunes a jueves sin contar feriados y vispera de feriados 
+            15% OFF de lunes a jueves sin contar feriados y vispera de feriados <br>
+            Uso exclusivo por 8 horas
           </p>
         </div>
 
@@ -722,6 +734,12 @@
             <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-snowflake"></i><span>Heladera y freezer</span></div>
             <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-utensils"></i><span>Vajilla básica</span></div>
             <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-lightbulb"></i><span>Sonido y luces audio-ritmicas</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-chair"></i><span>Mesas y sillas</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-couch"></i><span>Juegos de living</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-cookie-bite"></i><span>Candy bar</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-icons"></i><span>Patio con Luces kermes</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-volume-high"></i><span>Sonido</span></div>
+            <div class="amenity-item" style="justify-content: flex-start; text-align: left;"><i class="fa-solid fa-video"></i><span>Proyector</span></div>
           </div>
 
           <!-- Calendar Widget -->
@@ -1067,12 +1085,20 @@
           const lower = text.toLowerCase();
           let icon = 'fa-check';
           if (lower.includes('capacidad') || lower.includes('personas')) icon = 'fa-users';
+          else if (lower.includes('mesas') || lower.includes('sillas') || lower.includes('silla')) icon = 'fa-chair';
+          else if (lower.includes('living') || lower.includes('sillón') || lower.includes('sillones')) icon = 'fa-couch';
+          else if (lower.includes('candy') || lower.includes('dulce')) icon = 'fa-cookie-bite';
+          else if (lower.includes('kermes') || lower.includes('luces kermes')) icon = 'fa-icons';
+          else if (lower.includes('proyector') || lower.includes('pantalla') || lower.includes('video')) icon = 'fa-video';
+          else if (lower.includes('sonido') || lower.includes('audio')) icon = 'fa-volume-high';
+          else if (lower.includes('día') || lower.includes('dia')) icon = 'fa-sun';
+          else if (lower.includes('noche')) icon = 'fa-moon';
           else if (lower.includes('parque') || lower.includes('piscina') || lower.includes('patio')) icon = 'fa-tree';
           else if (lower.includes('clima') || lower.includes('aire')) icon = 'fa-snowflake';
           else if (lower.includes('asador') || lower.includes('parrilla') || lower.includes('cocina')) icon = 'fa-fire-burner';
           else if (lower.includes('estacionamiento') || lower.includes('cochera')) icon = 'fa-square-parking';
           else if (lower.includes('wifi') || lower.includes('conectividad') || lower.includes('internet')) icon = 'fa-wifi';
-          else if (lower.includes('dj') || lower.includes('sonido') || lower.includes('audio') || lower.includes('pista')) icon = 'fa-compact-disc';
+          else if (lower.includes('dj') || lower.includes('pista')) icon = 'fa-compact-disc';
           else if (lower.includes('luz') || lower.includes('luces') || lower.includes('led')) icon = 'fa-lightbulb';
           else if (lower.includes('ubicación') || lower.includes('céntrica')) icon = 'fa-building-user';
           else if (lower.includes('seguridad') || lower.includes('médica')) icon = 'fa-shield-halved';
