@@ -1126,12 +1126,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedSalonKey = calcSalonSelect ? calcSalonSelect.value : 'none';
     const isSalonSelected = selectedSalonKey === 'norte' || selectedSalonKey === 'centro';
 
-    if (isSalonSelected && guestCount > 100) {
-      guestCount = 100;
-      guestCountInput.value = 100;
-      if (guestCountNumBox) guestCountNumBox.value = 100;
+    if (isSalonSelected && guestCount > 90) {
+      guestCount = 90;
+      guestCountInput.value = 90;
+      if (guestCountNumBox) guestCountNumBox.value = 90;
       const guestRange = document.getElementById('guest-count');
-      if (guestRange) guestRange.value = 100;
+      if (guestRange) guestRange.value = 90;
     }
 
     // Actualizar campo de invitados numérico
@@ -1142,9 +1142,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Validar avisos de límite de capacidad en salones
     if (minGuestsWarning) {
-      if (isSalonSelected && parseInt(guestCountInput.value) >= 100) {
+      if (isSalonSelected && parseInt(guestCountInput.value) >= 90) {
         minGuestsWarning.style.display = 'block';
-        minGuestsWarning.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Capacidad máxima del salón alcanzada (100 personas). Para eventos más grandes, seleccioná "Catering a Domicilio".';
+        minGuestsWarning.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Capacidad máxima del salón alcanzada (90 personas). Para eventos más grandes, seleccioná "Catering a Domicilio".';
       } else {
         minGuestsWarning.style.display = 'none';
       }
