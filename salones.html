@@ -561,8 +561,8 @@
           </span>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end;">
             <div>
-              <label for="quoter-pax-centro" style="font-size: 0.75rem; font-weight: 700; color: var(--charcoal-light); display: block; margin-bottom: 4px;">Personas</label>
-              <input type="number" id="quoter-pax-centro" class="quoter-pax" min="1" step="1" value="40" placeholder="Ej. 80"
+              <label for="quoter-pax-centro" style="font-size: 0.75rem; font-weight: 700; color: var(--charcoal-light); display: block; margin-bottom: 4px;">Personas (máx. 90)</label>
+              <input type="number" id="quoter-pax-centro" class="quoter-pax" min="1" max="90" step="1" value="40" placeholder="Ej. 80"
                 style="width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 0.95rem; font-weight: 700; color: var(--charcoal);">
             </div>
             <div style="text-align: right;">
@@ -571,7 +571,7 @@
             </div>
           </div>
           <p style="font-size: 0.7rem; color: var(--charcoal-light); margin: 8px 0 0; line-height: 1.35;">
-            Valor orientativo del alquiler del salón. No incluye catering ni servicios adicionales.<br>
+            Valor orientativo del alquiler del salón (hasta 90 personas máx). No incluye catering ni servicios adicionales.<br>
             15% OFF de lunes a jueves sin contar feriados y vispera de feriados<br>
             Uso exclusivo por 8 horas
           </p>
@@ -685,8 +685,8 @@
           </span>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end;">
             <div>
-              <label for="quoter-pax-norte" style="font-size: 0.75rem; font-weight: 700; color: var(--charcoal-light); display: block; margin-bottom: 4px;">Personas</label>
-              <input type="number" id="quoter-pax-norte" class="quoter-pax" min="1" step="1" value="40" placeholder="Ej. 80"
+              <label for="quoter-pax-norte" style="font-size: 0.75rem; font-weight: 700; color: var(--charcoal-light); display: block; margin-bottom: 4px;">Personas (máx. 90)</label>
+              <input type="number" id="quoter-pax-norte" class="quoter-pax" min="1" max="90" step="1" value="40" placeholder="Ej. 80"
                 style="width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 0.95rem; font-weight: 700; color: var(--charcoal);">
             </div>
             <div style="text-align: right;">
@@ -695,7 +695,7 @@
             </div>
           </div>
           <p style="font-size: 0.7rem; color: var(--charcoal-light); margin: 8px 0 0; line-height: 1.35;">
-            Valor orientativo del alquiler del salón. No incluye catering ni servicios adicionales.<br>
+            Valor orientativo del alquiler del salón (hasta 90 personas máx). No incluye catering ni servicios adicionales.<br>
             15% OFF de lunes a jueves sin contar feriados y vispera de feriados <br>
             Uso exclusivo por 8 horas
           </p>
@@ -1018,7 +1018,11 @@
           if (!input || !salida || !tarifas[salon]) return;
 
           const calcular = () => {
-            const pax = parseInt(input.value, 10);
+            let pax = parseInt(input.value, 10);
+            if (pax > 90) {
+              pax = 90;
+              input.value = 90;
+            }
             if (!pax || pax < 1) { salida.textContent = '$0'; return; }
             const { base, extra } = tarifas[salon];
             const adicionales = Math.max(0, pax - MIN_PAX_INCLUIDOS);
