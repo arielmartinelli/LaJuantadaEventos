@@ -332,6 +332,11 @@ button {
   background-position: center;
   color: var(--bg-white);
   padding-top: 80px;
+  /* Las tarjetas suben 60px sobre el hero y van por encima (z-index mayor).
+     Este padding reserva esa franja: el contenido nunca llega hasta ahi,
+     asi no se superponen con los botones en monitores de poca altura.
+     Ademas fija un piso natural de alto para el hero. */
+  padding-bottom: 105px;
 }
 
 .hero-overlay {
@@ -2279,7 +2284,7 @@ button {
     height: auto;
     min-height: calc(100vh - 255px);
     padding-top: 92px;
-    padding-bottom: 40px;
+    padding-bottom: 58px;
   }
 
   /* La flecha de "seguir bajando" ya no hace falta: las tarjetas
