@@ -1173,7 +1173,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (isSalonSelected) {
       const isNorte = selectedSalonKey === 'norte';
-      salonName = isNorte ? 'Salón La Juntada Norte (Espacio Vallejo - Tu lugar de encuentros)' : 'Salón La Juntada Centro (Alta Córdoba)';
+      salonName = isNorte ? 'Salón La Juntada Norte tu lugar de encuentros' : 'Salón La Juntada Centro (Alta Córdoba)';
 
       const basePrice = parseFloat(isNorte ? activeConfigs.salon_norte_base_price : activeConfigs.salon_centro_base_price) || 300000;
       const extraRate = parseFloat(isNorte ? activeConfigs.salon_norte_extra_pax_price : activeConfigs.salon_centro_extra_pax_price) || 7500;
