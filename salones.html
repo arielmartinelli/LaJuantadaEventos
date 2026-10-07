@@ -1009,8 +1009,8 @@
         // Cotizador rapido por cantidad de personas.
         // Usa la misma formula que el presupuestador del inicio para que no haya
         // dos numeros distintos para el mismo salon:
-        //   base cubre hasta 40 invitados, desde ahi suma por persona adicional.
-        const MIN_PAX_INCLUIDOS = parseFloat(configs.min_guests_qty) || 40;
+        //   base cubre hasta 25 invitados, desde ahi suma por persona adicional.
+        const MIN_PAX_INCLUIDOS = parseFloat(configs.min_guests_qty) || 25;
         const tarifas = {
           norte:  { base: norteBase,  extra: parseFloat(configs.salon_norte_extra_pax_price)  || 7500 },
           centro: { base: centroBase, extra: parseFloat(configs.salon_centro_extra_pax_price) || 7500 }

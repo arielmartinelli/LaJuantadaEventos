@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     contact_phone2: '3512160141',
     contact_address: 'Mendoza 3147, Alta Córdoba, Córdoba',
     contact_email: 'lajuntadaeventos@gmail.com',
-    min_guests_qty: '40',
+    min_guests_qty: '25',
     cash_discount_percent: '10',
     living_set_price: '18000',
     salon_norte_base_price: '300000',
@@ -1179,7 +1179,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const extraRate = parseFloat(isNorte ? activeConfigs.salon_norte_extra_pax_price : activeConfigs.salon_centro_extra_pax_price) || 7500;
       const discountPercent = parseFloat(activeConfigs.salon_weekday_discount_percent) || 15;
 
-      const extraPax = Math.max(0, guestCount - 40);
+      const extraPax = Math.max(0, guestCount - minGuestsLimit);
       let baseTotalSalon = basePrice + (extraPax * extraRate);
 
       // Descuento en días de semana (Lunes a Jueves: dayOfWeek 1, 2, 3, 4)
