@@ -1112,7 +1112,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function calculateBudget(clientNameOverride = '', dateValOverride = '') {
     if (!guestCountInput) return;
 
-    const minGuestsLimit = parseInt(activeConfigs.min_guests_qty) || 40;
+    const minGuestsLimit = parseInt(activeConfigs.min_guests_qty) || 25;
     let guestCount = parseInt(guestCountInput.value) || minGuestsLimit;
     if (guestCount < minGuestsLimit) {
       guestCount = minGuestsLimit;
@@ -1542,14 +1542,14 @@ document.addEventListener('DOMContentLoaded', () => {
     guestCountNumBox.addEventListener('input', () => {
       let val = parseInt(guestCountNumBox.value);
       if (!isNaN(val)) {
-        if (val < 40) val = 40;
+        if (val < 25) val = 25;
         guestCountInput.value = val;
         calculateBudget();
       }
     });
     guestCountNumBox.addEventListener('change', () => {
       let val = parseInt(guestCountNumBox.value);
-      if (isNaN(val) || val < 40) val = 40;
+      if (isNaN(val) || val < 25) val = 25;
       guestCountNumBox.value = val;
       guestCountInput.value = val;
       calculateBudget();

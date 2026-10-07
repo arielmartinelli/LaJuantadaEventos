@@ -572,7 +572,7 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end;">
             <div>
               <label for="quoter-pax-centro" style="font-size: 0.75rem; font-weight: 700; color: var(--charcoal-light); display: block; margin-bottom: 4px;">Personas (máx. 90)</label>
-              <input type="number" id="quoter-pax-centro" class="quoter-pax" min="1" max="90" step="1" value="40" placeholder="Ej. 80"
+              <input type="number" id="quoter-pax-centro" class="quoter-pax" min="1" max="90" step="1" value="25" placeholder="Ej. 80"
                 style="width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 0.95rem; font-weight: 700; color: var(--charcoal);">
             </div>
             <div style="text-align: right;">
@@ -691,7 +691,7 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: end;">
             <div>
               <label for="quoter-pax-norte" style="font-size: 0.75rem; font-weight: 700; color: var(--charcoal-light); display: block; margin-bottom: 4px;">Personas (máx. 90)</label>
-              <input type="number" id="quoter-pax-norte" class="quoter-pax" min="1" max="90" step="1" value="40" placeholder="Ej. 80"
+              <input type="number" id="quoter-pax-norte" class="quoter-pax" min="1" max="90" step="1" value="25" placeholder="Ej. 80"
                 style="width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 0.95rem; font-weight: 700; color: var(--charcoal);">
             </div>
             <div style="text-align: right;">
@@ -1010,7 +1010,7 @@
         // Usa la misma formula que el presupuestador del inicio para que no haya
         // dos numeros distintos para el mismo salon:
         //   base cubre hasta 25 invitados, desde ahi suma por persona adicional.
-        const MIN_PAX_INCLUIDOS = parseFloat(configs.min_guests_qty) || 25;
+        const MIN_PAX_INCLUIDOS = 25;
         const tarifas = {
           norte:  { base: norteBase,  extra: parseFloat(configs.salon_norte_extra_pax_price)  || 7500 },
           centro: { base: centroBase, extra: parseFloat(configs.salon_centro_extra_pax_price) || 7500 }
