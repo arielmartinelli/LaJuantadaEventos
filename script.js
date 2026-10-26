@@ -2096,6 +2096,16 @@ Quedo atento/a. Muchas gracias!`;
       const ventana = window.open(waUrl, '_blank', 'noopener,noreferrer');
 
       if (ventana) {
+        // Conversion de Google Ads: se dispara solo cuando la consulta salio bien.
+        // El guard evita que un bloqueador de publicidad rompa el formulario.
+        if (typeof gtag === 'function') {
+          try {
+            gtag('event', 'conversion', { 'send_to': 'AW-846610417/WJoCCPbDqJ4dEPH_2JMD' });
+          } catch (err) {
+            console.warn('No se pudo registrar la conversion:', err);
+          }
+        }
+
         showFormMessage('Listo! Te abrimos WhatsApp con la consulta ya escrita. Sólo tenés que apretar enviar.', 'success');
         contactForm.reset();
       } else {
